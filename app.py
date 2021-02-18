@@ -456,6 +456,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 server = app.server
 
+
 app.layout = html.Div(
     children=[
         html.H1(
@@ -548,11 +549,11 @@ app.layout = html.Div(
          html.Div([dcc.Checklist(id='checkbox1',options = [{'label':'Active Infection','value':'I'},
                                                      {'label':'Active hospitilization','value':'IH'},
                                                      {'label':'Cummulative hospitilization','value':'GH'}],value = ['IH']), 
-           # dcc.Input(id="t_rate",type='number',placeholder="testing rate...",
-            #min=0, max=1, step=0.1,style = {'width':'10%','display':'inline-block','margin-left':'15px'},value = 0),
-            #dcc.Graph(id='fig2',figure = compare('IH','IL-Cook',0.2,0.0015,1/2),),
-            #dcc.Graph(id="fig",figure = school_testing_cost1(0.0015,0.02,25,1 / 2,'IL-Cook',5500,8500,11600),
-             #                                    style={'width':'20%','display':'inline-block'},),
+            dcc.Input(id="t_rate",type='number',placeholder="testing rate...",
+            min=0, max=1, step=0.1,style = {'width':'10%','display':'inline-block','margin-left':'15px'},value = 0),
+            dcc.Graph(id='fig2',figure = compare('IH','IL-Cook',0.2,0.0015,1/2),),
+            dcc.Graph(id="fig",figure = school_testing_cost1(0.0015,0.02,25,1 / 2,'IL-Cook',5500,8500,11600),
+                                                 style={'width':'20%','display':'inline-block'},),
             
                   ]),
          
@@ -562,6 +563,33 @@ app.layout = html.Div(
 
     ]
 )
+                                        
+@app.callback(
+    Output('fig', 'figure'),
+    Input('vr', 'value'),
+    Input('tr', 'value'),
+    Input('tc', 'value'),
+    Input('D/N', 'value'),
+    Input('County','value'),
+    Input('HC1','value'),
+    Input('HC2','value'),
+    Input('HC3','value'))
+def update_figure(cvr,ctr,tc,t,county,hc1,hc2,hc3):
+    fig = school_testing_cost1(cvr,ctr,tc,t/(t+1),county,hc1,hc2,hc3)
+    fig.update_layout(transition_duration=500)
+    return fig
+
+@app.callback(Output('fig2','figure'),
+              Input('checkbox1','value'),
+              Input('County','value'),
+              Input('t_rate', 'value'),
+              Input('vr', 'value'),
+              Input('tc', 'value'),
+              Input('D/N', 'value'))
+def update_figure2(inp,co,t_rate,cvr,ctr,dn):
+    fig2 = compare(inp,co,t_rate,cvr,dn)
+    fig2.update_layout(transition_duration=100)
+    return fig2
 
 if __name__ == '__main__':
     app.run_server(debug=True)
