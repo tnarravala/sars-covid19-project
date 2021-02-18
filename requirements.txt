@@ -16,3 +16,4 @@ plotly==4.14.3
 retrying==1.3.3
 six==1.15.0
 Werkzeug==1.0.1
+matplotlib @ file:///opt/concourse/worker/volumes/live/f7797860-f8aa-410c-4a56-72315954816b/volume/matplotlib-base_1603378002957/work
