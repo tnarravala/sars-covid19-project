@@ -104,7 +104,6 @@ sphinxcontrib-serializinghtml==1.1.4
 tables==3.6.1
 terminado==0.9.1
 testpath==0.4.4
-tifffile==2020.10.1
 tornado==6.0.4
 unicodecsv==0.14.1
 viola==0.3.8
