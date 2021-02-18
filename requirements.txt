@@ -1,7 +1,6 @@
 anyio==2.0.2
 appdirs==1.4.4
 applaunchservices==0.2.1
-appscript_1594840187551/work
 argh==0.26.2
 astropy==4.0.2
 async-generator==1.10
