@@ -79,7 +79,6 @@ pycosat==0.6.3
 pycurl==7.43.0.6
 pyflakes==2.2.0
 pyparsing==2.4.7
-pytest==0.0.0
 python-dateutil==2.8.1
 pytz==2020.1
 PyYAML==5.3.1
