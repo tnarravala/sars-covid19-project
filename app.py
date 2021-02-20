@@ -8,6 +8,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objects as go
 from dash.dependencies import Input, Output
+import dash_bootstrap_components as dbc
 
 city_vaccine_rate = 0.0015
 city_test_rate = 0.02
@@ -320,7 +321,7 @@ def simulate(testing, vaccinating, ct_rate, cv_rate, st_rate, sv_rate, fix_s_bet
 def school_testing_cost1(cvr,ctr,tc,dtf,county,hc1,hc2,hc3):
     t_low, t_up, t_step = 0, 1, 0.025
     t_rates = np.arange(t_low, t_up + t_step, t_step)
-    #days = np.arange(0, 150.5, 1)
+    days = np.arange(0, 150.5, 1)
     cols = ['save \\ test rate']
     cols.extend(t_rates)
     test_cost = tc
@@ -338,7 +339,7 @@ def school_testing_cost1(cvr,ctr,tc,dtf,county,hc1,hc2,hc3):
         commuters.append(commuter)
     
     base_GI = schools[0].GI[-1] + commuters[0].GI[-1]
-    #base_GT = schools[0].GT[-1] + commuters[0].GT[-1]
+    base_GT = schools[0].GT[-1] + commuters[0].GT[-1]
     y1 = [((base_GI - schools[i].GI[-1] - commuters[i].GI[-1]) * hosp_cost[0] -
 	       (schools[i].GT[-1] + commuters[i].GT[-1]) * test_cost) / 1000000
 	      for i in range(len(t_rates))]
@@ -371,8 +372,8 @@ def school_testing_cost1(cvr,ctr,tc,dtf,county,hc1,hc2,hc3):
     fig.update_traces(hoverinfo='text+name', mode='lines')
     fig.update_layout(
     autosize=True,
-    width=900,
-    height=650,
+    #width=900,
+    #height=650,
     yaxis = dict( 
        #range = [0,30] ,
        rangemode="tozero",
@@ -410,7 +411,7 @@ def compare(inp,co,t_rates,cvr,dn):
     df_I = pd.DataFrame(df_I)
     df_IH = {'days':days,'Hospitalization':IH_combined}
     df_IH = pd.DataFrame(df_IH)
-    df_GH = {'days':days,'CumHosp':GH_combined,'Hospitalization':IH_combined,'Infections':I_combined}
+    df_GH = {'days':days,'CumHosp':GH_combined,'Hospitalization':IH_combined,'Infections':I_combined,'t_rate':t_rates}
     df_GH = pd.DataFrame(df_GH)
     #df_GH['CumHosp'] = df_GH['CumHosp'].diff()
     #fig = px.line(df_I,x = df_I['days'],y = df_I['Infections'])
@@ -423,7 +424,7 @@ def compare(inp,co,t_rates,cvr,dn):
     
     fig2.update_traces(hoverinfo='text+name', mode='lines')
     fig2.update_layout(
-    #autosize=True,
+    autosize=True,
     #width=900,
     #height=650,
     yaxis = dict( 
@@ -443,38 +444,27 @@ def compare(inp,co,t_rates,cvr,dn):
     )
     return fig2
 
-
-
-
-
-
-
-
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 server = app.server
 
+app.layout = html.Div([
+    html.Div([
+        html.Div([
+            html.H3('Results'),
+            dcc.Graph(id='fig2',figure = compare('IH','IL-Cook',0.2,0.0015,1/2)),
+            html.Br(),
+            dcc.Graph(id="fig",figure = school_testing_cost1(0.0015,0.02,25,1 / 2,'IL-Cook',5500,8500,11600)),
+        ], className="six columns"),
 
-app.layout = html.Div(
-    children=[
-        html.H1(
-            children="Illinois Institute of Technology",
-            style={"textAlign": "center", "color": "#fa1b02"},
-        ),
-        html.Div(
-            children="""
-        Designed to find the best policy for reopening(SafeGraph dataset).
-    """,
-            style={"textAlign": "center", "color": "#ff7d6f"},
-        ),
-         html.Div([
-    
-        html.Br(),
-        html.Br(),
-
-        dcc.Dropdown(id='County',
+        html.Div([
+            html.H3('Tweek the Data'),
+            dbc.InputGroup(
+               [
+                   dbc.InputGroupAddon("County"),
+                   dcc.Dropdown(id='County',
             options=[
                      {'label': 'IL-Cook', 'value': 'IL-Cook'},
                      {'label':'TX-Dallas','value':'TX-Dallas'},
@@ -510,60 +500,93 @@ app.layout = html.Div(
             search_value='',                    
             placeholder='Choose County...',     
             clearable=True,                     
-            style={'width':"50%"}          
+            style={'width':"90%"}          
             ),
-        html.Label('Fixed School beta: ',style={'display':'inline-block','margin-right': '15px'}),
-        dcc.RadioItems(id="fsb",options=[
-        {'label': 'Yes', 'value': 'yes'},
-        {'label': 'No', 'value': 'no'}
-    ],value='yes',style={})                                  
-    ]),html.Br(),
-    html.Div([html.Label('D/N :',style = {'display':'inline-block','margin-right':'120px'}),
-              html.Label('City Testing Rate :',style = {'display':'inline-block','margin-right':'45px','margin-left':'7px'}),
-              html.Label('Vaccination Rate :',style = {'display':'inline-block','margin-right':'45px'}),
-              html.Label('Testing Cost :',style = {'display':'inline-block','margin-right':'50px'})]),
-    html.Div([ dcc.Input(id="D/N",type='number',placeholder="D/N...",
-            min=0, max=1, step=0.1,style = {'width':'10%','display':'inline-block'},className='six columns',value = 1 / 2
-        ),     #dcc.Input(id="sbm",type='number',placeholder="school beta multiplier...",
-            #min=10, max=100, step=3,style = {'width':'10%','display':'inline-block','margin-left':'15px'},className='six columns'), 
-            #dcc.Input(id="cbm",type='number',placeholder="city beta multiplier...",
-           # min=10, max=100, step=3,style = {'width':'10%','display':'inline-block','margin-left':'15px'}),
-            dcc.Input(id="tr",type='number',placeholder="testing rate...",
-            min=0, max=1, step=0.00000001,style = {'width':'10%','display':'inline-block','margin-left':'15px'},value=0.02),
-            dcc.Input(id="vr",type='number',placeholder="vaccination rate...",
-            min=0, max=1, step=0.00000001,style = {'width':'10%','display':'inline-block','margin-left':'15px'},value = 0.003),
-            dcc.Input(id="tc",type='number',placeholder="testing cost...",
-            min=10, max=100, step=1,style = {'width':'10%','display':'inline-block','margin-left':'15px'},value = 25)
-            ]),html.Br(),
-    html.Div([
-        html.Label('Hospitalization Cost :',style = {'display':'inline-block','margin-right':'10px'}),
-        dcc.Input(id="HC1",type='number',placeholder="Hospitalization cost...",
-            min=1, max=1000000, step=1,style = {'width':'10%','display':'inline-block','margin-left':'15px'},value = 5500),
-        dcc.Input(id="HC2",type='number',placeholder="Hospitalization cost...",
-            min=1, max=1000000, step=1,style = {'width':'10%','display':'inline-block','margin-left':'15px'},value = 8500),
-        dcc.Input(id="HC3",type='number',placeholder="Hospitalization cost...",
-            min=1, max=1000000, step=1,style = {'width':'10%','display':'inline-block','margin-left':'15px'},value = 11600)
-        ]),html.Br(),
-    #html.Div(html.H4(id='output-container',style={'display':'inline-block','margin-right':'20%'})),
-        
-         html.Div([dcc.Checklist(id='checkbox1',options = [{'label':'Active Infection','value':'I'},
-                                                     {'label':'Active hospitilization','value':'IH'},
-                                                     {'label':'Cummulative hospitilization','value':'GH'}],value = ['IH']), 
-            dcc.Input(id="t_rate",type='number',placeholder="testing rate...",
-            min=0, max=1, step=0.1,style = {'width':'10%','display':'inline-block','margin-left':'15px'},value = 0),
-            dcc.Graph(id='fig2',figure = compare('IH','IL-Cook',0.2,0.0015,1/2),),
-            dcc.Graph(id="fig",figure = school_testing_cost1(0.0015,0.02,25,1 / 2,'IL-Cook',5500,8500,11600),
-                                                 style={'width':'20%','display':'inline-block'},),
-            
-                  ]),
-         
-            
-             
-         
+               ],
+               style={'margin-top':'30px', 'width': '50%', 'float': 'left'},
+           ),
+        dbc.InputGroup(
+               [
 
-    ]
-)
-                                        
+                   dbc.Label("Day_Night_Fraction"),
+                   dcc.Input(id="D/N",type='number',placeholder="D/N...",
+            min=0, max=1, step=0.1,style = {'width':'20%'},value = 1 / 2
+        ),
+               ],
+               className="mb-3",
+               style={'margin-top':'20px','width': '80%', 'float': 'left'},
+       ),
+        dbc.InputGroup(
+               [
+                   dbc.Label("City Testing Rate"),
+                    dcc.Input(id="tr",type='number',placeholder="testing rate...",
+            min=0, max=1, step=0.01,style = {'width':'23%'},
+            value=0.02),
+
+               ],
+               className="mb-3",
+               style={'margin-top':'20px','width': '70%', 'float': 'left'},
+       ),
+        dbc.InputGroup(
+               [
+                   dbc.Label("Vaccination Rate"),
+                    dcc.Input(id="vr",type='number',placeholder="vaccination rate...",
+            min=0, max=1, step=0.001,style = {'width':'23%'}
+            ,value = 0.003),
+
+               ],
+               className="mb-3",
+               style={'margin-top':'20px','width': '70%', 'float': 'left'},
+       ),dbc.InputGroup(
+               [
+                   dbc.Label("Testing Cost"),
+                    dcc.Input(id="tc",type='number',placeholder="Testing rate...",
+            min=0, max=100, step=1,style = {'width':'23%'}
+            ,value = 25),
+
+               ],
+               className="mb-3",
+               style={'margin-top':'20px','width': '70%', 'float': 'left'},
+       ),dbc.InputGroup(
+               [
+                   dcc.Checklist(id='checkbox1',options = [{'label':'Active Infection','value':'I'},
+                                                     {'label':'Active hospitilization','value':'IH'},
+                                                     {'label':'Cummulative hospitilization','value':'GH'}],value = ['IH'])
+               ],
+               className="mb-3",
+               style={'margin-top':'20px','width': '70%', 'float': 'left'},
+       ),dbc.InputGroup(
+               [
+                   html.Label('Testing Rate :'),
+            dcc.Input(id="trs",type='number',placeholder="Testing rate...",
+            min=0, max=1, step=0.1,style = {'width':'23%'}
+            ,value = 0.2),
+               ],
+               className="mb-3",
+               style={'margin-top':'20px','width': '70%', 'float': 'left'},
+       ),
+           dbc.InputGroup(
+               [
+                   html.Label('Hospitalization Cost :'),
+        dcc.Input(id="HC1",type='number',placeholder="Hospitalization cost...",
+            min=1, max=1000000, step=1,style = {'width':'18%'},value = 5500),
+        dcc.Input(id="HC2",type='number',placeholder="Hospitalization cost...",
+            min=1, max=1000000, step=1,style = {'width':'18%'},value = 8500),
+        dcc.Input(id="HC3",type='number',placeholder="Hospitalization cost...",
+            min=1, max=1000000, step=1,style = {'width':'18%'},value = 11600)
+        
+               ],
+               className="mb-3",
+               style={'margin-top':'20px','width': '70%', 'float': 'left'},
+       )
+        ], className="six columns"),
+    ], className="row")
+])
+
+app.css.append_css({
+    'external_url': 'https://codepen.io/chriddyp/pen/bWLwgP.css'
+})
+
 @app.callback(
     Output('fig', 'figure'),
     Input('vr', 'value'),
@@ -582,12 +605,12 @@ def update_figure(cvr,ctr,tc,t,county,hc1,hc2,hc3):
 @app.callback(Output('fig2','figure'),
               Input('checkbox1','value'),
               Input('County','value'),
-              Input('t_rate', 'value'),
+              Input('trs', 'value'),
               Input('vr', 'value'),
               Input('tc', 'value'),
               Input('D/N', 'value'))
-def update_figure2(inp,co,t_rate,cvr,ctr,dn):
-    fig2 = compare(inp,co,t_rate,cvr,dn)
+def update_figure2(inp,co,t_rate,cvr,ctr,t):
+    fig2 = compare(inp,co,t_rate,cvr,t/(t+1))
     fig2.update_layout(transition_duration=100)
     return fig2
 
