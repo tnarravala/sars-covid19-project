@@ -372,7 +372,7 @@ def school_testing_cost1(cvr,ctr,tc,dtf,county,hc1,hc2,hc3):
     fig.update_traces(hoverinfo='text+name', mode='lines')
     fig.update_layout(
     autosize=True,
-    #width=900,
+    #width=700,
     #height=650,
     yaxis = dict( 
        #range = [0,30] ,
@@ -424,9 +424,9 @@ def compare(inp,co,t_rates,cvr,dn):
     
     fig2.update_traces(hoverinfo='text+name', mode='lines')
     fig2.update_layout(
-    autosize=True,
-    #width=900,
-    #height=650,
+    #autosize=True,
+    width=700,
+    height=650,
     yaxis = dict( 
        #range = [0,100] ,
        #rangemode="tozero",
@@ -626,7 +626,7 @@ def update_figure2(pic,inp,county,t_rate,cvr,ctr,t,tc,hc1,hc2,hc3):
         fig.update_layout(transition_duration=100)
     else:
         fig = school_testing_cost1(cvr,ctr,tc,t/(t+1),county,hc1,hc2,hc3)
-        fig.update_layout(transition_duration=500)
+        fig.update_layout(transition_duration=100)
     return fig
 
 if __name__ == '__main__':
