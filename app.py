@@ -282,15 +282,15 @@ class Commuter:
 
 
 def simulate(testing, vaccinating, ct_rate, cv_rate, st_rate, sv_rate, fix_s_beta, day_frac,County):
-	school = Node('school', '2N', '2N/Population.csv', 0, st_rate, sv_rate)
-	city = Node(County, '2N', '2N/Population.csv', 5, ct_rate, cv_rate)
+	school = Node(County, '2N', '2N/Population1.csv', 0, st_rate, sv_rate)
+	city = Node(County, '2N', '2N/Population1.csv', 5, ct_rate, cv_rate)
 	city.S[0] *= 1.5
 	city.eta *= 1.5
 	'''if County=='IL-Cook':
 		school.S[0] = 50000
 		school.n_0 = school.S[0]/school.eta'''
-	#school.S[0] = 50000
-	#school.n_0 = school.S[0]/school.eta
+	school.S[0] = 10000
+	school.n_0 = school.S[0]/school.eta
 	commuter = Commuter(school.S[-1] * 0.8)
 	school.commute_out(commuter)
 
@@ -388,7 +388,7 @@ def school_testing_cost1(cvr,ctr,tc,dtf,county,hc1,hc2,hc3):
         zeroline = True
     ),
     )
-
+    fig.update_layout(legend = dict(x=0,y=-0.5))
     return fig
 
 def compare(inp,co,t_rates,cvr,dn):
@@ -442,6 +442,7 @@ def compare(inp,co,t_rates,cvr,dn):
         zeroline = True
     ),
     )
+    fig2.update_layout(legend = dict(x=0,y=-0.4))
     return fig2
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -453,14 +454,17 @@ server = app.server
 app.layout = html.Div([
     html.Div([
         html.Div([
-            html.H3('Results'),
+            html.H1('Results'),
+            html.Br(),
+            html.H4('Choose the figure'),
+            dcc.Dropdown(id = 'resfigure',options = [{'label':'figure1','value':'fig'},{'label':'figure2','value':'fig2'}],value = 'fig',style = {'width':'70%'}),
             dcc.Graph(id='fig2',figure = compare('IH','IL-Cook',0.2,0.0015,1/2)),
             html.Br(),
-            dcc.Graph(id="fig",figure = school_testing_cost1(0.0015,0.02,25,1 / 2,'IL-Cook',5500,8500,11600)),
+            #dcc.Graph(id="fig",figure = school_testing_cost1(0.0015,0.02,25,1 / 2,'IL-Cook',5500,8500,11600)),
         ], className="six columns"),
 
         html.Div([
-            html.H3('Tweek the Data'),
+            html.H1('Tweek the Data'),
             dbc.InputGroup(
                [
                    dbc.InputGroupAddon("County"),
@@ -519,7 +523,7 @@ app.layout = html.Div([
         dbc.InputGroup(
                [
                    dbc.Label("City Testing Rate"),
-                    dcc.Input(id="tr",type='number',placeholder="testing rate...",
+                    dcc.Input(id="City_Testing_Rate",type='number',placeholder="testing rate...",
             min=0, max=1, step=0.01,style = {'width':'23%'},
             value=0.02),
 
@@ -530,7 +534,7 @@ app.layout = html.Div([
         dbc.InputGroup(
                [
                    dbc.Label("Vaccination Rate"),
-                    dcc.Input(id="vr",type='number',placeholder="vaccination rate...",
+                    dcc.Input(id="Vaccination_Rate",type='number',placeholder="vaccination rate...",
             min=0, max=1, step=0.001,style = {'width':'23%'}
             ,value = 0.003),
 
@@ -540,7 +544,7 @@ app.layout = html.Div([
        ),dbc.InputGroup(
                [
                    dbc.Label("Testing Cost"),
-                    dcc.Input(id="tc",type='number',placeholder="Testing rate...",
+                    dcc.Input(id="Testing_Cost",type='number',placeholder="Testing rate...",
             min=0, max=100, step=1,style = {'width':'23%'}
             ,value = 25),
 
@@ -551,14 +555,14 @@ app.layout = html.Div([
                [
                    dcc.Checklist(id='checkbox1',options = [{'label':'Active Infection','value':'I'},
                                                      {'label':'Active hospitilization','value':'IH'},
-                                                     {'label':'Cummulative hospitilization','value':'GH'}],value = ['IH'])
+                                                     {'label':'Cummulative hospitilization','value':'GH'}],value = ['IH','I','GH'])
                ],
                className="mb-3",
                style={'margin-top':'20px','width': '70%', 'float': 'left'},
        ),dbc.InputGroup(
                [
                    html.Label('Testing Rate :'),
-            dcc.Input(id="trs",type='number',placeholder="Testing rate...",
+            dcc.Input(id="Testing_Rate",type='number',placeholder="Testing rate...",
             min=0, max=1, step=0.1,style = {'width':'23%'}
             ,value = 0.2),
                ],
@@ -587,7 +591,7 @@ app.css.append_css({
     'external_url': 'https://codepen.io/chriddyp/pen/bWLwgP.css'
 })
 
-@app.callback(
+'''@app.callback(
     Output('fig', 'figure'),
     Input('vr', 'value'),
     Input('tr', 'value'),
@@ -596,23 +600,34 @@ app.css.append_css({
     Input('County','value'),
     Input('HC1','value'),
     Input('HC2','value'),
-    Input('HC3','value'))
+    Input('HC3','value'),
+    Input('checkbox1','value'),
+    Input('trs','value'))
 def update_figure(cvr,ctr,tc,t,county,hc1,hc2,hc3):
     fig = school_testing_cost1(cvr,ctr,tc,t/(t+1),county,hc1,hc2,hc3)
     fig.update_layout(transition_duration=500)
-    return fig
-
+    return fig'''
 @app.callback(Output('fig2','figure'),
+              Input('resfigure','value'),
               Input('checkbox1','value'),
               Input('County','value'),
-              Input('trs', 'value'),
-              Input('vr', 'value'),
-              Input('tc', 'value'),
-              Input('D/N', 'value'))
-def update_figure2(inp,co,t_rate,cvr,ctr,t):
-    fig2 = compare(inp,co,t_rate,cvr,t/(t+1))
-    fig2.update_layout(transition_duration=100)
-    return fig2
+              Input('Testing_Rate', 'value'),
+              Input('Vaccination_Rate', 'value'),
+              Input('City_Testing_Rate', 'value'),
+              Input('D/N', 'value'),
+              Input('Testing_Cost', 'value'),
+              Input('HC1','value'),
+              Input('HC2','value'),
+              Input('HC3','value'),
+              )
+def update_figure2(pic,inp,county,t_rate,cvr,ctr,t,tc,hc1,hc2,hc3):
+    if pic == 'fig':
+        fig = compare(inp,county,t_rate,cvr,t/(t+1))
+        fig.update_layout(transition_duration=100)
+    else:
+        fig = school_testing_cost1(cvr,ctr,tc,t/(t+1),county,hc1,hc2,hc3)
+        fig.update_layout(transition_duration=500)
+    return fig
 
 if __name__ == '__main__':
     app.run_server(debug=True)
