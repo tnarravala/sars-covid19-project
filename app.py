@@ -453,18 +453,10 @@ server = app.server
 
 app.layout = html.Div([
     html.Div([
-        html.Div([
-            html.H1('Results'),
-            html.Br(),
-            html.H4('Choose the figure'),
-            dcc.Dropdown(id = 'resfigure',options = [{'label':'figure1','value':'fig'},{'label':'figure2','value':'fig2'}],value = 'fig',style = {'width':'70%'}),
-            dcc.Graph(id='fig2',figure = compare('IH','IL-Cook',0.2,0.0015,1/2)),
-            html.Br(),
-            #dcc.Graph(id="fig",figure = school_testing_cost1(0.0015,0.02,25,1 / 2,'IL-Cook',5500,8500,11600)),
-        ], className="six columns"),
+        
 
         html.Div([
-            html.H1('Tweek the Data'),
+            html.H1('Tweek the Data',style= {'margin-left':'10%'}),
             dbc.InputGroup(
                [
                    dbc.InputGroupAddon("County"),
@@ -507,7 +499,7 @@ app.layout = html.Div([
             style={'width':"90%"}          
             ),
                ],
-               style={'margin-top':'30px', 'width': '50%', 'float': 'left'},
+               style={'margin-top':'20px', 'width': '70%', 'float': 'right','margin-right':'20%'},
            ),
         dbc.InputGroup(
                [
@@ -518,7 +510,7 @@ app.layout = html.Div([
         ),
                ],
                className="mb-3",
-               style={'margin-top':'20px','width': '80%', 'float': 'left'},
+               style={'margin-top':'20px','width': '70%', 'float': 'right','margin-right':'20%'},
        ),
         dbc.InputGroup(
                [
@@ -529,7 +521,7 @@ app.layout = html.Div([
 
                ],
                className="mb-3",
-               style={'margin-top':'20px','width': '70%', 'float': 'left'},
+               style={'margin-top':'20px','width': '70%', 'float': 'right','margin-right':'20%'},
        ),
         dbc.InputGroup(
                [
@@ -540,7 +532,7 @@ app.layout = html.Div([
 
                ],
                className="mb-3",
-               style={'margin-top':'20px','width': '70%', 'float': 'left'},
+               style={'margin-top':'20px','width': '70%', 'float': 'right','margin-right':'20%'},
        ),dbc.InputGroup(
                [
                    dbc.Label("Testing Cost"),
@@ -550,7 +542,7 @@ app.layout = html.Div([
 
                ],
                className="mb-3",
-               style={'margin-top':'20px','width': '70%', 'float': 'left'},
+               style={'margin-top':'20px','width': '70%', 'float': 'right','margin-right':'20%'},
        ),dbc.InputGroup(
                [
                    dcc.Checklist(id='checkbox1',options = [{'label':'Active Infection','value':'I'},
@@ -558,7 +550,7 @@ app.layout = html.Div([
                                                      {'label':'Cummulative hospitilization','value':'GH'}],value = ['IH','I','GH'])
                ],
                className="mb-3",
-               style={'margin-top':'20px','width': '70%', 'float': 'left'},
+               style={'margin-top':'20px','width': '70%', 'float': 'right','margin-right':'20%'},
        ),dbc.InputGroup(
                [
                    html.Label('Testing Rate :'),
@@ -567,7 +559,7 @@ app.layout = html.Div([
             ,value = 0.2),
                ],
                className="mb-3",
-               style={'margin-top':'20px','width': '70%', 'float': 'left'},
+               style={'margin-top':'20px','width': '70%', 'float': 'right','margin-right':'20%'},
        ),
            dbc.InputGroup(
                [
@@ -581,10 +573,21 @@ app.layout = html.Div([
         
                ],
                className="mb-3",
-               style={'margin-top':'20px','width': '70%', 'float': 'left'},
+               style={'margin-top':'20px','width': '70%', 'float': 'right','margin-right':'20%'},
        )
         ], className="six columns"),
-    ], className="row")
+    ]),
+           
+    html.Div([html.Div([
+            html.H1('Results'),
+            html.Br(),
+            html.Label('Choose the figure'),
+            dcc.Dropdown(id = 'resfigure',options = [{'label':'figure1','value':'fig'},{'label':'figure2','value':'fig2'}],optionHeight=35,value = 'fig',
+                         ),
+            dcc.Graph(id='fig2',figure = compare('IH','IL-Cook',0.2,0.0015,1/2)),
+            html.Br(),
+            #dcc.Graph(id="fig",figure = school_testing_cost1(0.0015,0.02,25,1 / 2,'IL-Cook',5500,8500,11600)),
+        ], className="six columns"),],className="row")
 ])
 
 app.css.append_css({
