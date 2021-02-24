@@ -372,8 +372,8 @@ def school_testing_cost1(cvr,ctr,tc,dtf,county,hc1,hc2,hc3):
     fig.update_traces(hoverinfo='text+name', mode='lines')
     fig.update_layout(
     autosize=True,
-    #width=700,
-    #height=650,
+    width=700,
+    height=650,
     yaxis = dict( 
        #range = [0,30] ,
        rangemode="tozero",
@@ -415,16 +415,16 @@ def compare(inp,co,t_rates,cvr,dn):
     df_GH = pd.DataFrame(df_GH)
     #df_GH['CumHosp'] = df_GH['CumHosp'].diff()
     #fig = px.line(df_I,x = df_I['days'],y = df_I['Infections'])
-    fig2 = go.Figure(go.Scatter(x=df_GH['days'],y=df_GH['Hospitalization'],name = 'Active Hospitilization'))
+    fig2 = go.Figure(go.Scatter(x=df_GH['days'],y=df_GH['Infections'],name = 'Active Infections'))
     for i in inp:
-        if i == 'I':
-           fig2.add_trace(go.Scatter(x=df_GH['days'],y=df_GH['Infections'],name = 'Active Infections')) 
+        if i == 'IH':
+           fig2.add_trace(go.Scatter(x=df_GH['days'],y=df_GH['Hospitalization'],name = 'Active Hospitilization')) 
         if i == 'GH':
             fig2.add_trace(go.Scatter(x=df_GH['days'],y=df_GH['CumHosp'],name = 'Cummulative Hospitilization'))
     
     fig2.update_traces(hoverinfo='text+name', mode='lines')
     fig2.update_layout(
-    #autosize=True,
+    autosize=True,
     width=700,
     height=650,
     yaxis = dict( 
@@ -452,166 +452,162 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
 app.layout = html.Div([
+html.Div([
+html.Div([
+html.H3('Tweek the data'),
+dbc.InputGroup(
+							 [
+									 dbc.InputGroupAddon("County"),
+									 dcc.Dropdown(id='County',
+						options=[
+										 {'label': 'IL-Cook', 'value': 'IL-Cook'},
+										 {'label':'TX-Dallas','value':'TX-Dallas'},
+										 {'label':'NY-New York','value':'NY-New York'},
+										 {'label':'CA-Los Angeles','value':'CA-Los Angeles'},
+										 {'label':'GA-Fulton','value':'GA-Fulton'},
+										 {'label':'MN-Hennepin','value':'MN-Hennepin'},
+										 {'label':'NV-Clark','value':'NV-Clark'},
+										 {'label':'NJ-Hudson','value':'NJ-Hudson'},
+										 {'label':'NJ-Bergen','value':'NJ-Bergen'},
+										 {'label':'LA-Jefferson','value':'LA-Jefferson'},
+										 {'label':'OH-Franklin','value':'OH-Franklin'},
+										 {'label':'PA-Philadelphia','value':'PA-Philadelphia'},
+										 {'label':'NC-Mecklenburg','value':'NC-Mecklenburg'},
+										 {'label':'TN-Shelby','value':'TN-Shelby'},
+										 {'label':'WI-Milwaukee','value':'WI-Milwaukee'},
+										 {'label':'VA-Fairfax','value':'VA-Fairfax'},
+										 {'label':'AZ-Maricopa','value':'AZ-Maricopa'},
+										 {'label':'CA-Riverside','value':'CA-Riverside'},
+										 {'label':'FL-Broward','value':'FL-Broward'},
+										 {'label':'FL-Miami-Dade','value':'FL-Miami-Dade'},
+										 {'label':'MA-Middlesex','value':'MA-Middlesex'},
+										 {'label':'TX-Harris','value':'TX-Harris'},
+										 {'label':'UT-Salt Lake','value':'UT-Salt Lake'},
+										 
+										 
+						],
+						optionHeight=35,                   
+						value='IL-Cook',                    
+						disabled=False,                     
+						multi=False,                        
+						searchable=True,                    
+						search_value='',                    
+						placeholder='Choose County...',     
+						clearable=True,                     
+						style={'width':"90%"}          
+						),
+							 ],
+							 style={'margin-top':'20px', 'width': '70%', 'float': 'left','margin-left':'10%'},
+					 ),
+				dbc.InputGroup(
+							 [
+
+									 dbc.Label("Day_Night_Fraction"),
+									 dcc.Input(id="D/N",type='number',placeholder="D/N...",
+						min=0, max=1, step=0.1,style = {'width':'20%'},value = 1 / 2
+				),
+							 ],
+							 className="mb-3",
+							 style={'margin-top':'20px','width': '90%', 'float': 'left','margin-left':'10%'},
+			 ),
+				dbc.InputGroup(
+							 [
+									 dbc.Label("City Testing Rate"),
+										dcc.Input(id="City_Testing_Rate",type='number',placeholder="testing rate...",
+						min=0, max=1, step=0.01,style = {'width':'23%'},
+						value=0.02),
+
+							 ],
+							 className="mb-3",
+							 style={'margin-top':'20px','width': '100%', 'float': 'left','margin-left':'10%'},
+			 ),
+				dbc.InputGroup(
+							 [
+									 dbc.Label("Vaccination Rate"),
+										dcc.Input(id="Vaccination_Rate",type='number',placeholder="vaccination rate...",
+						min=0, max=1, step=0.001,style = {'width':'23%'}
+						,value = 0.003),
+
+							 ],
+							 className="mb-3",
+							 style={'margin-top':'20px','width': '100%', 'float': 'left','margin-left':'10%'},
+			 ),dbc.InputGroup(
+							 [
+									 dbc.Label("Testing Cost"),
+										dcc.Input(id="Testing_Cost",type='number',placeholder="Testing rate...",
+						min=0, max=100, step=1,style = {'width':'23%'}
+						,value = 25),
+
+							 ],
+							 className="mb-3",
+							 style={'margin-top':'20px','width': '100%', 'float': 'left','margin-left':'10%'},
+			 ),dbc.InputGroup(
+							 [
+									 dcc.Checklist(id='checkbox1',options = [{'label':'Active Infection','value':'I'},
+																										 {'label':'Active hospitilization','value':'IH'},
+																										 {'label':'Cummulative hospitilization','value':'GH'}],value = ['I'])
+							 ],
+							 className="mb-3",
+							 style={'margin-top':'20px','width': '100%', 'float': 'left','margin-left':'10%'},
+			 ),dbc.InputGroup(
+							 [
+									 html.Label('Testing Rate :'),
+						dcc.Input(id="Testing_Rate",type='number',placeholder="Testing rate...",
+						min=0, max=1, step=0.1,style = {'width':'23%'}
+						,value = 0.2),
+							 ],
+							 className="mb-3",
+							 style={'margin-top':'20px','width': '100%', 'float': 'left','margin-left':'10%'},
+			 ),
+					 dbc.InputGroup(
+							 [
+									 html.Label('Hospitalization Cost :'),
+				dcc.Input(id="HC1",type='number',placeholder="Hospitalization cost...",
+						min=1, max=1000000, step=1,style = {'width':'18%'},value = 5500),
+				dcc.Input(id="HC2",type='number',placeholder="Hospitalization cost...",
+						min=1, max=1000000, step=1,style = {'width':'18%'},value = 8500),
+				dcc.Input(id="HC3",type='number',placeholder="Hospitalization cost...",
+						min=1, max=1000000, step=1,style = {'width':'18%'},value = 11600)
+				
+							 ],
+							 className="mb-3",
+							 style={'margin-top':'20px','width': '100%', 'float': 'left','margin-left':'10%'},
+			 )
+], className="one-third column"),
+
     html.Div([
-        
-
-        html.Div([
-            html.H1('Tweek the Data',style= {'margin-left':'10%'}),
-            dbc.InputGroup(
-               [
-                   dbc.InputGroupAddon("County"),
-                   dcc.Dropdown(id='County',
-            options=[
-                     {'label': 'IL-Cook', 'value': 'IL-Cook'},
-                     {'label':'TX-Dallas','value':'TX-Dallas'},
-                     {'label':'NY-New York','value':'NY-New York'},
-                     {'label':'CA-Los Angeles','value':'CA-Los Angeles'},
-                     {'label':'GA-Fulton','value':'GA-Fulton'},
-                     {'label':'MN-Hennepin','value':'MN-Hennepin'},
-                     {'label':'NV-Clark','value':'NV-Clark'},
-                     {'label':'NJ-Hudson','value':'NJ-Hudson'},
-                     {'label':'NJ-Bergen','value':'NJ-Bergen'},
-                     {'label':'LA-Jefferson','value':'LA-Jefferson'},
-                     {'label':'OH-Franklin','value':'OH-Franklin'},
-                     {'label':'PA-Philadelphia','value':'PA-Philadelphia'},
-                     {'label':'NC-Mecklenburg','value':'NC-Mecklenburg'},
-                     {'label':'TN-Shelby','value':'TN-Shelby'},
-                     {'label':'WI-Milwaukee','value':'WI-Milwaukee'},
-                     {'label':'VA-Fairfax','value':'VA-Fairfax'},
-                     {'label':'AZ-Maricopa','value':'AZ-Maricopa'},
-                     {'label':'CA-Riverside','value':'CA-Riverside'},
-                     {'label':'FL-Broward','value':'FL-Broward'},
-                     {'label':'FL-Miami-Dade','value':'FL-Miami-Dade'},
-                     {'label':'MA-Middlesex','value':'MA-Middlesex'},
-                     {'label':'TX-Harris','value':'TX-Harris'},
-                     {'label':'UT-Salt Lake','value':'UT-Salt Lake'},
-                     
-                     
-            ],
-            optionHeight=35,                   
-            value='IL-Cook',                    
-            disabled=False,                     
-            multi=False,                        
-            searchable=True,                    
-            search_value='',                    
-            placeholder='Choose County...',     
-            clearable=True,                     
-            style={'width':"90%"}          
-            ),
-               ],
-               style={'margin-top':'20px', 'width': '70%', 'float': 'right','margin-right':'20%'},
-           ),
-        dbc.InputGroup(
-               [
-
-                   dbc.Label("Day_Night_Fraction"),
-                   dcc.Input(id="D/N",type='number',placeholder="D/N...",
-            min=0, max=1, step=0.1,style = {'width':'20%'},value = 1 / 2
-        ),
-               ],
-               className="mb-3",
-               style={'margin-top':'20px','width': '70%', 'float': 'right','margin-right':'20%'},
-       ),
-        dbc.InputGroup(
-               [
-                   dbc.Label("City Testing Rate"),
-                    dcc.Input(id="City_Testing_Rate",type='number',placeholder="testing rate...",
-            min=0, max=1, step=0.01,style = {'width':'23%'},
-            value=0.02),
-
-               ],
-               className="mb-3",
-               style={'margin-top':'20px','width': '70%', 'float': 'right','margin-right':'20%'},
-       ),
-        dbc.InputGroup(
-               [
-                   dbc.Label("Vaccination Rate"),
-                    dcc.Input(id="Vaccination_Rate",type='number',placeholder="vaccination rate...",
-            min=0, max=1, step=0.001,style = {'width':'23%'}
-            ,value = 0.003),
-
-               ],
-               className="mb-3",
-               style={'margin-top':'20px','width': '70%', 'float': 'right','margin-right':'20%'},
-       ),dbc.InputGroup(
-               [
-                   dbc.Label("Testing Cost"),
-                    dcc.Input(id="Testing_Cost",type='number',placeholder="Testing rate...",
-            min=0, max=100, step=1,style = {'width':'23%'}
-            ,value = 25),
-
-               ],
-               className="mb-3",
-               style={'margin-top':'20px','width': '70%', 'float': 'right','margin-right':'20%'},
-       ),dbc.InputGroup(
-               [
-                   dcc.Checklist(id='checkbox1',options = [{'label':'Active Infection','value':'I'},
-                                                     {'label':'Active hospitilization','value':'IH'},
-                                                     {'label':'Cummulative hospitilization','value':'GH'}],value = ['IH','I','GH'])
-               ],
-               className="mb-3",
-               style={'margin-top':'20px','width': '70%', 'float': 'right','margin-right':'20%'},
-       ),dbc.InputGroup(
-               [
-                   html.Label('Testing Rate :'),
-            dcc.Input(id="Testing_Rate",type='number',placeholder="Testing rate...",
-            min=0, max=1, step=0.1,style = {'width':'23%'}
-            ,value = 0.2),
-               ],
-               className="mb-3",
-               style={'margin-top':'20px','width': '70%', 'float': 'right','margin-right':'20%'},
-       ),
-           dbc.InputGroup(
-               [
-                   html.Label('Hospitalization Cost :'),
-        dcc.Input(id="HC1",type='number',placeholder="Hospitalization cost...",
-            min=1, max=1000000, step=1,style = {'width':'18%'},value = 5500),
-        dcc.Input(id="HC2",type='number',placeholder="Hospitalization cost...",
-            min=1, max=1000000, step=1,style = {'width':'18%'},value = 8500),
-        dcc.Input(id="HC3",type='number',placeholder="Hospitalization cost...",
-            min=1, max=1000000, step=1,style = {'width':'18%'},value = 11600)
-        
-               ],
-               className="mb-3",
-               style={'margin-top':'20px','width': '70%', 'float': 'right','margin-right':'20%'},
-       )
-        ], className="six columns"),
-    ]),
-           
-    html.Div([html.Div([
-            html.H1('Results'),
-            html.Br(),
-            html.Label('Choose the figure'),
-            dcc.Dropdown(id = 'resfigure',options = [{'label':'figure1','value':'fig'},{'label':'figure2','value':'fig2'}],optionHeight=35,value = 'fig',
-                         ),
-            dcc.Graph(id='fig2',figure = compare('IH','IL-Cook',0.2,0.0015,1/2)),
-            html.Br(),
-            #dcc.Graph(id="fig",figure = school_testing_cost1(0.0015,0.02,25,1 / 2,'IL-Cook',5500,8500,11600)),
-        ], className="six columns"),],className="row")
+        html.H3('Figure 1'),
+         dcc.Graph(id='fig2',figure = compare('IH','IL-Cook',0.2,0.0015,1/2))
+    ], className="one-third column"),
+    
+    html.Div([
+        html.H3('Figure 2'),
+        dcc.Graph(id="fig",figure = school_testing_cost1(0.0015,0.02,25,1 / 2,'IL-Cook',5500,8500,11600))
+    ], className="one-third column"),
+      
+], className="row"), 
 ])
 
 app.css.append_css({
     'external_url': 'https://codepen.io/chriddyp/pen/bWLwgP.css'
 })
 
-'''@app.callback(
+@app.callback(
     Output('fig', 'figure'),
-    Input('vr', 'value'),
-    Input('tr', 'value'),
-    Input('tc', 'value'),
+    Input('Vaccination_Rate', 'value'),
+    Input('Testing_Rate', 'value'),
+    Input('Testing_Cost', 'value'),
     Input('D/N', 'value'),
     Input('County','value'),
     Input('HC1','value'),
     Input('HC2','value'),
-    Input('HC3','value'),
-    Input('checkbox1','value'),
-    Input('trs','value'))
+    Input('HC3','value'),)
 def update_figure(cvr,ctr,tc,t,county,hc1,hc2,hc3):
     fig = school_testing_cost1(cvr,ctr,tc,t/(t+1),county,hc1,hc2,hc3)
     fig.update_layout(transition_duration=500)
-    return fig'''
+    return fig
 @app.callback(Output('fig2','figure'),
-              Input('resfigure','value'),
+              #Input('resfigure','value'),
               Input('checkbox1','value'),
               Input('County','value'),
               Input('Testing_Rate', 'value'),
@@ -623,14 +619,10 @@ def update_figure(cvr,ctr,tc,t,county,hc1,hc2,hc3):
               Input('HC2','value'),
               Input('HC3','value'),
               )
-def update_figure2(pic,inp,county,t_rate,cvr,ctr,t,tc,hc1,hc2,hc3):
-    if pic == 'fig':
-        fig = compare(inp,county,t_rate,cvr,t/(t+1))
-        fig.update_layout(transition_duration=100)
-    else:
-        fig = school_testing_cost1(cvr,ctr,tc,t/(t+1),county,hc1,hc2,hc3)
-        fig.update_layout(transition_duration=100)
-    return fig
+def update_figure2(inp,county,t_rate,cvr,ctr,t,tc,hc1,hc2,hc3):
+	fig = compare(inp,county,t_rate,cvr,t/(t+1))
+	fig.update_layout(transition_duration=100)
+	return fig
 
 if __name__ == '__main__':
     app.run_server(debug=True)
