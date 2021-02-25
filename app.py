@@ -451,9 +451,12 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 server = app.server
 
-app.layout = html.Div([
+app.layout = html.Div([ html.H4(dcc.Link('Impact of Vaccination and Testing in an Urban Campus model for the SARS-CoV-2 Pandemic', 
+                                         href='https://www.medrxiv.org/content/10.1101/2021.02.02.21251040v1.full-text',target="_blank")
+                                ,style = {'margin-left':'13%'}),
+html.Div([ 
 html.Div([
-html.Div([
+
 html.H3('Tweek the data'),
 dbc.InputGroup(
 							 [
@@ -573,6 +576,7 @@ dbc.InputGroup(
 							 className="mb-3",
 							 style={'margin-top':'20px','width': '100%', 'float': 'left','margin-left':'10%'},
 			 )
+            
 ], className="one-third column"),
 
     html.Div([
