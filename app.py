@@ -452,12 +452,13 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
 app.layout = html.Div([ html.H4(dcc.Link('Impact of Vaccination and Testing in an Urban Campus model for the SARS-CoV-2 Pandemic', 
-                                         href='https://www.medrxiv.org/content/10.1101/2021.02.02.21251040v1.full-text',target="_blank")
+                                         href='https://www.medrxiv.org/content/10.1101/2021.02.02.21251040v1.full-text',target="_blank",
+                                         style = {"color": "#C94D95"})
                                 ,style = {'margin-left':'13%'}),
 html.Div([ 
 html.Div([
 
-html.H3('Tweek the data'),
+html.H3('Tweek the data',style = {'margin-left':'10%',"color": "#068AF7"}),
 dbc.InputGroup(
 							 [
 									 dbc.InputGroupAddon("County"),
@@ -580,12 +581,12 @@ dbc.InputGroup(
 ], className="one-third column"),
 
     html.Div([
-        html.H3('Figure 1'),
+        html.H3('Figure 1',style = {"color": "#068AF7"}),
          dcc.Graph(id='fig2',figure = compare('IH','IL-Cook',0.2,0.0015,1/2))
     ], className="one-third column"),
     
     html.Div([
-        html.H3('Figure 2'),
+        html.H3('Figure 2',style = {"color": "#068AF7"}),
         dcc.Graph(id="fig",figure = school_testing_cost1(0.0015,0.02,25,1 / 2,'IL-Cook',5500,8500,11600))
     ], className="one-third column"),
       
