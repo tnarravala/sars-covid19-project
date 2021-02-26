@@ -451,10 +451,10 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 server = app.server
 
-app.layout = html.Div([ html.H4(dcc.Link('Impact of Vaccination and Testing in an Urban Campus model for the SARS-CoV-2 Pandemic', 
+app.layout = html.Div([ html.H4(children = 'Impact of Vaccination and Testing in an Urban Campus model for the SARS-CoV-2 Pandemic',style = {"color": "#C94D95",'textAlign': 'center' }),
+                                html.Button(dcc.Link('Full artile', 
                                          href='https://www.medrxiv.org/content/10.1101/2021.02.02.21251040v1.full-text',target="_blank",
-                                         style = {"color": "#C94D95"})
-                                ,style = {'margin-left':'13%'}),
+                                         style = {"color": "#C94D95",'display':'inline-block'}), style = {'margin-left':'45%'} ,id='submit-val', n_clicks=0),
 html.Div([ 
 html.Div([
 
@@ -581,12 +581,12 @@ dbc.InputGroup(
 ], className="one-third column"),
 
     html.Div([
-        html.H3('Figure 1',style = {"color": "#068AF7"}),
+        #html.H3('Figure 1',style = {"color": "#068AF7"}),
          dcc.Graph(id='fig2',figure = compare('IH','IL-Cook',0.2,0.0015,1/2))
     ], className="one-third column"),
     
     html.Div([
-        html.H3('Figure 2',style = {"color": "#068AF7"}),
+       # html.H3('Figure 2',style = {"color": "#068AF7"}),
         dcc.Graph(id="fig",figure = school_testing_cost1(0.0015,0.02,25,1 / 2,'IL-Cook',5500,8500,11600))
     ], className="one-third column"),
       
@@ -626,7 +626,7 @@ def update_figure(cvr,ctr,tc,t,county,hc1,hc2,hc3):
               )
 def update_figure2(inp,county,t_rate,cvr,ctr,t,tc,hc1,hc2,hc3):
 	fig = compare(inp,county,t_rate,cvr,t/(t+1))
-	fig.update_layout(transition_duration=100)
+	fig.update_layout(transition_duration=0)
 	return fig
 
 if __name__ == '__main__':
