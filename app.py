@@ -12,8 +12,8 @@ import dash_daq as daq
 import pandas as pd
 
 
-cases = pd.read_csv("/Users/thejeswarreddynarravala/Desktop/Independent Study/Covid/covid_network/indian_cases_confirmed_cases.csv")
-deaths = pd.read_csv("/Users/thejeswarreddynarravala/Desktop/Independent Study/Covid/covid_network/indian_cases_confirmed_deaths.csv")
+cases = pd.read_csv("indian_cases_confirmed_cases.csv")
+deaths = pd.read_csv("indian_cases_confirmed_deaths.csv")
 state_dic = {'ap':'Andhra Pradesh',
              'dl':'Delhi',
              'mp':'Madhya Pradesh',
