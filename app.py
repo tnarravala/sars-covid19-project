@@ -1,6 +1,4 @@
 import os
-
-
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -8,7 +6,7 @@ import plotly.graph_objects as go
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 import dash_daq as daq
-
+import plotly.express as px
 import pandas as pd
 
 
@@ -17,7 +15,39 @@ deaths = pd.read_csv("indian_cases_confirmed_deaths.csv")
 state_dic = {'ap':'Andhra Pradesh',
              'dl':'Delhi',
              'mp':'Madhya Pradesh',
-             'kl':'Kerala'}
+             'kl':'Kerala',
+             'up':'Uttar Pradesh',
+             'mh':'Maharastra',
+             'br':'Bihar',
+             'wb':'West Bengal',
+             'tn':'Tamil Nadu',
+             'rj':'Rajesthan',
+             'ka':'Karnataka',
+             'gj':'Gujarat',
+             'or':'Odisha',
+             'tg':'Telangana',
+             'jh':'Jharkhand',
+             'as':'Assam',
+             'pb':'Punjab',
+             'ct':'Chattisgarh',
+             'hr':'Haryana',
+             'jk':'Jammu and Kashmir',
+             'ut':'Uttarakhand',
+             'hp':'Himachal Pradesh',
+             'tr':'Tripura',
+             'ml':'Meghalaya',
+             'mn':'Manipur',
+             'nl':'Nagaland',
+             'ga':'Goa',
+             'ar':'Arunachal Pradesh',
+             'py':'Puducherry',
+             'mz':'Mizoram',
+             'ch':'Chandigarh',
+             'sk':'Sikkim',
+             'dn_dd':'Daman and Diu',
+             'an':'Andaman and Nicobar',
+             'ld':'Ladakh',
+             'la':'Lakshdweep'}
 total_cases = cases.set_index('state')
 total_state_cases = total_cases.iloc[:,-1:]
 total_cases = total_state_cases.sum()
@@ -25,8 +55,11 @@ total_cases = total_state_cases.sum()
 total_deaths = deaths.set_index('state')
 total_state_deaths = total_deaths.iloc[:,-1:]
 total_deaths= total_state_deaths.sum()
+
+date_range = ["2020-01-30 18:36:37.3129", "2021-05-07 05:23:22.6871"]
+
 def plot_cases(state,ca):
-    if ca == False:
+    if ca == True:
         st = cases.set_index('state')
         col1 = st['2020-01-30']
         st = st.diff(axis = 1)
@@ -39,9 +72,9 @@ def plot_cases(state,ca):
     st = st[1:].reset_index()
     st.columns = ['date','cases']
     st['date'] = pd.to_datetime(st['date'])
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=st['date'],y=st['cases'],mode= 'markers',name=f'{state_dic[state]}'))
-
+    #fig = go.Figure()
+    #fig.add_trace(go.Scatter(x=st['date'],y=st['cases'],mode= 'markers',name=f'{state_dic[state]}'))
+    fig = px.bar(st, x='date', y='cases')
     fig.update_layout(
     autosize=True,
     title = f"Cases in {state_dic[state]}",
@@ -58,10 +91,10 @@ def plot_cases(state,ca):
     xaxis=dict(
         title_text = "date",
         autorange=True,
-        range=["2020-01-30 18:36:37.3129", "2021-05-02 05:23:22.6871"],
+        range=date_range,
         rangeslider=dict(
             autorange=True,
-            range=["2020-01-30 18:36:37.3129", "2021-05-02 05:23:22.6871"]
+            range=date_range
         ),
         type="date"
     ),
@@ -70,7 +103,7 @@ def plot_cases(state,ca):
     return fig
 
 def plot_deaths(state,ca):
-    if ca == False:
+    if ca == True:
         st = deaths.set_index('state')
         col1 = st['2020-01-30']
         st = st.diff(axis = 1)
@@ -82,9 +115,9 @@ def plot_deaths(state,ca):
     st = st[1:].reset_index()
     st.columns = ['date','deaths']
     st['date'] = pd.to_datetime(st['date'])
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=st['date'],y=st['deaths'],mode= 'markers',name=f'{state_dic[state]}'))
-
+    #fig = go.Figure()
+    #fig.add_trace(go.Scatter(x=st['date'],y=st['deaths'],mode= 'markers',name=f'{state_dic[state]}'))
+    fig = px.bar(st, x='date', y='deaths')
     fig.update_layout(
     autosize=True,
     title = f"Deaths in {state_dic[state]}",
@@ -102,10 +135,10 @@ def plot_deaths(state,ca):
     xaxis=dict(
         title_text = "date",
         autorange=True,
-        range=["2020-01-30 18:36:37.3129", "2021-05-02 05:23:22.6871"],
+        range=date_range,
         rangeslider=dict(
             autorange=True,
-            range=["2020-01-30 18:36:37.3129", "2021-05-02 05:23:22.6871"]
+            range=date_range
         ),
         type="date"
     ),
@@ -113,7 +146,7 @@ def plot_deaths(state,ca):
 
     return fig
 def plot_total_cases(ca):
-    if ca == False:
+    if ca == True:
         st = cases.set_index('state')
         col1 = st['2020-01-30']
         st = st.diff(axis = 1)
@@ -126,9 +159,9 @@ def plot_total_cases(ca):
     ind = ind.reset_index()
     ind.columns = ['date','sum']
     ind['date'] = pd.to_datetime(ind['date'])
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=ind['date'],y=ind['sum'],mode= 'markers'))
-
+    #fig = go.Figure()
+    #fig.add_trace(go.Scatter(x=ind['date'],y=ind['sum'],mode= 'markers'))
+    fig = px.bar(ind, x='date', y='sum')
     fig.update_layout(
     autosize=True,
     title = "Cases in India",
@@ -145,10 +178,10 @@ def plot_total_cases(ca):
     xaxis=dict(
         title_text = "date",
         autorange=True,
-        range=["2020-01-30 18:36:37.3129", "2021-05-02 05:23:22.6871"],
+        range=date_range,
         rangeslider=dict(
             autorange=True,
-            range=["2020-01-30 18:36:37.3129", "2021-05-02 05:23:22.6871"]
+            range=date_range
         ),
         type="date"
     ),
@@ -157,7 +190,7 @@ def plot_total_cases(ca):
     return fig
 
 def plot_total_deaths(ca):
-    if ca == False:
+    if ca == True:
         st = deaths.set_index('state')
         col1 = st['2020-01-30']
         st = st.diff(axis = 1)
@@ -170,15 +203,17 @@ def plot_total_deaths(ca):
     ind = ind.reset_index()
     ind.columns = ['date','sum']
     ind['date'] = pd.to_datetime(ind['date'])
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=ind['date'],y=ind['sum'],mode= 'markers'))
-
+    #fig = go.Figure()
+    #fig.add_trace(go.Scatter(x=ind['date'],y=ind['sum'],mode= 'markers'))
+    fig = px.bar(ind, x='date', y='sum')
     fig.update_layout(
     autosize=True,
     title = "Deaths in India",
     margin = dict(l=40, r=40, t=40, b=40 ),
     width=500,
     height=400,
+
+    #style = {'color':'green'},
     yaxis = dict(
        #range = [0,100] ,
        #rangemode="tozero",
@@ -189,10 +224,10 @@ def plot_total_deaths(ca):
     xaxis=dict(
         title_text = "date",
         autorange=True,
-        range=["2020-01-30 18:36:37.3129", "2021-05-02 05:23:22.6871"],
+        range=date_range,
         rangeslider=dict(
             autorange=True,
-            range=["2020-01-30 18:36:37.3129", "2021-05-02 05:23:22.6871"]
+            range=date_range
         ),
         type="date"
     ),
@@ -201,6 +236,9 @@ def plot_total_deaths(ca):
     return fig
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+
+
+
 
 
 body = dbc.Container([ 
@@ -254,7 +292,40 @@ dbc.Row(
             {'label': 'Andhra Pradesh', 'value': 'ap'},
             {'label': 'Kerala', 'value': 'kl'},
             {'label': 'Madhya Pradesh', 'value': 'mp'},
-            {'label':'Delhi','value':'dl'}
+            {'label':'Delhi','value':'dl'},
+            {'label':'Uttar Pradesh','value':'up'},
+            {'label':'Maharastra','value':'mh'},
+            {'label':'Bihar','value':'br'},
+            {'label':'West Bengal','value':'wb'},
+            {'label':'Tamil Nadu','value':'tn'},
+            {'label':'Rajesthan','value':'rj'},
+            {'label':'Karnataka','value':'ka'},
+            {'label':'Gujarat','value':'gj'},
+            {'label':'Odisha','value':'or'},
+            {'label':'Telangana','value':'tg'},
+            {'label':'Jharkhand','value':'jh'},
+            {'label':'Assam','value':'as'},
+            {'label':'Punjab','value':'pb'},
+            {'label':'Chattisgarh','value':'ct'},
+            {'label':'Haryana','value':'hr'},
+            {'label':'Jammu and Kashmir','value':'jk'},
+            {'label':'Uttarakhand','value':'ut'},
+            {'label':'Himachal Pradesh','value':'hp'},
+            {'label':'Tripura','value':'tr'},
+            {'label':'Meghalaya','value':'ml'},
+            {'label':'Manipur','value':'mn'},
+            {'label':'Nagaland','value':'nl'},
+            {'label':'Goa','value':'ga'},
+            {'label':'Arunachal Pradesh','value':'ar'},
+            {'label':'Puducherry','value':'py'},
+            {'label':'Mizoram','value':'mz'},
+            {'label':'Chandigarh','value':'ch'},
+            {'label':'Sikkim','value':'sk'},
+            {'label':'Daman and Diu','value':'dn_dd'},
+            {'label':'Andaman and Nicobar','value':'an'},
+            {'label':'Ladakh','value':'ld'},
+            {'label':'Lakshdweep','value':'la'},
+            
         ],
         value='dl',style = {'color':'black','width':'50%','display': 'inline-block','margin-left':'0.8%'}
     ),
