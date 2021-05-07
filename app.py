@@ -202,9 +202,6 @@ def plot_total_deaths(ca):
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-
-server = app.server
 
 body = dbc.Container([ 
 dbc.Row(
@@ -291,7 +288,7 @@ dbc.Row([
 )
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SUPERHERO])
-
+server = app.server
 app.layout = html.Div([body])
 
 
