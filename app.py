@@ -8,11 +8,9 @@ import plotly.graph_objects as go
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 import dash_daq as daq
-import json
+
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import datetime
+
 
 cases = pd.read_csv("/Users/thejeswarreddynarravala/Desktop/Independent Study/Covid/covid_network/indian_cases_confirmed_cases.csv")
 deaths = pd.read_csv("/Users/thejeswarreddynarravala/Desktop/Independent Study/Covid/covid_network/indian_cases_confirmed_deaths.csv")
