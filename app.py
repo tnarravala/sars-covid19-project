@@ -380,7 +380,7 @@ app.css.append_css({
     Input('cum-act','value'))
 def update_figure(st,ca):
     fig1 = plot_cases(st,ca)
-    fig1.update_layout(title = u'Cases in {}'.format(state_dic[st]))
+    #fig1.update_layout(title = u'Cases in {}'.format(state_dic[st]))
     fig1.update_layout(transition_duration=500)
     return fig1
 
@@ -390,7 +390,7 @@ def update_figure(st,ca):
     Input('cum-act','value'))
 def update_figure2(st,ca):
     fig2 = plot_deaths(st,ca)
-    fig2.update_layout(title = u'Deaths in {}'.format(state_dic[st]))
+    #fig2.update_layout(title = u'Deaths in {}'.format(state_dic[st]))
     fig2.update_layout(transition_duration=500)
     return fig2
 
