@@ -265,28 +265,15 @@ dbc.Row(
             ]
         ),
   dbc.Row([
-        dbc.Col([html.H3(id = "tsc", style = {'display': 'inline-block'})]),
-        dbc.Col([html.H3(id = "tsd", style = {'display': 'inline-block'})])
+        dbc.Col([html.H3(id = "tsc", style = {'display': 'inline-block'}),
+                 dcc.Graph(id="fig3",figure = plot_total_cases('Daily new cases'))]),
+        dbc.Col([html.H3(id = "tsd", style = {'display': 'inline-block'}),
+                  dcc.Graph(id="fig4",figure = plot_total_cases('Daily new cases'))])
         ,],align='center',justify = "center"),
   
 dbc.Row(
         [html.Br()]),
-dbc.Row([
-        dbc.Col(
-                   
-                        dcc.Graph(id="fig3",figure = plot_total_cases('Daily new cases'))
-                         ,
-                        
-                ),
-                dbc.Col(
-                 
-                           dcc.Graph(id="fig4",figure = plot_total_cases('Daily new cases'))
-                       
-                ),
-               
-      ]  ),
-dbc.Row(
-        [html.Br()]),
+
 dbc.Row(
         [
     dcc.Dropdown(
@@ -337,29 +324,18 @@ dbc.Row(
       dbc.Row(
         [html.Br()]),     
     dbc.Row([
-        dbc.Col([html.H3(id = "tc", style = {'display': 'inline-block'})]),
-        dbc.Col([html.H3(id = "td", style = {'display': 'inline-block'})])
+        dbc.Col([html.H3(id = "tc", style = {'display': 'inline-block'}),
+                 html.Br(),
+               html.P(id = "title1", style = {'display': 'inline-block'}),dcc.Graph(id='fig',figure = plot_cases('dl',True))] ),
+        dbc.Col([
+            html.H3(id = "td", style = {'display': 'inline-block'}),
+            html.Br(),
+            html.P(id = "title2", style = {'display': 'inline-block'}),
+            dcc.Graph(id='fig2',figure = plot_deaths('dl',True))
+            ])
         ,]),                                                                               
     dbc.Row(
         [html.Br()]),
-      dbc.Row([
-        dbc.Col([html.P(id = "title1", style = {'display': 'inline-block'})]),
-        dbc.Col([html.P(id = "title2", style = {'display': 'inline-block'})])
-        ,]), 
-dbc.Row([
-        dbc.Col(
-                   
-                       dcc.Graph(id='fig',figure = plot_cases('dl',True))
-                         ,
-                        
-                ),
-                dbc.Col(
-                 
-                           dcc.Graph(id='fig2',figure = plot_deaths('dl',True))
-                       
-                ),
-               
-      ]  )
 
 ],style={"height": "100vh"}
 
@@ -380,7 +356,6 @@ app.css.append_css({
     Input('cum-act','value'))
 def update_figure(st,ca):
     fig1 = plot_cases(st,ca)
-    #fig1.update_layout(title = u'Cases in {}'.format(state_dic[st]))
     fig1.update_layout(transition_duration=500)
     return fig1
 
@@ -390,7 +365,6 @@ def update_figure(st,ca):
     Input('cum-act','value'))
 def update_figure2(st,ca):
     fig2 = plot_deaths(st,ca)
-    #fig2.update_layout(title = u'Deaths in {}'.format(state_dic[st]))
     fig2.update_layout(transition_duration=500)
     return fig2
 
