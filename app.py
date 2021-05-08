@@ -59,7 +59,7 @@ total_deaths= total_state_deaths.sum()
 date_range = ["2020-01-30 18:36:37.3129", "2021-05-07 05:23:22.6871"]
 
 def plot_cases(state,ca):
-    if ca == True:
+    if ca == False:
         st = cases.set_index('state')
         col1 = st['2020-01-30']
         st = st.diff(axis = 1)
@@ -104,7 +104,7 @@ def plot_cases(state,ca):
     return fig
 
 def plot_deaths(state,ca):
-    if ca == True:
+    if ca == False:
         st = deaths.set_index('state')
         col1 = st['2020-01-30']
         st = st.diff(axis = 1)
@@ -148,7 +148,7 @@ def plot_deaths(state,ca):
 
     return fig
 def plot_total_cases(ca):
-    if ca == True:
+    if ca == False:
         st = cases.set_index('state')
         col1 = st['2020-01-30']
         st = st.diff(axis = 1)
@@ -192,7 +192,7 @@ def plot_total_cases(ca):
     return fig
 
 def plot_total_deaths(ca):
-    if ca == True:
+    if ca == False:
         st = deaths.set_index('state')
         col1 = st['2020-01-30']
         st = st.diff(axis = 1)
@@ -249,26 +249,28 @@ dbc.Row(
             html.H1("Indian Covid-19 Tracker")
             ], align="center",justify = "center"
             ),
-dbc.Row(
-        [
-            html.Div(
-                [ html.P('Cummulative',style = {'display': 'inline-block'}),
-            daq.ToggleSwitch(
-                id='cum-act',
-                value=True,
-                style = {'display': 'inline-block'}
-                        ),
-                    ]
-                
-                )
-            
-            ]
-        ),
+
   dbc.Row([
         dbc.Col([html.H3(id = "tsc", style = {'display': 'inline-block'}),
+                 html.Br(),
+                 html.P("Cummulative",style = {'display': 'inline-block'}),
+                 daq.BooleanSwitch(
+                id='cum-tc',
+                on=False,
+                style = {'display': 'inline-block','size':'20%'}
+                        ),
                  dcc.Graph(id="fig3",figure = plot_total_cases('Daily new cases'))]),
+        
+        
         dbc.Col([html.H3(id = "tsd", style = {'display': 'inline-block'}),
-                  dcc.Graph(id="fig4",figure = plot_total_cases('Daily new cases'))])
+                 html.Br(),
+                 html.P("Cummulative",style = {'display': 'inline-block'}),
+                 daq.BooleanSwitch(
+                id='cum-td',
+                on=False,
+                style = {'display': 'inline-block','size':'20%'}
+                        ),
+                  dcc.Graph(id="fig4",figure = plot_total_deaths('Daily new cases'))])
         ,],align='center',justify = "center"),
   
 dbc.Row(
@@ -279,43 +281,43 @@ dbc.Row(
     dcc.Dropdown(
         id='st',
         options=[
-            {'label': 'Andhra Pradesh', 'value': 'ap'},
-            {'label': 'Kerala', 'value': 'kl'},
-            {'label': 'Madhya Pradesh', 'value': 'mp'},
-            {'label':'Delhi','value':'dl'},
-            {'label':'Uttar Pradesh','value':'up'},
-            {'label':'Maharastra','value':'mh'},
-            {'label':'Bihar','value':'br'},
-            {'label':'West Bengal','value':'wb'},
-            {'label':'Tamil Nadu','value':'tn'},
-            {'label':'Rajesthan','value':'rj'},
-            {'label':'Karnataka','value':'ka'},
-            {'label':'Gujarat','value':'gj'},
-            {'label':'Odisha','value':'or'},
-            {'label':'Telangana','value':'tg'},
-            {'label':'Jharkhand','value':'jh'},
-            {'label':'Assam','value':'as'},
-            {'label':'Punjab','value':'pb'},
-            {'label':'Chattisgarh','value':'ct'},
-            {'label':'Haryana','value':'hr'},
-            {'label':'Jammu and Kashmir','value':'jk'},
-            {'label':'Uttarakhand','value':'ut'},
-            {'label':'Himachal Pradesh','value':'hp'},
-            {'label':'Tripura','value':'tr'},
-            {'label':'Meghalaya','value':'ml'},
-            {'label':'Manipur','value':'mn'},
-            {'label':'Nagaland','value':'nl'},
-            {'label':'Goa','value':'ga'},
-            {'label':'Arunachal Pradesh','value':'ar'},
-            {'label':'Puducherry','value':'py'},
-            {'label':'Mizoram','value':'mz'},
-            {'label':'Chandigarh','value':'ch'},
-            {'label':'Sikkim','value':'sk'},
-            {'label':'Daman and Diu','value':'dn_dd'},
             {'label':'Andaman and Nicobar','value':'an'},
+            {'label': 'Andhra Pradesh', 'value': 'ap'},
+            {'label':'Arunachal Pradesh','value':'ar'},
+            {'label':'Assam','value':'as'},
+            {'label':'Bihar','value':'br'},
+            {'label':'Chandigarh','value':'ch'},
+            {'label':'Chattisgarh','value':'ct'},
+            {'label':'Daman and Diu','value':'dn_dd'},
+            {'label':'Delhi','value':'dl'},
+            {'label':'Goa','value':'ga'},
+            {'label':'Gujarat','value':'gj'},
+            {'label':'Haryana','value':'hr'},
+            {'label':'Himachal Pradesh','value':'hp'},
+            {'label':'Jammu and Kashmir','value':'jk'},
+            {'label':'Jharkhand','value':'jh'},
+            {'label':'Karnataka','value':'ka'},
+            {'label': 'Kerala', 'value': 'kl'},
             {'label':'Ladakh','value':'ld'},
             {'label':'Lakshdweep','value':'la'},
-            
+            {'label': 'Madhya Pradesh', 'value': 'mp'},
+            {'label':'Maharastra','value':'mh'},
+            {'label':'Manipur','value':'mn'},
+            {'label':'Meghalaya','value':'ml'},
+            {'label':'Mizoram','value':'mz'},
+            {'label':'Nagaland','value':'nl'},
+            {'label':'Odisha','value':'or'},
+            {'label':'Puducherry','value':'py'},
+            {'label':'Punjab','value':'pb'},
+            {'label':'Rajesthan','value':'rj'},
+            {'label':'Sikkim','value':'sk'},
+            {'label':'Tamil Nadu','value':'tn'},
+            {'label':'Telangana','value':'tg'},
+            {'label':'Tripura','value':'tr'},
+            {'label':'Uttarakhand','value':'ut'},
+            {'label':'Uttar Pradesh','value':'up'},
+            {'label':'West Bengal','value':'wb'},
+ 
         ],
         value='dl',style = {'color':'black','width':'50%','display': 'inline-block','margin-left':'0.8%'}
     ),
@@ -326,10 +328,24 @@ dbc.Row(
     dbc.Row([
         dbc.Col([html.H3(id = "tc", style = {'display': 'inline-block'}),
                  html.Br(),
+                 html.P("Cummulative",style = {'display': 'inline-block'}),
+                 daq.BooleanSwitch(
+                id='cum-c',
+                on=False,
+                style = {'display': 'inline-block','size':'20%'}
+                        ),
+                               html.Br(),
                html.P(id = "title1", style = {'display': 'inline-block'}),dcc.Graph(id='fig',figure = plot_cases('dl',True))] ),
         dbc.Col([
             html.H3(id = "td", style = {'display': 'inline-block'}),
             html.Br(),
+                 html.P("Cummulative",style = {'display': 'inline-block'}),
+                 daq.BooleanSwitch(
+                id='cum-d',
+                on=False,
+                style = {'display': 'inline-block','size':'20%'}
+                        ),
+                               html.Br(),
             html.P(id = "title2", style = {'display': 'inline-block'}),
             dcc.Graph(id='fig2',figure = plot_deaths('dl',True))
             ])
@@ -353,7 +369,7 @@ app.css.append_css({
 @app.callback(
     Output('fig', 'figure'),
     Input('st', 'value'),
-    Input('cum-act','value'))
+    Input('cum-c','value'))
 def update_figure(st,ca):
     fig1 = plot_cases(st,ca)
     fig1.update_layout(transition_duration=500)
@@ -362,7 +378,7 @@ def update_figure(st,ca):
 @app.callback(
     Output('fig2', 'figure'),
     Input('st', 'value'),
-    Input('cum-act','value'))
+    Input('cum-d','on'))
 def update_figure2(st,ca):
     fig2 = plot_deaths(st,ca)
     fig2.update_layout(transition_duration=500)
@@ -370,7 +386,7 @@ def update_figure2(st,ca):
 
 @app.callback(
     Output('fig3', 'figure'),
-    Input('cum-act','value'))
+    Input('cum-tc','on'))
 def update_figure3(ca):
     fig3 = plot_total_cases(ca)
     fig3.update_layout(transition_duration=500)
@@ -378,7 +394,7 @@ def update_figure3(ca):
 
 @app.callback(
     Output('fig4', 'figure'),
-    Input('cum-act','value'))
+    Input('cum-td','on'))
 def update_figure4(ca):
     fig4 = plot_total_deaths(ca)
     fig4.update_layout(transition_duration=500)
