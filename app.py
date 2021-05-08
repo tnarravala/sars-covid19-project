@@ -72,12 +72,13 @@ def plot_cases(state,ca):
     st = st[1:].reset_index()
     st.columns = ['date','cases']
     st['date'] = pd.to_datetime(st['date'])
+    st_name = u'Cases in {}'.format(state_dic[state])
     #fig = go.Figure()
     #fig.add_trace(go.Scatter(x=st['date'],y=st['cases'],mode= 'markers',name=f'{state_dic[state]}'))
     fig = px.bar(st, x='date', y='cases')
     fig.update_layout(
     autosize=True,
-    title = f"Cases in {state_dic[state]}",
+    #title = st_name,
     margin = dict(l=40, r=40, t=40, b=40 ),
     width=500,
     height=400,
@@ -117,10 +118,11 @@ def plot_deaths(state,ca):
     st['date'] = pd.to_datetime(st['date'])
     #fig = go.Figure()
     #fig.add_trace(go.Scatter(x=st['date'],y=st['deaths'],mode= 'markers',name=f'{state_dic[state]}'))
+    st_name = u'Deaths in {}'.format(state_dic[state])
     fig = px.bar(st, x='date', y='deaths')
     fig.update_layout(
     autosize=True,
-    title = f"Deaths in {state_dic[state]}",
+    #title =  st_name,
 
     margin = dict(l=40, r=40, t=40, b=40 ),
     width=500,
@@ -265,7 +267,8 @@ dbc.Row(
   dbc.Row([
         dbc.Col([html.H3(id = "tsc", style = {'display': 'inline-block'})]),
         dbc.Col([html.H3(id = "tsd", style = {'display': 'inline-block'})])
-        ,]),  
+        ,],align='center',justify = "center"),
+  
 dbc.Row(
         [html.Br()]),
 dbc.Row([
@@ -339,16 +342,20 @@ dbc.Row(
         ,]),                                                                               
     dbc.Row(
         [html.Br()]),
+      dbc.Row([
+        dbc.Col([html.P(id = "title1", style = {'display': 'inline-block'})]),
+        dbc.Col([html.P(id = "title2", style = {'display': 'inline-block'})])
+        ,]), 
 dbc.Row([
         dbc.Col(
                    
-                       dcc.Graph(id='fig',figure = plot_deaths('ap','Daily new cases'))
+                       dcc.Graph(id='fig',figure = plot_cases('dl',True))
                          ,
                         
                 ),
                 dbc.Col(
                  
-                           dcc.Graph(id='fig2',figure = plot_cases('ap','Daily new cases'))
+                           dcc.Graph(id='fig2',figure = plot_deaths('dl',True))
                        
                 ),
                
@@ -372,9 +379,10 @@ app.css.append_css({
     Input('st', 'value'),
     Input('cum-act','value'))
 def update_figure(st,ca):
-    fig = plot_cases(st,ca)
-    fig.update_layout(transition_duration=500)
-    return fig
+    fig1 = plot_cases(st,ca)
+    fig1.update_layout(title = u'Cases in {}'.format(state_dic[st]))
+    fig1.update_layout(transition_duration=500)
+    return fig1
 
 @app.callback(
     Output('fig2', 'figure'),
@@ -382,6 +390,7 @@ def update_figure(st,ca):
     Input('cum-act','value'))
 def update_figure2(st,ca):
     fig2 = plot_deaths(st,ca)
+    fig2.update_layout(title = u'Deaths in {}'.format(state_dic[st]))
     fig2.update_layout(transition_duration=500)
     return fig2
 
@@ -389,17 +398,17 @@ def update_figure2(st,ca):
     Output('fig3', 'figure'),
     Input('cum-act','value'))
 def update_figure3(ca):
-    fig = plot_total_cases(ca)
-    fig.update_layout(transition_duration=500)
-    return fig
+    fig3 = plot_total_cases(ca)
+    fig3.update_layout(transition_duration=500)
+    return fig3
 
 @app.callback(
     Output('fig4', 'figure'),
     Input('cum-act','value'))
 def update_figure4(ca):
-    fig = plot_total_deaths(ca)
-    fig.update_layout(transition_duration=500)
-    return fig
+    fig4 = plot_total_deaths(ca)
+    fig4.update_layout(transition_duration=500)
+    return fig4
 @app.callback(
     Output('tc','children'),
     Input('st','value')
@@ -427,6 +436,20 @@ def update_output_div3(st):
     )
 def update_output_div4(st):
     return u'Total Deaths in India: {:,}'.format(total_deaths.values[0])
+
+@app.callback(
+    Output('title1','children'),
+    Input('st','value')
+    )
+def update_output_div5(st):
+    return u'Cases in {}'.format(state_dic[st]) 
+
+@app.callback(
+    Output('title2','children'),
+    Input('st','value')
+    )
+def update_output_div6(st):
+    return u'Deaths in {}'.format(state_dic[st]) 
 
 if __name__ == '__main__':
     app.run_server(debug=True)
