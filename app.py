@@ -238,7 +238,7 @@ def plot_total_deaths(ca):
 
     return fig
 
-imp_st = pd.read_csv('/Users/thejeswarreddynarravala/Desktop/Independent Study/Covid/covid_network/cases_deaths_india.csv')
+imp_st = pd.read_csv('cases_deaths_india.csv')
 imp_st = imp_st.sort_values('date')
 def plot_all_states(state):
     ct = imp_st[imp_st['state'] == state]
