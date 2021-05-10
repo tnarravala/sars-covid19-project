@@ -7,10 +7,13 @@ import dash_bootstrap_components as dbc
 import dash_daq as daq
 import plotly.express as px
 import pandas as pd
-
+import plotly.graph_objects as go
 
 cases = pd.read_csv("indian_cases_confirmed_cases.csv")
 deaths = pd.read_csv("indian_cases_confirmed_deaths.csv")
+imp_st = pd.read_csv('cases_deaths_india.csv')
+imp_st = imp_st.sort_values('date')
+
 state_dic = {'ap':'Andhra Pradesh',
              'dl':'Delhi',
              'mp':'Madhya Pradesh',
@@ -58,6 +61,12 @@ total_deaths= total_state_deaths.sum()
 date_range = ["2020-01-30 18:36:37.3129", "2021-05-07 05:23:22.6871"]
 
 def plot_cases(state,ca):
+    sim_data = pd.read_csv(f'fitting_2021-05-03/{state}/sim.csv')
+    sim_data = sim_data[sim_data['series'] == 'G'].T
+    sim_data = sim_data[1:].reset_index()
+    sim_data.columns = ['date','G']
+    sim_data['date'] = pd.to_datetime(sim_data['date'])
+    dates =  sim_data['date']
     if ca == False:
         st = cases.set_index('state')
         col1 = st['2020-01-30']
@@ -65,6 +74,11 @@ def plot_cases(state,ca):
         st['2020-01-30'] = col1
         st = st.reset_index()
         st = (st[st['state'] == state].T)
+        sim_data = sim_data['G'].diff()
+        sim_data[0] = 0
+        sim_data = sim_data.to_frame()
+        sim_data['date'] = dates
+        sim_data.columns = ['G','date']
     else:
         st = (cases[cases['state'] == state].T)
 
@@ -72,15 +86,24 @@ def plot_cases(state,ca):
     st.columns = ['date','cases']
     st['date'] = pd.to_datetime(st['date'])
     st_name = u'Cases in {}'.format(state_dic[state])
+    
+    fig = go.Figure()
+    fig.add_trace(go.Bar(x=st['date'],y = st['cases'],name="Actual G"))
+    fig.add_trace(go.Scatter(x=sim_data['date'],y = sim_data['G'],name="G"))
     #fig = go.Figure()
-    #fig.add_trace(go.Scatter(x=st['date'],y=st['cases'],mode= 'markers',name=f'{state_dic[state]}'))
+    #fig.add_trace(go.Scatter(x=st['date'],y=st['cases'],mode= 'markers',name='Cases'))
+    #fig.add_trace(go.Scatter(x=sim_data['date'],y=sim_data['infections'],mode= 'markers',name='I'))
     #fig = make_subplots(rows = 6, cols =6, start_cell = "top-left")
     #fig.add_trace(go.Scatter(x=st['date'],y=st['cases'],mode= 'markers'))
-    fig = px.bar(st, x='date', y='cases')
+    #fig = px.scatter(st, x='date', y='cases')
+    #fig = go.Figure()
+    #fig.add_trace(go.scatter(x=sim_data['date'],y=sim_data['infections'],mode ="lines",name="infections"))
+    #fig.add_trace(go.scatter(x=st['date'],y=st['cases'],mode ="lines"))
+    #fig.add_trace()
     fig.update_layout(
     autosize=True,
     #title = st_name,
-    margin = dict(l=40, r=40, t=40, b=40 ),
+    margin = dict(l=40, r=40, t=10, b=40 ),
     width=500,
     height=400,
     yaxis = dict(
@@ -105,6 +128,12 @@ def plot_cases(state,ca):
     return fig
 
 def plot_deaths(state,ca):
+    sim_data = pd.read_csv(f'fitting_2021-05-03/{state}/sim.csv')
+    sim_data = sim_data[sim_data['series'] == 'D'].T
+    sim_data = sim_data[1:].reset_index()
+    sim_data.columns = ['date','D']
+    sim_data['date'] = pd.to_datetime(sim_data['date'])
+    dates =  sim_data['date']
     if ca == False:
         st = deaths.set_index('state')
         col1 = st['2020-01-30']
@@ -112,6 +141,11 @@ def plot_deaths(state,ca):
         st['2020-01-30'] = col1
         st = st.reset_index()
         st = (st[st['state'] == state].T)
+        sim_data = sim_data['D'].diff()
+        sim_data[0] = 0
+        sim_data = sim_data.to_frame()
+        sim_data['date'] = dates
+        sim_data.columns = ['D','date']
     else:
         st = (deaths[deaths['state'] == state].T)
     st = st[1:].reset_index()
@@ -120,12 +154,15 @@ def plot_deaths(state,ca):
     #fig = go.Figure()
     #fig.add_trace(go.Scatter(x=st['date'],y=st['deaths'],mode= 'markers',name=f'{state_dic[state]}'))
     st_name = u'Deaths in {}'.format(state_dic[state])
-    fig = px.bar(st, x='date', y='deaths')
+    #fig = px.bar(st, x='date', y='deaths')
+    fig = go.Figure()
+    fig.add_trace(go.Bar(x=st['date'],y = st['deaths'],name="Actual D"))
+    fig.add_trace(go.Scatter(x=sim_data['date'],y = sim_data['D'],name="D"))
     fig.update_layout(
     autosize=True,
     #title =  st_name,
 
-    margin = dict(l=40, r=40, t=40, b=40 ),
+    margin = dict(l=40, r=40, t=10, b=40 ),
     width=500,
     height=400,
     yaxis = dict(
@@ -238,8 +275,7 @@ def plot_total_deaths(ca):
 
     return fig
 
-imp_st = pd.read_csv('cases_deaths_india.csv')
-imp_st = imp_st.sort_values('date')
+
 def plot_all_states(state):
     ct = imp_st[imp_st['state'] == state]
     fig = px.bar(ct, x='date', y='confirmed_cases')
