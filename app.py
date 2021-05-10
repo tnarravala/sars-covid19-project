@@ -278,7 +278,16 @@ def plot_total_deaths(ca):
 
 def plot_all_states(state):
     ct = imp_st[imp_st['state'] == state]
-    fig = px.bar(ct, x='date', y='confirmed_cases')
+    sim_data = pd.read_csv(f'fitting_2021-05-03/{state}/sim.csv')
+    sim_data = sim_data[sim_data['series'] == 'G'].T
+    sim_data = sim_data[1:].reset_index()
+    sim_data.columns = ['date','G']
+    sim_data['date'] = pd.to_datetime(sim_data['date'])
+    dates =  sim_data['date']
+    fig = go.Figure()
+    fig.add_trace(go.Bar(x=ct['date'],y = ct['confirmed_cases']))
+    fig.add_trace(go.Scatter(x=sim_data['date'],y = sim_data['G']))
+    #fig = px.bar(ct, x='date', y='confirmed_cases')
     fig.update_layout(
     autosize=True,
     title = state_dic[state],
@@ -298,6 +307,7 @@ def plot_all_states(state):
         range=date_range,
         )
     )
+    fig.update_layout(showlegend=False)
     #fig.update_yaxes(visible=False, showticklabels=False)
     #fig.update_xaxes(visible=False, showticklabels=False)
     return fig
