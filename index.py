@@ -10,7 +10,8 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
-
+# must add this line in order for the app to be deployed successfully on Heroku
+from app import server
 from app import app
 # import all pages in the app
 from apps import home, simulations
@@ -90,4 +91,4 @@ def display_page(pathname):
 
 
 if __name__ == '__main__':
-    app.run_server(host='127.0.0.1', debug=True)
+    app.run_server(debug=True)
