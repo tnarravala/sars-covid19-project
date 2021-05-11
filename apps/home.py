@@ -14,7 +14,7 @@ cases = pd.read_csv("indian_cases_confirmed_cases.csv")
 deaths = pd.read_csv("indian_cases_confirmed_deaths.csv")
 imp_st = pd.read_csv('cases_deaths_india.csv')
 imp_st = imp_st.sort_values('date')
-
+sim_range = ["2021-02-10 18:36:37.3129", "2021-05-07 05:23:22.6871"]
 state_dic = {'ap':'Andhra Pradesh',
              'dl':'Delhi',
              'mp':'Madhya Pradesh',
@@ -63,6 +63,7 @@ date_range = ["2020-01-30 18:36:37.3129", "2021-05-07 05:23:22.6871"]
 
 def plot_cases(state,ca):
     sim_data = pd.read_csv(f'fitting_2021-05-03/{state}/sim.csv')
+    sim_data1 = sim_data
     sim_data = sim_data[sim_data['series'] == 'G'].T
     sim_data = sim_data[1:].reset_index()
     sim_data.columns = ['date','G']
@@ -82,7 +83,12 @@ def plot_cases(state,ca):
         sim_data.columns = ['G','date']
     else:
         st = (cases[cases['state'] == state].T)
-
+    
+    #sim_data1 = sim_data1[sim_data1['series'] == 'A'].T
+    #sim_data1 = sim_data1[1:].reset_index()
+    #sim_data1.columns = ['date','A']
+    #sim_data1['date'] = pd.to_datetime(sim_data1['date'])
+    dates =  sim_data['date']
     st = st[1:].reset_index()
     st.columns = ['date','cases']
     st['date'] = pd.to_datetime(st['date'])
@@ -91,6 +97,7 @@ def plot_cases(state,ca):
     fig = go.Figure()
     fig.add_trace(go.Bar(x=st['date'],y = st['cases'],name="Actual G"))
     fig.add_trace(go.Scatter(x=sim_data['date'],y = sim_data['G'],name="G"))
+    #fig.add_trace(go.Scatter(x=sim_data1['date'],y = sim_data1['A'],name="A"))
     #fig = go.Figure()
     #fig.add_trace(go.Scatter(x=st['date'],y=st['cases'],mode= 'markers',name='Cases'))
     #fig.add_trace(go.Scatter(x=sim_data['date'],y=sim_data['infections'],mode= 'markers',name='I'))
@@ -117,7 +124,7 @@ def plot_cases(state,ca):
     xaxis=dict(
         title_text = "date",
         autorange=True,
-        #range=date_range,
+        range=date_range,
         rangeslider=dict(
             autorange=True,
             range=date_range
@@ -179,9 +186,12 @@ def plot_deaths(state,ca):
         range=date_range,
         rangeslider=dict(
             autorange=True,
-            range=date_range
+            range=date_range,
+            
+            
+            
         ),
-        type="date"
+        type="date",
     ),
     )
 
@@ -287,8 +297,10 @@ def plot_all_states(state):
     dates =  sim_data['date']
     fig = go.Figure()
     fig.add_trace(go.Bar(x=ct['date'],y = ct['confirmed_cases']))
-    fig.add_trace(go.Scatter(x=sim_data['date'],y = sim_data['G']))
+    #fig.add_trace(go.Scatter(x=sim_data['date'],y = sim_data['G']))
     #fig = px.bar(ct, x='date', y='confirmed_cases')
+    fig.update_traces(marker_color='rgb(158,202,225)', marker_line_color='rgb(8,48,107)',
+                  marker_line_width=1.5, opacity=0.6)
     fig.update_layout(
     autosize=True,
     title = state_dic[state],
