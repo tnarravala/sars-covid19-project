@@ -96,7 +96,9 @@ def plot_cases(state,ca):
     
     fig = go.Figure()
     fig.add_trace(go.Bar(x=st['date'],y = st['cases'],name="Actual G"))
-    fig.add_trace(go.Scatter(x=sim_data['date'],y = sim_data['G'],name="G"))
+    fig.update_traces(marker_color='rgb(0,128,0)',
+                   opacity=1)
+    #fig.add_trace(go.Scatter(x=sim_data['date'],y = sim_data['G'],name="G"))
     #fig.add_trace(go.Scatter(x=sim_data1['date'],y = sim_data1['A'],name="A"))
     #fig = go.Figure()
     #fig.add_trace(go.Scatter(x=st['date'],y=st['cases'],mode= 'markers',name='Cases'))
@@ -165,7 +167,9 @@ def plot_deaths(state,ca):
     #fig = px.bar(st, x='date', y='deaths')
     fig = go.Figure()
     fig.add_trace(go.Bar(x=st['date'],y = st['deaths'],name="Actual D"))
-    fig.add_trace(go.Scatter(x=sim_data['date'],y = sim_data['D'],name="D"))
+    fig.update_traces(marker_color='rgb(255,99,71)',
+                   opacity=1)
+    #fig.add_trace(go.Scatter(x=sim_data['date'],y = sim_data['D'],name="D"))
     fig.update_layout(
     autosize=True,
     #title =  st_name,
@@ -213,6 +217,7 @@ def plot_total_cases(ca):
     #fig = go.Figure()
     #fig.add_trace(go.Scatter(x=ind['date'],y=ind['sum'],mode= 'markers'))
     fig = px.bar(ind, x='date', y='sum')
+    fig.update_traces(opacity=1)
     fig.update_layout(
     autosize=True,
     title = "Cases in India",
@@ -257,6 +262,7 @@ def plot_total_deaths(ca):
     #fig = go.Figure()
     #fig.add_trace(go.Scatter(x=ind['date'],y=ind['sum'],mode= 'markers'))
     fig = px.bar(ind, x='date', y='sum')
+    fig.update_traces(opacity=1)
     fig.update_layout(
     autosize=True,
     title = "Deaths in India",
