@@ -14,7 +14,7 @@ cases = pd.read_csv("indian_cases_confirmed_cases.csv")
 deaths = pd.read_csv("indian_cases_confirmed_deaths.csv")
 imp_st = pd.read_csv('cases_deaths_india.csv')
 imp_st = imp_st.sort_values('date')
-sim_range = ["2021-02-10 18:36:37.3129", "2021-05-07 05:23:22.6871"]
+sim_range = ["2021-02-10 18:36:37.3129", "2021-06-10 05:23:22.6871"]
 state_dic = {'ap':'Andhra Pradesh',
              'dl':'Delhi',
              'mp':'Madhya Pradesh',
@@ -59,10 +59,10 @@ total_deaths = deaths.set_index('state')
 total_state_deaths = total_deaths.iloc[:,-1:]
 total_deaths= total_state_deaths.sum()
 
-date_range = ["2020-01-30 18:36:37.3129", "2021-05-07 05:23:22.6871"]
+date_range = ["2020-01-30 18:36:37.3129", "2021-06-10 05:23:22.6871"]
 
 def plot_cases(state,ca):
-    sim_data = pd.read_csv(f'fitting_2021-05-03/{state}/sim.csv')
+    sim_data = pd.read_csv(f'fitting_2021-05-11/{state}/sim.csv')
     sim_data1 = sim_data
     sim_data = sim_data[sim_data['series'] == 'G'].T
     sim_data = sim_data[1:].reset_index()
@@ -138,7 +138,7 @@ def plot_cases(state,ca):
     return fig
 
 def plot_deaths(state,ca):
-    sim_data = pd.read_csv(f'fitting_2021-05-03/{state}/sim.csv')
+    sim_data = pd.read_csv(f'fitting_2021-05-11/{state}/sim.csv')
     sim_data = sim_data[sim_data['series'] == 'D'].T
     sim_data = sim_data[1:].reset_index()
     sim_data.columns = ['date','D']
@@ -295,7 +295,7 @@ def plot_total_deaths(ca):
 
 def plot_all_states(state):
     ct = imp_st[imp_st['state'] == state]
-    sim_data = pd.read_csv(f'fitting_2021-05-03/{state}/sim.csv')
+    sim_data = pd.read_csv(f'fitting_2021-05-11/{state}/sim.csv')
     sim_data = sim_data[sim_data['series'] == 'G'].T
     sim_data = sim_data[1:].reset_index()
     sim_data.columns = ['date','G']

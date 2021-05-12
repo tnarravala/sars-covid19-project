@@ -68,10 +68,10 @@ total_deaths = deaths.set_index('state')
 total_state_deaths = total_deaths.iloc[:,-1:]
 total_deaths= total_state_deaths.sum()
 
-date_range = ["2021-02-10 18:36:37.3129", "2021-05-07 05:23:22.6871"]
+date_range = ["2021-02-10 18:36:37.3129", "2021-06-10 05:23:22.6871"]
 
 def plot_cases(state,ca):
-    sim_data = pd.read_csv(f'fitting_2021-05-03/{state}/sim.csv')
+    sim_data = pd.read_csv(f'fitting_2021-05-11/{state}/sim.csv')
     sim_data = sim_data[sim_data['series'] == 'G'].T
     sim_data = sim_data[1:].reset_index()
     sim_data.columns = ['date','G']
@@ -139,7 +139,7 @@ def plot_cases(state,ca):
     return fig
 
 def plot_deaths(state,ca):
-    sim_data = pd.read_csv(f'fitting_2021-05-03/{state}/sim.csv')
+    sim_data = pd.read_csv(f'fitting_2021-05-11/{state}/sim.csv')
     sim_data = sim_data[sim_data['series'] == 'D'].T
     sim_data = sim_data[1:].reset_index()
     sim_data.columns = ['date','D']
@@ -180,6 +180,96 @@ def plot_deaths(state,ca):
     yaxis = dict(
          #range = [0,100] ,
          #rangemode="tozero",
+        autorange=True,
+        title_text='deaths',
+        titlefont=dict(size=10),
+    ),
+    xaxis=dict(
+        title_text = "date",
+        autorange=True,
+        range=date_range,
+        rangeslider=dict(
+            autorange=True,
+            range=date_range
+        ),
+        type="date"
+    ),
+    )
+
+    return fig
+
+def plot_total_cases(ca):
+    if ca == False:
+        st = cases.set_index('state')
+        col1 = st['2020-01-30']
+        st = st.diff(axis = 1)
+        st['2020-01-30'] = col1
+        st = st.reset_index()
+    else:
+        st = cases
+    ind = st.sum(axis =0)[1:]
+    ind = ind.to_frame()
+    ind = ind.reset_index()
+    ind.columns = ['date','sum']
+    ind['date'] = pd.to_datetime(ind['date'])
+    #fig = go.Figure()
+    #fig.add_trace(go.Scatter(x=ind['date'],y=ind['sum'],mode= 'markers'))
+    fig = px.bar(ind, x='date', y='sum')
+    fig.update_layout(
+    autosize=True,
+    title = "Cases in India",
+    margin = dict(l=40, r=40, t=40, b=40 ),
+    width=500,
+    height=400,
+    yaxis = dict(
+       #range = [0,100] ,
+       #rangemode="tozero",
+        autorange=True,
+        title_text='cases',
+        titlefont=dict(size=10),
+    ),
+    xaxis=dict(
+        title_text = "date",
+        autorange=True,
+        range=date_range,
+        rangeslider=dict(
+            autorange=True,
+            range=date_range
+        ),
+        type="date"
+    ),
+    )
+
+    return fig
+
+def plot_total_deaths(ca):
+    if ca == False:
+        st = deaths.set_index('state')
+        col1 = st['2020-01-30']
+        st = st.diff(axis = 1)
+        st['2020-01-30'] = col1
+        st = st.reset_index()
+    else:
+        st = deaths
+    ind = st.sum(axis =0)[1:]
+    ind = ind.to_frame()
+    ind = ind.reset_index()
+    ind.columns = ['date','sum']
+    ind['date'] = pd.to_datetime(ind['date'])
+    #fig = go.Figure()
+    #fig.add_trace(go.Scatter(x=ind['date'],y=ind['sum'],mode= 'markers'))
+    fig = px.bar(ind, x='date', y='sum')
+    fig.update_layout(
+    autosize=True,
+    title = "Deaths in India",
+    margin = dict(l=40, r=40, t=40, b=40 ),
+    width=500,
+    height=400,
+
+    #style = {'color':'green'},
+    yaxis = dict(
+       #range = [0,100] ,
+       #rangemode="tozero",
         autorange=True,
         title_text='deaths',
         titlefont=dict(size=10),
@@ -274,7 +364,37 @@ dbc.Row(
             dcc.Graph(id='sim_fig2',figure = plot_deaths('dl',True))
             
             ])
-        ,]),                                                                               
+        ,]),  
+
+dbc.Row([
+   dbc.Col([html.H3(id = "sim_ic", style = {'display': 'inline-block'}),
+                 html.Br(),
+                 html.P("Cummulative",style = {'display': 'inline-block'}),
+                 daq.BooleanSwitch(
+                id='sim_cum-ic',
+                on=False,
+                style = {'display': 'inline-block','size':'20%'}
+                        ),
+                               html.Br(),
+               html.P(id = "sim_ind_title", style = {'color':'green','display': 'inline-block'}),
+               dcc.Graph(id='sim_i_fig',figure = plot_total_cases(True))] ),
+        dbc.Col([
+            html.H3(id = "sim_i_d", style = {'display': 'inline-block'}),
+            html.Br(),
+                 html.P("Cummulative",style = {'display': 'inline-block'}),
+                 daq.BooleanSwitch(
+                id='sim_cum-i_d',
+                on=False,
+                style = {'display': 'inline-block','size':'20%'}
+                        ),
+                               html.Br(),
+            html.P(id = "sim_ind_title2", style = {'color':'red','display': 'inline-block'}),
+            dcc.Graph(id='sim_i_fig2',figure = plot_total_deaths(True))
+            
+            ])
+    
+   ]
+        ),                                                                             
     
 
 ],style={"height": "100vh"}
@@ -315,4 +435,34 @@ def update_output_divsim1(st):
     Input('sim_st','value')
     )
 def update_output_divsim2(st):
+    return u'Deaths in {}'.format(state_dic[st]) 
+
+@app.callback(
+    Output('sim_i_fig', 'figure'),
+    Input('sim_cum-ic','on'))
+def update_figure_sim3(ca):
+    fig1 = plot_total_cases(ca)
+    fig1.update_layout(transition_duration=500)
+    return fig1
+
+@app.callback(
+    Output('sim_i_fig2', 'figure'),
+    Input('sim_cum-i_d','on'))
+def update_figure_sim4(ca):
+    fig2 = plot_total_deaths(ca)
+    fig2.update_layout(transition_duration=500)
+    return fig2
+
+@app.callback(
+    Output('sim_ind_title1','children'),
+    Input('sim_st','value')
+    )
+def update_output_divsim3(st):
+    return u'Cases in {}'.format(state_dic[st]) 
+
+@app.callback(
+    Output('sim_ind_title2','children'),
+    Input('sim_st','value')
+    )
+def update_output_divsim4(st):
     return u'Deaths in {}'.format(state_dic[st]) 
