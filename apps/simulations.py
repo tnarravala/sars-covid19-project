@@ -128,15 +128,13 @@ def plot_cases(state,ca):
     xaxis=dict(
         title_text = "date",
         autorange=True,
-        #range=date_range,
-        rangeslider=dict(
-            autorange=True,
-            range=date_range
-        ),
-        type="date"
+        range=date_range,
+
     ),
     )
-
+    fig.update_layout(showlegend=False)
+    fig.update_yaxes(title=None)
+    fig.update_xaxes(title=None)
     return fig
 
 def plot_deaths(state,ca):
@@ -189,13 +187,11 @@ def plot_deaths(state,ca):
         title_text = "date",
         autorange=True,
         range=date_range,
-        rangeslider=dict(
-            autorange=True,
-            range=date_range
-        ),
-        type="date"
     ),
     )
+    fig.update_layout(showlegend=False)
+    fig.update_yaxes(title=None)
+    fig.update_xaxes(title=None)
     return fig
 
 def plot_total_cases(ca):
@@ -242,6 +238,8 @@ def plot_total_cases(ca):
     ),
     )
     fig.update_layout(showlegend=False)
+    fig.update_yaxes(title=None)
+    fig.update_xaxes(title=None)
     return fig
 
 def plot_total_deaths(ca):
@@ -287,9 +285,12 @@ def plot_total_deaths(ca):
         title_text = "date",
         autorange=True,
         range=date_range,
+        title=None
     ),
     )
     fig.update_layout(showlegend=False)
+    fig.update_yaxes(title=None)
+    fig.update_xaxes(title=None)
     #fig.update_yaxes(visible=True, showticklabels=True, title=False)
     #fig.update_xaxes(visible=False, showticklabels=True)
     return fig
