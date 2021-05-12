@@ -23,7 +23,8 @@ cases = pd.read_csv("indian_cases_confirmed_cases.csv")
 deaths = pd.read_csv("indian_cases_confirmed_deaths.csv")
 imp_st = pd.read_csv('cases_deaths_india.csv')
 imp_st = imp_st.sort_values('date')
-
+india_cases= pd.read_csv("inida_cases_diff.csv")
+india_deaths= pd.read_csv("inida_deaths_diff.csv")
 state_dic = {'ap':'Andhra Pradesh',
              'dl':'Delhi',
              'mp':'Madhya Pradesh',
@@ -68,7 +69,7 @@ total_deaths = deaths.set_index('state')
 total_state_deaths = total_deaths.iloc[:,-1:]
 total_deaths= total_state_deaths.sum()
 
-date_range = ["2021-02-10 18:36:37.3129", "2021-06-10 05:23:22.6871"]
+date_range = ["2021-02-10", "2021-06-10"]
 
 def plot_cases(state,ca):
     sim_data = pd.read_csv(f'fitting_2021-05-11/{state}/sim.csv')
@@ -165,7 +166,7 @@ def plot_deaths(state,ca):
     st = st[st['date'] > '2021-01-31']
     #fig = go.Figure()
     #fig.add_trace(go.Scatter(x=st['date'],y=st['deaths'],mode= 'markers',name=f'{state_dic[state]}'))
-    st_name = u'Deaths in {}'.format(state_dic[state])
+    #st_name = u'Deaths in {}'.format(state_dic[state])
     #fig = px.bar(st, x='date', y='deaths')
     fig = go.Figure()
     fig.add_trace(go.Bar(x=st['date'],y = st['deaths'],name="Actual D"))
@@ -195,7 +196,6 @@ def plot_deaths(state,ca):
         type="date"
     ),
     )
-
     return fig
 
 def plot_total_cases(ca):
@@ -212,9 +212,16 @@ def plot_total_cases(ca):
     ind = ind.reset_index()
     ind.columns = ['date','sum']
     ind['date'] = pd.to_datetime(ind['date'])
-    #fig = go.Figure()
+    ind = ind[ind['date'] > '2021-01-31']
+    tc = india_cases[india_cases['date'] > '2021-01-31']
+    fig = go.Figure()
     #fig.add_trace(go.Scatter(x=ind['date'],y=ind['sum'],mode= 'markers'))
-    fig = px.bar(ind, x='date', y='sum')
+    #fig = px.bar(ind, x='date', y='sum')
+    fig.add_trace(go.Bar(x=ind['date'],y=ind['sum'],name='Actual G'))
+    if ca == True: 
+        fig.add_trace(go.Scatter(x=tc['date'],y=tc['cases'],name='G'))
+    else:
+        fig.add_trace(go.Scatter(x=tc['date'],y=tc['diff'],name='G'))
     fig.update_layout(
     autosize=True,
     title = "Cases in India",
@@ -232,14 +239,9 @@ def plot_total_cases(ca):
         title_text = "date",
         autorange=True,
         range=date_range,
-        rangeslider=dict(
-            autorange=True,
-            range=date_range
-        ),
-        type="date"
     ),
     )
-
+    fig.update_layout(showlegend=False)
     return fig
 
 def plot_total_deaths(ca):
@@ -256,9 +258,16 @@ def plot_total_deaths(ca):
     ind = ind.reset_index()
     ind.columns = ['date','sum']
     ind['date'] = pd.to_datetime(ind['date'])
-    #fig = go.Figure()
+    ind = ind[ind['date'] > '2021-01-31']
+    tc = india_deaths[india_deaths['date'] > '2021-01-31']
+    fig = go.Figure()
     #fig.add_trace(go.Scatter(x=ind['date'],y=ind['sum'],mode= 'markers'))
-    fig = px.bar(ind, x='date', y='sum')
+    fig.add_trace(go.Bar(x=ind['date'],y=ind['sum'],name='Actual D'))
+    if ca == True: 
+        fig.add_trace(go.Scatter(x=tc['date'],y=tc['deaths'],name='D'))
+    else:
+        fig.add_trace(go.Scatter(x=tc['date'],y=tc['diff'],name='D'))
+    #fig.add_trace(go.Scatter(x=cum_pro['date'],y=cum_pro['deaths'],name='D'))
     fig.update_layout(
     autosize=True,
     title = "Deaths in India",
@@ -278,14 +287,11 @@ def plot_total_deaths(ca):
         title_text = "date",
         autorange=True,
         range=date_range,
-        rangeslider=dict(
-            autorange=True,
-            range=date_range
-        ),
-        type="date"
     ),
     )
-
+    fig.update_layout(showlegend=False)
+    #fig.update_yaxes(visible=True, showticklabels=True, title=False)
+    #fig.update_xaxes(visible=False, showticklabels=True)
     return fig
 
 body = dbc.Container([ 
@@ -376,10 +382,10 @@ dbc.Row([
                 style = {'display': 'inline-block','size':'20%'}
                         ),
                                html.Br(),
-               html.P(id = "sim_ind_title", style = {'color':'green','display': 'inline-block'}),
+              # html.P(id = "sim_ind_title", style = {'color':'green','display': 'inline-block'}),
                dcc.Graph(id='sim_i_fig',figure = plot_total_cases(True))] ),
         dbc.Col([
-            html.H3(id = "sim_i_d", style = {'display': 'inline-block'}),
+           # html.H3(id = "sim_i_d", style = {'display': 'inline-block'}),
             html.Br(),
                  html.P("Cummulative",style = {'display': 'inline-block'}),
                  daq.BooleanSwitch(
@@ -388,7 +394,7 @@ dbc.Row([
                 style = {'display': 'inline-block','size':'20%'}
                         ),
                                html.Br(),
-            html.P(id = "sim_ind_title2", style = {'color':'red','display': 'inline-block'}),
+            #html.P(id = "sim_ind_title2", style = {'color':'red','display': 'inline-block'}),
             dcc.Graph(id='sim_i_fig2',figure = plot_total_deaths(True))
             
             ])
