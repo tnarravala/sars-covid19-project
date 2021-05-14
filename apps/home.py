@@ -16,7 +16,10 @@ imp_st = pd.read_csv('cases_deaths_india.csv')
 imp_st = imp_st.sort_values('date')
 india_cases= pd.read_csv("inida_cases_diff.csv")
 india_deaths= pd.read_csv("inida_deaths_diff.csv")
-#sim_range = ["2021-02-10", "2021-06-10"]
+states_g = pd.read_csv("plot_states_g.csv")
+states_d = pd.read_csv("plot_states_d.csv")
+date_range = ["2020-01-30", "2021-05-11"]
+
 state_dic = {'ap':'Andhra Pradesh',
              'dl':'Delhi',
              'mp':'Madhya Pradesh',
@@ -61,13 +64,10 @@ total_deaths = deaths.set_index('state')
 total_state_deaths = total_deaths.iloc[:,-1:]
 total_deaths= total_state_deaths.sum()
 
-date_range = ["2020-01-30", "2021-06-10"]
-
 def plot_cases(state,ca):
-    sim_data = pd.read_csv(f'fitting_2021-05-11/{state}/sim.csv')
-    sim_data1 = sim_data
-    sim_data = sim_data[sim_data['series'] == 'G'].T
-    sim_data = sim_data[1:].reset_index()
+    sim_data = states_g[states_g['series'] == state]
+    sim_data = sim_data.T
+    sim_data = sim_data[2:].reset_index()
     sim_data.columns = ['date','G']
     sim_data['date'] = pd.to_datetime(sim_data['date'])
     dates =  sim_data['date']
@@ -94,7 +94,6 @@ def plot_cases(state,ca):
     st = st[1:].reset_index()
     st.columns = ['date','cases']
     st['date'] = pd.to_datetime(st['date'])
-    st_name = u'Cases in {}'.format(state_dic[state])
     
     fig = go.Figure()
     fig.add_trace(go.Bar(x=st['date'],y = st['cases'],name="Actual G"))
@@ -141,9 +140,9 @@ def plot_cases(state,ca):
     return fig
 
 def plot_deaths(state,ca):
-    sim_data = pd.read_csv(f'fitting_2021-05-11/{state}/sim.csv')
-    sim_data = sim_data[sim_data['series'] == 'D'].T
-    sim_data = sim_data[1:].reset_index()
+    sim_data = states_d[states_d['series'] == state]
+    sim_data = sim_data.T
+    sim_data = sim_data[2:].reset_index()
     sim_data.columns = ['date','D']
     sim_data['date'] = pd.to_datetime(sim_data['date'])
     dates =  sim_data['date']
@@ -166,7 +165,7 @@ def plot_deaths(state,ca):
     st['date'] = pd.to_datetime(st['date'])
     #fig = go.Figure()
     #fig.add_trace(go.Scatter(x=st['date'],y=st['deaths'],mode= 'markers',name=f'{state_dic[state]}'))
-    st_name = u'Deaths in {}'.format(state_dic[state])
+    #st_name = u'Deaths in {}'.format(state_dic[state])
     #fig = px.bar(st, x='date', y='deaths')
     fig = go.Figure()
     fig.add_trace(go.Bar(x=st['date'],y = st['deaths'],name="Actual D"))
