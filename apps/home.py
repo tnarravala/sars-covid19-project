@@ -14,7 +14,9 @@ cases = pd.read_csv("indian_cases_confirmed_cases.csv")
 deaths = pd.read_csv("indian_cases_confirmed_deaths.csv")
 imp_st = pd.read_csv('cases_deaths_india.csv')
 imp_st = imp_st.sort_values('date')
-sim_range = ["2021-02-10 18:36:37.3129", "2021-06-10 05:23:22.6871"]
+india_cases= pd.read_csv("inida_cases_diff.csv")
+india_deaths= pd.read_csv("inida_deaths_diff.csv")
+#sim_range = ["2021-02-10", "2021-06-10"]
 state_dic = {'ap':'Andhra Pradesh',
              'dl':'Delhi',
              'mp':'Madhya Pradesh',
@@ -59,7 +61,7 @@ total_deaths = deaths.set_index('state')
 total_state_deaths = total_deaths.iloc[:,-1:]
 total_deaths= total_state_deaths.sum()
 
-date_range = ["2020-01-30 18:36:37.3129", "2021-06-10 05:23:22.6871"]
+date_range = ["2020-01-30", "2021-06-10"]
 
 def plot_cases(state,ca):
     sim_data = pd.read_csv(f'fitting_2021-05-11/{state}/sim.csv')
@@ -134,7 +136,8 @@ def plot_cases(state,ca):
         type="date"
     ),
     )
-
+    fig.update_yaxes(title=None)
+    fig.update_xaxes(title=None)
     return fig
 
 def plot_deaths(state,ca):
@@ -198,7 +201,8 @@ def plot_deaths(state,ca):
         type="date",
     ),
     )
-
+    fig.update_yaxes(title=None)
+    fig.update_xaxes(title=None)
     return fig
 def plot_total_cases(ca):
     if ca == False:
@@ -214,10 +218,12 @@ def plot_total_cases(ca):
     ind = ind.reset_index()
     ind.columns = ['date','sum']
     ind['date'] = pd.to_datetime(ind['date'])
-    #fig = go.Figure()
+    #ind = ind[ind['date'] > '2021-01-31']
+    #tc = india_cases[india_cases['date'] > '2021-01-31']
+    fig = go.Figure()
     #fig.add_trace(go.Scatter(x=ind['date'],y=ind['sum'],mode= 'markers'))
-    fig = px.bar(ind, x='date', y='sum')
-    fig.update_traces(opacity=1)
+    #fig = px.bar(ind, x='date', y='sum')
+    fig.add_trace(go.Bar(x=ind['date'],y=ind['sum'],name='Actual G'))
     fig.update_layout(
     autosize=True,
     title = "Cases in India",
@@ -237,12 +243,17 @@ def plot_total_cases(ca):
         range=date_range,
         rangeslider=dict(
             autorange=True,
-            range=date_range
+            range=date_range,
+            
+            
+            
         ),
-        type="date"
+        type="date",
     ),
     )
-
+    fig.update_layout(showlegend=False)
+    fig.update_yaxes(title=None)
+    fig.update_xaxes(title=None)
     return fig
 
 def plot_total_deaths(ca):
@@ -259,10 +270,12 @@ def plot_total_deaths(ca):
     ind = ind.reset_index()
     ind.columns = ['date','sum']
     ind['date'] = pd.to_datetime(ind['date'])
-    #fig = go.Figure()
+    #ind = ind[ind['date'] > '2021-01-31']
+    #tc = india_deaths[india_deaths['date'] > '2021-01-31']
+    fig = go.Figure()
     #fig.add_trace(go.Scatter(x=ind['date'],y=ind['sum'],mode= 'markers'))
-    fig = px.bar(ind, x='date', y='sum')
-    fig.update_traces(opacity=1)
+    fig.add_trace(go.Bar(x=ind['date'],y=ind['sum'],name='Actual D'))
+    #fig.add_trace(go.Scatter(x=cum_pro['date'],y=cum_pro['deaths'],name='D'))
     fig.update_layout(
     autosize=True,
     title = "Deaths in India",
@@ -284,51 +297,19 @@ def plot_total_deaths(ca):
         range=date_range,
         rangeslider=dict(
             autorange=True,
-            range=date_range
+            range=date_range,
+            
+            
+            
         ),
-        type="date"
+        type="date",
     ),
-    )
-
-    return fig
-
-
-def plot_all_states(state):
-    ct = imp_st[imp_st['state'] == state]
-    sim_data = pd.read_csv(f'fitting_2021-05-11/{state}/sim.csv')
-    sim_data = sim_data[sim_data['series'] == 'G'].T
-    sim_data = sim_data[1:].reset_index()
-    sim_data.columns = ['date','G']
-    sim_data['date'] = pd.to_datetime(sim_data['date'])
-    dates =  sim_data['date']
-    fig = go.Figure()
-    fig.add_trace(go.Bar(x=ct['date'],y = ct['confirmed_cases']))
-    #fig.add_trace(go.Scatter(x=sim_data['date'],y = sim_data['G']))
-    #fig = px.bar(ct, x='date', y='confirmed_cases')
-    fig.update_traces(marker_color='rgb(158,202,225)', marker_line_color='rgb(8,48,107)',
-                   opacity=0.3)
-    fig.update_layout(
-    autosize=True,
-    title = state_dic[state],
-    margin = dict(l=20, r=10, t=27, b=10 ),
-    width=300,
-    height=200,
-    yaxis = dict(
-       #range = [0,100] ,
-       #rangemode="tozero",
-        autorange=True,
-        title_text='cases',
-       # titlefont=dict(size=10),
-    ),
-    xaxis=dict(
-        #title_text = "date",
-        autorange=True,
-        range=date_range,
-        )
     )
     fig.update_layout(showlegend=False)
-    fig.update_yaxes(visible=False, showticklabels=False)
-    #fig.update_xaxes(visible=False, showticklabels=False)
+    fig.update_yaxes(title=None)
+    fig.update_xaxes(title=None)
+    #fig.update_yaxes(visible=True, showticklabels=True, title=False)
+    #fig.update_xaxes(visible=False, showticklabels=True)
     return fig
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -440,56 +421,6 @@ dbc.Row(
             
             ])
         ,]),                                                                               
-    dbc.Row(
-        [html.Br()]),
-    dbc.Row(
-        [
-            html.H2("Cummulative cases for each state in India")
-            ]
-        ),
-    
-    dbc.Row(
-        [
-        
-            dbc.Col(dcc.Graph(id='fig5',figure = plot_all_states('an')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig6',figure = plot_all_states('ap')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig7',figure = plot_all_states('ar')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig8',figure = plot_all_states('as')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig9',figure = plot_all_states('br')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig10',figure = plot_all_states('ch')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig11',figure = plot_all_states('ct')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig12',figure = plot_all_states('dn_dd')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig13',figure = plot_all_states('dl')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig14',figure = plot_all_states('ga')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig15',figure = plot_all_states('gj')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig16',figure = plot_all_states('hr')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig17',figure = plot_all_states('hp')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig18',figure = plot_all_states('jk')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig19',figure = plot_all_states('jh')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig20',figure = plot_all_states('ka')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig21',figure = plot_all_states('kl')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig22',figure = plot_all_states('ld')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig23',figure = plot_all_states('la')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig24',figure = plot_all_states('mp')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig25',figure = plot_all_states('mh')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig26',figure = plot_all_states('ml')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig27',figure = plot_all_states('mn')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig28',figure = plot_all_states('mz')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig29',figure = plot_all_states('nl')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig30',figure = plot_all_states('or')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig31',figure = plot_all_states('py')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig32',figure = plot_all_states('pb')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig33',figure = plot_all_states('rj')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig34',figure = plot_all_states('sk')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig35',figure = plot_all_states('tn')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig36',figure = plot_all_states('tg')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig37',figure = plot_all_states('tr')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig38',figure = plot_all_states('ut')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig39',figure = plot_all_states('up')),width=6, lg=3),
-            dbc.Col(dcc.Graph(id='fig40',figure = plot_all_states('wb')),width=6, lg=3)
-            
-            ]
-        )
 
 ],style={"height": "100vh"}
 
