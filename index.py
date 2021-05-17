@@ -32,17 +32,23 @@ dropdown = dbc.DropdownMenu(
 navbar = dbc.Navbar(
     dbc.Container(
         [
-            html.A(
+            html.A([
                 # Use row and col to control vertical alignment of logo / brand
                 dbc.Row(
                     [
                         #dbc.Col(html.Img(src="/assets/virus.png", height="30px")),
                         dbc.Col(dbc.NavbarBrand("Indian COVID-19 Tracker", className="ml-2")),
+                        
+                         
                     ],
                     align="center",
                     no_gutters=True,
-                ),
-                href="/home",
+                ),dbc.Row([ 
+                    html.P(dcc.Link('Computational Decision Science Laboratory, Illinois Institute of Technology', 
+                                         href='https://sites.google.com/iit.edu/cdsl',target="_blank",
+                                         style = {"color": "#C94D95",'display':'inline-block',}),style = {'margin-left':'3.5%'}  ,id='submit-val'),]),
+                ],href="/home",
+                
             ),
             dbc.NavbarToggler(id="navbar-toggler2"),
             dbc.Collapse(
