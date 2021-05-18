@@ -44,10 +44,14 @@ navbar = dbc.Navbar(
                     align="center",
                     no_gutters=True,
                 ),dbc.Row([ 
-                    html.P(dcc.Link('Computational Decision Science Laboratory, Illinois Institute of Technology', 
+                    html.P(dcc.Link('Computational Decision Science Laboratory', 
                                          href='https://sites.google.com/iit.edu/cdsl',target="_blank",
-                                         style = {"color": "#C94D95",'display':'inline-block',}),style = {'margin-left':'3.5%'}  ,id='submit-val'),]),
-                ],href="/home",
+                                         style = {"color": "#ff1127",'display':'inline-block',}),style = {'margin-left':'6%'}  ,id='submit-val'),]),
+                dbc.Row([ 
+                    html.P(dcc.Link( 'Illinois Institute of Technology', 
+                                         href='https://www.iit.edu/',target="_blank",
+                                         style = {"color": "#ff1127",'display':'inline-block',}),style = {'margin-left':'6%'}  ,id='iit'),])
+                    ],href="/home",
                 
             ),
             dbc.NavbarToggler(id="navbar-toggler2"),
