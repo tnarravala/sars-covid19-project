@@ -21,7 +21,7 @@ from apps import home, simulations
 dropdown = dbc.DropdownMenu(
     children=[
         dbc.DropdownMenuItem("Home", href="/home"),
-        dbc.DropdownMenuItem("simulations", href="/simulations"),
+        dbc.DropdownMenuItem("Projections", href="/Projections"),
         #dbc.DropdownMenuItem("Singapore", href="/singapore"),
     ],
     nav = True,
@@ -93,7 +93,7 @@ app.layout = html.Div([
 @app.callback(Output('page-content', 'children'),
               [Input('url', 'pathname')])
 def display_page(pathname):
-    if pathname == '/simulations':
+    if pathname == '/Projections':
         return simulations.layout
     else:
         return home.layout

@@ -23,8 +23,8 @@ cases = pd.read_csv("indian_cases_confirmed_cases.csv")
 deaths = pd.read_csv("indian_cases_confirmed_deaths.csv")
 imp_st = pd.read_csv('cases_deaths_india.csv')
 imp_st = imp_st.sort_values('date')
-india_cases= pd.read_csv("inida_cases_diff.csv")
-india_deaths= pd.read_csv("inida_deaths_diff.csv")
+india_cases= pd.read_csv("india_cases_diff.csv")
+india_deaths= pd.read_csv("india_deaths_diff.csv")
 state_dic = {'ap':'Andhra Pradesh',
              'dl':'Delhi',
              'mp':'Madhya Pradesh',
