@@ -297,7 +297,41 @@ body = dbc.Container([
 
  dbc.Row([html.P("Projections for infections and deaths in Indian States and  for overall India are based in part on the model described in the following paper: ",style= {"color":"#151516"}),]),
 dbc.Row([html.P(dcc.Link("Hidden Parameters Impacting Resurgence of SARS-CoV-2 Pandemic",href="https://www.medrxiv.org/content/10.1101/2021.01.15.20248217v1",target="_blank",style = {"color":"#6211FF"}))]),
-dbc.Row(
+dbc.Row([html.P("Research Sponsored by NSF-USA",style={'color':'#E80F85'})]),
+dbc.Row([html.P("Projections on removal of lockdown coming soon...",style={'color':'#9E12D6'})]),
+      dbc.Row(
+        [html.Br()]),
+    
+    dbc.Row([
+   dbc.Col([html.H3(id = "sim_ic", style = {'display': 'inline-block'}),
+                 html.Br(),
+                 html.P("Cummulative",style = {'display': 'inline-block'}),
+                 daq.BooleanSwitch(
+                id='sim_cum-ic',
+                on=False,
+                style = {'display': 'inline-block','size':'20%'}
+                        ),
+                               html.Br(),
+              # html.P(id = "sim_ind_title", style = {'color':'green','display': 'inline-block'}),
+               dcc.Graph(id='sim_i_fig',figure = plot_total_cases(True))] ),
+        dbc.Col([
+           # html.H3(id = "sim_i_d", style = {'display': 'inline-block'}),
+            html.Br(),
+                 html.P("Cummulative",style = {'display': 'inline-block'}),
+                 daq.BooleanSwitch(
+                id='sim_cum-i_d',
+                on=False,
+                style = {'display': 'inline-block','size':'20%'}
+                        ),
+                               html.Br(),
+            #html.P(id = "sim_ind_title2", style = {'color':'red','display': 'inline-block'}),
+            dcc.Graph(id='sim_i_fig2',figure = plot_total_deaths(True))
+            
+            ])
+    
+   ]
+        ),
+    dbc.Row(
         [
     dcc.Dropdown(
         id='sim_st',
@@ -344,8 +378,6 @@ dbc.Row(
     ),
             ]
         ),
-      dbc.Row(
-        [html.Br()]),     
     dbc.Row([
         dbc.Col([html.H3(id = "sim_tc", style = {'display': 'inline-block'}),
                  html.Br(),
@@ -371,37 +403,9 @@ dbc.Row(
             dcc.Graph(id='sim_fig2',figure = plot_deaths('dl',True))
             
             ])
-        ,]),  
+        ,])
 
-dbc.Row([
-   dbc.Col([html.H3(id = "sim_ic", style = {'display': 'inline-block'}),
-                 html.Br(),
-                 html.P("Cummulative",style = {'display': 'inline-block'}),
-                 daq.BooleanSwitch(
-                id='sim_cum-ic',
-                on=False,
-                style = {'display': 'inline-block','size':'20%'}
-                        ),
-                               html.Br(),
-              # html.P(id = "sim_ind_title", style = {'color':'green','display': 'inline-block'}),
-               dcc.Graph(id='sim_i_fig',figure = plot_total_cases(True))] ),
-        dbc.Col([
-           # html.H3(id = "sim_i_d", style = {'display': 'inline-block'}),
-            html.Br(),
-                 html.P("Cummulative",style = {'display': 'inline-block'}),
-                 daq.BooleanSwitch(
-                id='sim_cum-i_d',
-                on=False,
-                style = {'display': 'inline-block','size':'20%'}
-                        ),
-                               html.Br(),
-            #html.P(id = "sim_ind_title2", style = {'color':'red','display': 'inline-block'}),
-            dcc.Graph(id='sim_i_fig2',figure = plot_total_deaths(True))
-            
-            ])
-    
-   ]
-        ),                                                                             
+,                                                                             
     
 
 ],style={"height": "100vh"}
