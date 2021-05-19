@@ -318,6 +318,11 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 
 body = dbc.Container([ 
+    
+    dbc.Row([html.P("This data on confirmed cases and deaths has been updated on 17th May, 2021",style= {"color":"#151516"}),]),
+    dbc.Row([         
+             html.P(dcc.Link("Projections based on our model can be found on this link",href='https://sars-covid-tracker-india.herokuapp.com/Projections',target="_blank",
+                                         style = {"color": "#ff1127",'display':'inline-block',}),)]),
 
   dbc.Row([
         dbc.Col([html.H3(id = "tsc", style = {'display': 'inline-block'}),
@@ -419,7 +424,12 @@ dbc.Row(
             dcc.Graph(id='fig2',figure = plot_deaths('dl',True))
             
             ])
-        ,]),                                                                               
+        ,]),
+
+dbc.Row([
+    dbc.Col(html.P("Data used in this site is taken from the below website...", style={"color":"#33068A"}))]),
+    dbc.Row([dbc.Col(html.P(dcc.Link("http://projects.datameet.org/covid19/",href = "http://projects.datameet.org/covid19/",style={"color":"#33068A"})))
+    ]),                                                                               
 
 ],style={"height": "100vh"}
 
