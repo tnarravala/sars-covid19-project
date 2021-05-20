@@ -295,10 +295,10 @@ def plot_total_deaths(ca):
 
 body = dbc.Container([ 
 
- dbc.Row([html.P("Projections for infections and deaths in Indian States and  for overall India are based in part on the model described in the following paper: ",style= {"color":"#151516"}),]),
+dbc.Row([html.P("Projections for infections and deaths in Indian States and  for overall India are based in part on the model described in the following paper: ",style= {"color":"#151516"}),]),
 dbc.Row([html.P(dcc.Link("Hidden Parameters Impacting Resurgence of SARS-CoV-2 Pandemic",href="https://www.medrxiv.org/content/10.1101/2021.01.15.20248217v1",target="_blank",style = {"color":"#6211FF"}))]),
-dbc.Row([html.P("Research Sponsored by NSF-USA",style={'color':'#E80F85'})]),
 dbc.Row([html.P("Projections on removal of lockdown coming soon...",style={'color':'#9E12D6'})]),
+dbc.Row([html.Small("Research Sponsored by NSF-USA",style={'color':'#E80F85','font':"0.5%"})]),
       dbc.Row(
         [html.Br()]),
     
