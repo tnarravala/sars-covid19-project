@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon May 10 13:33:13 2021
+Created on Fri May 21 09:34:13 2021
 
 @author: thejeswarreddynarravala
 """
@@ -16,8 +16,9 @@ import dash_daq as daq
 import plotly.express as px
 import pandas as pd
 import plotly.graph_objects as go
-
+from dateutil.relativedelta import relativedelta
 from app import app
+from datetime import datetime,time
 
 cases = pd.read_csv("indian_cases_confirmed_cases.csv")
 deaths = pd.read_csv("indian_cases_confirmed_deaths.csv")
@@ -99,7 +100,7 @@ def plot_cases(state,ca):
     fig = go.Figure()
     fig.add_trace(go.Bar(x=st['date'],y = st['cases'],name="Actual G"))
     fig.add_trace(go.Scatter(x=sim_data['date'],y = sim_data['G'],name="G"))
-    fig.add_trace(go.Scatter(x=st['date'],y = st['mv3'],name="mav",line = dict(shape = 'linear', color = '#0000FF', dash = 'dash')))
+    fig.add_trace(go.Scatter(x=st['date'],y = st['mv3'],name="mv3"))
     #fig = go.Figure()
     #fig.add_trace(go.Scatter(x=st['date'],y=st['cases'],mode= 'markers',name='Cases'))
     #fig.add_trace(go.Scatter(x=sim_data['date'],y=sim_data['infections'],mode= 'markers',name='I'))
@@ -110,12 +111,6 @@ def plot_cases(state,ca):
     #fig.add_trace(go.scatter(x=sim_data['date'],y=sim_data['infections'],mode ="lines",name="infections"))
     #fig.add_trace(go.scatter(x=st['date'],y=st['cases'],mode ="lines"))
     #fig.add_trace()
-    fig.update_layout(legend=dict(
-    yanchor="top",
-    y=0.99,
-    xanchor="left",
-    x=0.01
-    ))
     fig.update_layout(
     autosize=True,
     #title = st_name,
@@ -136,7 +131,7 @@ def plot_cases(state,ca):
 
     ),
     )
-    #fig.update_layout(showlegend=False)
+    fig.update_layout(showlegend=False)
     fig.update_yaxes(title=None)
     fig.update_xaxes(title=None)
     return fig
@@ -174,7 +169,7 @@ def plot_deaths(state,ca):
     fig = go.Figure()
     fig.add_trace(go.Bar(x=st['date'],y = st['deaths'],name="Actual D"))
     fig.add_trace(go.Scatter(x=sim_data['date'],y = sim_data['D'],name="D"))
-    fig.add_trace(go.Scatter(x=st['date'],y = st['mv3'],name="mav",line = dict(shape = 'linear', color = '#0000FF', dash = 'dash')))
+    fig.add_trace(go.Scatter(x=st['date'],y = st['mv3'],name="mv3"))
     fig.update_layout(
     autosize=True,
     #title =  st_name,
@@ -195,13 +190,7 @@ def plot_deaths(state,ca):
         range=date_range,
     ),
     )
-    fig.update_layout(legend=dict(
-    yanchor="top",
-    y=0.99,
-    xanchor="left",
-    x=0.01
-    ))
-    #fig.update_layout(showlegend=False)
+    fig.update_layout(showlegend=False)
     fig.update_yaxes(title=None)
     fig.update_xaxes(title=None)
     return fig
@@ -222,17 +211,14 @@ def plot_total_cases(ca):
     ind['date'] = pd.to_datetime(ind['date'])
     ind = ind[ind['date'] > '2021-01-31']
     tc = india_cases[india_cases['date'] > '2021-01-31']
-    ind['mv3'] = ind.iloc[:,1].rolling(window=7).mean()
     fig = go.Figure()
     #fig.add_trace(go.Scatter(x=ind['date'],y=ind['sum'],mode= 'markers'))
     #fig = px.bar(ind, x='date', y='sum')
     fig.add_trace(go.Bar(x=ind['date'],y=ind['sum'],name='Actual G'))
-    
     if ca == True: 
         fig.add_trace(go.Scatter(x=tc['date'],y=tc['cases'],name='G'))
     else:
         fig.add_trace(go.Scatter(x=tc['date'],y=tc['diff'],name='G'))
-    fig.add_trace(go.Scatter(x=ind['date'],y=ind['mv3'],name='mav',line = dict(shape = 'linear', color = '#0000FF', dash = 'dash')))
     fig.update_layout(
     autosize=True,
     title = "Cases in India",
@@ -252,13 +238,7 @@ def plot_total_cases(ca):
         range=date_range,
     ),
     )
-    fig.update_layout(legend=dict(
-    yanchor="top",
-    y=0.99,
-    xanchor="left",
-    x=0.01
-    ))
-    #fig.update_layout(showlegend=False)
+    fig.update_layout(showlegend=False)
     fig.update_yaxes(title=None)
     fig.update_xaxes(title=None)
     return fig
@@ -279,7 +259,6 @@ def plot_total_deaths(ca):
     ind['date'] = pd.to_datetime(ind['date'])
     ind = ind[ind['date'] > '2021-01-31']
     tc = india_deaths[india_deaths['date'] > '2021-01-31']
-    ind['mv3'] = ind.iloc[:,1].rolling(window=7).mean()
     fig = go.Figure()
     #fig.add_trace(go.Scatter(x=ind['date'],y=ind['sum'],mode= 'markers'))
     fig.add_trace(go.Bar(x=ind['date'],y=ind['sum'],name='Actual D'))
@@ -287,7 +266,6 @@ def plot_total_deaths(ca):
         fig.add_trace(go.Scatter(x=tc['date'],y=tc['deaths'],name='D'))
     else:
         fig.add_trace(go.Scatter(x=tc['date'],y=tc['diff'],name='D'))
-    fig.add_trace(go.Scatter(x=ind['date'],y=ind['mv3'],name='mav',line = dict(shape = 'linear', color = '#0000FF', dash = 'dash')))
     #fig.add_trace(go.Scatter(x=cum_pro['date'],y=cum_pro['deaths'],name='D'))
     fig.update_layout(
     autosize=True,
@@ -311,62 +289,41 @@ def plot_total_deaths(ca):
         title=None
     ),
     )
-    fig.update_layout(legend=dict(
-    yanchor="top",
-    y=0.99,
-    xanchor="left",
-    x=0.01
-    ))
-    #fig.update_layout(showlegend=False)
+    fig.update_layout(showlegend=False)
     fig.update_yaxes(title=None)
     fig.update_xaxes(title=None)
     #fig.update_yaxes(visible=True, showticklabels=True, title=False)
     #fig.update_xaxes(visible=False, showticklabels=True)
     return fig
 
+daterange = pd.date_range(start='2017',end='2018',freq='W')
+def unix_time_millis(dt):
+    ''' Convert datetime to unix timestamp '''
+    return int(time.mktime(dt.timetuple()))
+
+def get_marks_from_start_end(start, end, Nth=100):
+    ''' Returns the marks for labeling. 
+        Every Nth value will be used.
+    '''
+
+    result = {}
+    for i, date in enumerate(daterange):
+        if(i%Nth == 1):
+            # Append value to dict
+            result[unix_time_millis(date)] = str(date.strftime('%Y-%m-%d'))
+
+    return result
+
+#d1 = unix_time_millis(date_range.datetime.min())
 body = dbc.Container([ 
 
-dbc.Row([html.P("Projections for infections and deaths in Indian States and  for overall India are based in part on the model described in the following paper: ",style= {"color":"#151516","font-size":"20px"}),]),
-dbc.Row([html.P(dcc.Link("Hidden Parameters Impacting Resurgence of SARS-CoV-2 Pandemic",href="https://www.medrxiv.org/content/10.1101/2021.01.15.20248217v1",target="_blank",style = {"color":"#6211FF","font-size":"20px"}))]),
-dbc.Row([html.P("Projections on removal of lockdown coming soon...",style={'color':'#9E12D6',"font-size":"20px"})]),
-dbc.Row([html.P("Computing is provided by Chemeleon Cloud, sponsored by NSF-USA",style = {"font-size":"10px"})]),
 
-      dbc.Row(
-        [html.Br()]),
-    dbc.Row([
-   dbc.Col([html.H3(id = "sim_ic", style = {'display': 'inline-block'}),
-                 html.Br(),
-                 html.P("Cummulative",style = {'display': 'inline-block'}),
-                 daq.BooleanSwitch(
-                id='sim_cum-ic',
-                on=False,
-                style = {'display': 'inline-block','size':'20%'}
-                        ),
-                               html.Br(),
-            html.P("G -- Cummulative Cases, mav -- Moving Average"),
-              # html.P(id = "sim_ind_title", style = {'color':'green','display': 'inline-block'}),
-               dcc.Graph(id='sim_i_fig',figure = plot_total_cases(True))] ),
-        dbc.Col([
-           # html.H3(id = "sim_i_d", style = {'display': 'inline-block'}),
-            html.Br(),
-                 html.P("Cummulative",style = {'display': 'inline-block'}),
-                 daq.BooleanSwitch(
-                id='sim_cum-i_d',
-                on=False,
-                style = {'display': 'inline-block','size':'20%'}
-                        ),
-                               html.Br(),
-                html.P("D -- Cummulative Deaths, mav -- Moving Average"),
-            #html.P(id = "sim_ind_title2", style = {'color':'red','display': 'inline-block'}),
-            dcc.Graph(id='sim_i_fig2',figure = plot_total_deaths(True))
-            
-            ]),
-    
-   ]
-        ),
+dbc.Row([html.P("Projections on removal of lockdown coming soon...",style={'color':'#9E12D6',"font-size":"20px"})]),\
+
+
     dbc.Row(
         [
-    dcc.Dropdown(
+    dbc.Col(dcc.Dropdown(
         id='sim_st',
         options=[
             {'label':'Andaman and Nicobar','value':'an'},
@@ -408,37 +365,12 @@ dbc.Row([html.P("Computing is provided by Chemeleon Cloud, sponsored by NSF-USA"
  
         ],
         value='dl',style = {'color':'black','width':'50%','display': 'inline-block','margin-left':'0.8%'}
-    ),
+    )),
+
+    
             ]
         ),
-    dbc.Row([
-        dbc.Col([html.H3(id = "sim_tc", style = {'display': 'inline-block'}),
-                 html.Br(),
-                 html.P("Cummulative",style = {'display': 'inline-block'}),
-                 daq.BooleanSwitch(
-                id='sim_cum-c',
-                on=False,
-                style = {'display': 'inline-block','size':'20%'}
-                        ),
-                               html.Br(),
-               html.P(id = "sim_title1", style = {'color':'green','display': 'inline-block'}),dcc.Graph(id='sim_fig',figure = plot_cases('dl',True))] ),
-        dbc.Col([
-            html.H3(id = "sim_td", style = {'display': 'inline-block'}),
-            html.Br(),
-                 html.P("Cummulative",style = {'display': 'inline-block'}),
-                 daq.BooleanSwitch(
-                id='sim_cum-d',
-                on=False,
-                style = {'display': 'inline-block','size':'20%'}
-                        ),
-                               html.Br(),
-            html.P(id = "sim_title2", style = {'color':'red','display': 'inline-block'}),
-            dcc.Graph(id='sim_fig2',figure = plot_deaths('dl',True))
-            
-            ])
-        ,])
-
-,                                                                             
+                                                                              
     
 
 ],style={"height": "100vh"}
@@ -448,65 +380,3 @@ dbc.Row([html.P("Computing is provided by Chemeleon Cloud, sponsored by NSF-USA"
 #app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SUPERHERO])
 server = app.server
 layout = html.Div([body])
-
-@app.callback(
-    Output('sim_fig', 'figure'),
-    Input('sim_st', 'value'),
-    Input('sim_cum-c','on'))
-def update_figure_sim(st,ca):
-    fig1 = plot_cases(st,ca)
-    fig1.update_layout(transition_duration=500)
-    return fig1
-
-@app.callback(
-    Output('sim_fig2', 'figure'),
-    Input('sim_st', 'value'),
-    Input('sim_cum-d','on'))
-def update_figure_sim2(st,ca):
-    fig2 = plot_deaths(st,ca)
-    fig2.update_layout(transition_duration=500)
-    return fig2
-
-@app.callback(
-    Output('sim_title1','children'),
-    Input('sim_st','value')
-    )
-def update_output_divsim1(st):
-    return u'Cases in {}'.format(state_dic[st]) 
-
-@app.callback(
-    Output('sim_title2','children'),
-    Input('sim_st','value')
-    )
-def update_output_divsim2(st):
-    return u'Deaths in {}'.format(state_dic[st]) 
-
-@app.callback(
-    Output('sim_i_fig', 'figure'),
-    Input('sim_cum-ic','on'))
-def update_figure_sim3(ca):
-    fig1 = plot_total_cases(ca)
-    fig1.update_layout(transition_duration=500)
-    return fig1
-
-@app.callback(
-    Output('sim_i_fig2', 'figure'),
-    Input('sim_cum-i_d','on'))
-def update_figure_sim4(ca):
-    fig2 = plot_total_deaths(ca)
-    fig2.update_layout(transition_duration=500)
-    return fig2
-
-@app.callback(
-    Output('sim_ind_title1','children'),
-    Input('sim_st','value')
-    )
-def update_output_divsim3(st):
-    return u'Cases in {}'.format(state_dic[st]) 
-
-@app.callback(
-    Output('sim_ind_title2','children'),
-    Input('sim_st','value')
-    )
-def update_output_divsim4(st):
-    return u'Deaths in {}'.format(state_dic[st]) 
