@@ -37,20 +37,20 @@ navbar = dbc.Navbar(
                 dbc.Row(
                     [
                         #dbc.Col(html.Img(src="/assets/virus.png", height="30px")),
-                        dbc.Col(dbc.NavbarBrand("Indian COVID-19 Tracker", className="ml-2")),
-                        
+                        dbc.Col(dbc.NavbarBrand("Indian COVID-19 Projections",style={'font-size': '40px'})),
+                      
                          
                     ],
-                    align="center",
+                    #align="right",
                     no_gutters=True,
                 ),dbc.Row([ 
                     html.P(dcc.Link('Computational Decision Science Laboratory', 
                                          href='https://sites.google.com/iit.edu/cdsl',target="_blank",
-                                         style = {"color": "#ff1127",'display':'inline-block',}),style = {'margin-left':'6%'}  ,id='submit-val'),]),
+                                         style = {"color": "#ff1127",}),style = {'font-size': '20px','margin-left':"20px"}  ,id='submit-val'),]),
                 dbc.Row([ 
                     html.P(dcc.Link( 'Illinois Institute of Technology', 
                                          href='https://www.iit.edu/',target="_blank",
-                                         style = {"color": "#ff1127",'display':'inline-block',}),style = {'margin-left':'6%'}  ,id='iit'),])
+                                         style = {"color": "#ff1127",}),style = {'font-size': '20px','margin-left':"20px"}  ,id='iit'),])
                     ],href="/home",
                 
             ),
@@ -93,10 +93,10 @@ app.layout = html.Div([
 @app.callback(Output('page-content', 'children'),
               [Input('url', 'pathname')])
 def display_page(pathname):
-    if pathname == '/Projections':
-        return simulations.layout
-    else:
+    if pathname == '/home':
         return home.layout
+    else:
+        return simulations.layout
 
 
 
