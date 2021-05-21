@@ -97,9 +97,9 @@ def plot_cases(state,ca):
     st = st[st['date'] > '2021-01-31']
     st['mv3'] = st.iloc[:,1].rolling(window=7).mean()
     fig = go.Figure()
-    fig.add_trace(go.Bar(x=st['date'],y = st['cases'],name="Actual G"))
-    fig.add_trace(go.Scatter(x=sim_data['date'],y = sim_data['G'],name="G"))
-    fig.add_trace(go.Scatter(x=st['date'],y = st['mv3'],name="mav",line = dict(shape = 'linear', color = '#0000FF', dash = 'dash')))
+    fig.add_trace(go.Bar(x=st['date'],y = st['cases'],name="Actual"))
+    fig.add_trace(go.Scatter(x=sim_data['date'],y = sim_data['G'],name="Projections"))
+    fig.add_trace(go.Scatter(x=st['date'],y = st['mv3'],name="7-Mav",line = dict(shape = 'linear', color = '#0000FF', dash = 'dash')))
     #fig = go.Figure()
     #fig.add_trace(go.Scatter(x=st['date'],y=st['cases'],mode= 'markers',name='Cases'))
     #fig.add_trace(go.Scatter(x=sim_data['date'],y=sim_data['infections'],mode= 'markers',name='I'))
@@ -172,9 +172,9 @@ def plot_deaths(state,ca):
     #st_name = u'Deaths in {}'.format(state_dic[state])
     #fig = px.bar(st, x='date', y='deaths')
     fig = go.Figure()
-    fig.add_trace(go.Bar(x=st['date'],y = st['deaths'],name="Actual D"))
-    fig.add_trace(go.Scatter(x=sim_data['date'],y = sim_data['D'],name="D"))
-    fig.add_trace(go.Scatter(x=st['date'],y = st['mv3'],name="mav",line = dict(shape = 'linear', color = '#0000FF', dash = 'dash')))
+    fig.add_trace(go.Bar(x=st['date'],y = st['deaths'],name="Actual"))
+    fig.add_trace(go.Scatter(x=sim_data['date'],y = sim_data['D'],name="Projections"))
+    fig.add_trace(go.Scatter(x=st['date'],y = st['mv3'],name="7-Mav",line = dict(shape = 'linear', color = '#0000FF', dash = 'dash')))
     fig.update_layout(
     autosize=True,
     #title =  st_name,
@@ -226,13 +226,13 @@ def plot_total_cases(ca):
     fig = go.Figure()
     #fig.add_trace(go.Scatter(x=ind['date'],y=ind['sum'],mode= 'markers'))
     #fig = px.bar(ind, x='date', y='sum')
-    fig.add_trace(go.Bar(x=ind['date'],y=ind['sum'],name='Actual G'))
+    fig.add_trace(go.Bar(x=ind['date'],y=ind['sum'],name='Actual'))
     
     if ca == True: 
-        fig.add_trace(go.Scatter(x=tc['date'],y=tc['cases'],name='G'))
+        fig.add_trace(go.Scatter(x=tc['date'],y=tc['cases'],name='Projections'))
     else:
-        fig.add_trace(go.Scatter(x=tc['date'],y=tc['diff'],name='G'))
-    fig.add_trace(go.Scatter(x=ind['date'],y=ind['mv3'],name='mav',line = dict(shape = 'linear', color = '#0000FF', dash = 'dash')))
+        fig.add_trace(go.Scatter(x=tc['date'],y=tc['diff'],name='Projections'))
+    fig.add_trace(go.Scatter(x=ind['date'],y=ind['mv3'],name='7-Mav',line = dict(shape = 'linear', color = '#0000FF', dash = 'dash')))
     fig.update_layout(
     autosize=True,
     title = "Cases in India",
@@ -282,12 +282,12 @@ def plot_total_deaths(ca):
     ind['mv3'] = ind.iloc[:,1].rolling(window=7).mean()
     fig = go.Figure()
     #fig.add_trace(go.Scatter(x=ind['date'],y=ind['sum'],mode= 'markers'))
-    fig.add_trace(go.Bar(x=ind['date'],y=ind['sum'],name='Actual D'))
+    fig.add_trace(go.Bar(x=ind['date'],y=ind['sum'],name='Actual'))
     if ca == True: 
-        fig.add_trace(go.Scatter(x=tc['date'],y=tc['deaths'],name='D'))
+        fig.add_trace(go.Scatter(x=tc['date'],y=tc['deaths'],name='Projections'))
     else:
-        fig.add_trace(go.Scatter(x=tc['date'],y=tc['diff'],name='D'))
-    fig.add_trace(go.Scatter(x=ind['date'],y=ind['mv3'],name='mav',line = dict(shape = 'linear', color = '#0000FF', dash = 'dash')))
+        fig.add_trace(go.Scatter(x=tc['date'],y=tc['diff'],name='Projections'))
+    fig.add_trace(go.Scatter(x=ind['date'],y=ind['mv3'],name='7-Mav',line = dict(shape = 'linear', color = '#0000FF', dash = 'dash')))
     #fig.add_trace(go.Scatter(x=cum_pro['date'],y=cum_pro['deaths'],name='D'))
     fig.update_layout(
     autosize=True,
@@ -343,7 +343,7 @@ dbc.Row([html.P("Computing is provided by Chemeleon Cloud, sponsored by NSF-USA"
                 style = {'display': 'inline-block','size':'20%'}
                         ),
                                html.Br(),
-            html.P("G -- Cummulative Cases, mav -- Moving Average"),
+            
               # html.P(id = "sim_ind_title", style = {'color':'green','display': 'inline-block'}),
                dcc.Graph(id='sim_i_fig',figure = plot_total_cases(True))] ),
         dbc.Col([
@@ -356,7 +356,7 @@ dbc.Row([html.P("Computing is provided by Chemeleon Cloud, sponsored by NSF-USA"
                 style = {'display': 'inline-block','size':'20%'}
                         ),
                                html.Br(),
-                html.P("D -- Cummulative Deaths, mav -- Moving Average"),
+              
             #html.P(id = "sim_ind_title2", style = {'color':'red','display': 'inline-block'}),
             dcc.Graph(id='sim_i_fig2',figure = plot_total_deaths(True))
             
