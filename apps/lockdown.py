@@ -181,7 +181,7 @@ def extend_state(state, ConfirmFile, DeathFile, PopFile, ParaFile, release_frac,
    peak_day = 0
  
    # release_day = max(release_day, dates_ext.index('2021-06-01'))
-   release_day = dates_ext.index(release_date)
+   release_day = dates_ext.index(release_d)
 
    S = [n_0 * eta * (1 - Hiding_init)]
    E = [0]
@@ -209,29 +209,20 @@ def extend_state(state, ConfirmFile, DeathFile, PopFile, ParaFile, release_frac,
        fig.add_trace(go.Bar(x=days_ext[1:len(d_confirmed)],y = [i / 1000 for i in d_confirmed[1:]],name="Reported"))
        fig.add_trace(go.Scatter(x=days_ext[1:],y = [i / 1000 for i in dG1[1:]],name=f'{round(release_frac * 100)}% release'))
        fig.add_trace(go.Scatter(x=days_ext[1:],y = [i / 1000 for i in dG0[1:]],name='Original\nProjection'))
-       fig.add_vline(days_ext[reopen_day],line_dash ='dash')
    elif cd == "deaths" and cum == False:
        fig.add_trace(go.Bar(x=days_ext[1:len(d_death)],y = [i / 1000 for i in d_death[1:]],name="Reported"))
        fig.add_trace(go.Scatter(x=days_ext[1:],y = [i / 1000 for i in dD1[1:]],name=f'{round(release_frac * 100)}% release'))
        fig.add_trace(go.Scatter(x=days_ext[1:],y = [i / 1000 for i in dD0[1:]],name='Original\nProjection'))
-       fig.add_vline(days_ext[reopen_day],line_dash ='dash')
    elif cd == "cases" and cum == True:
        fig.add_trace(go.Bar(x=days,y = [i / 1000 for i in confirmed],name="Reported"))
        fig.add_trace(go.Scatter(x=days_ext,y = [i / 1000 for i in G1],name=f'{round(release_frac * 100)}% release'))
        fig.add_trace(go.Scatter(x=days_ext,y = [i / 1000 for i in G0],name='Original\nProjection'))
-       fig.add_vline(days_ext[reopen_day],line_dash ='dash')
    elif cd == "deaths" and cum == True:
        fig.add_trace(go.Bar(x=days,y = [i / 1000 for i in death],name="Reported"))
        fig.add_trace(go.Scatter(x=days_ext,y = [i / 1000 for i in D1],name=f'{round(release_frac * 100)}% release'))
        fig.add_trace(go.Scatter(x=days_ext,y = [i / 1000 for i in D0],name='Original\nProjection'))
-       fig.add_vline(days_ext[reopen_day],line_dash ='dash')
-
-   '''data = [S0, E0, I0, A0, IH0, IN0, D0, R0, G0, H0, betas0, S1, E1, I1, A1, IH1, IN1, D1, R1, G1, H1, HH1, betas1]
-   c0 = ['S', 'E', 'I', 'A', 'IH', 'IN', 'D', 'R', 'G', 'H', 'betas', 'S1', 'E1', 'I1', 'A1', 'IH1', 'IN1', 'D1', 'R1',
-         'G1', 'H1', 'HH1', 'betas1']
-   df = pd.DataFrame(data, columns=dates_ext)
-   df.insert(0, 'series', c0)
-   df.to_csv(f'{state_path}/sim.csv', index=False)'''
+   
+   fig.add_vline(release_d,line_dash ='dash')
    fig.update_layout(
     autosize=True,
     #title = titlename,
@@ -394,19 +385,43 @@ def extend_all(cd,rel_days,rel_frac,rel_date,cum = False):
 body = dbc.Container([ 
 
 
-dbc.Row([html.P("Projections on removal of lockdown coming soon...",style={'color':'#9E12D6',"font-size":"20px"})]),
+dbc.Row([html.P("These projections are based on population behaviour in 2021 and can change based on adoption of social distancing measures",style={'color':'#9E12D6',"font-size":"20px"})]),
+dbc.Row(
+        [
+            dbc.Col(html.Label("Release Date ",style = {'font-size':'20px','display': 'inline-block'})),
+            dbc.Col(html.Label("Release Fraction ",style = {'font-size':'20px','display': 'inline-block'})),
+            dbc.Col(html.Label("Release days ",style = {'font-size':'20px','display': 'inline-block'}))
+        ]
+        ),
 dbc.Row([
-    dbc.Col([html.Label("Release Date ",style = {'font-size':'20px','display': 'inline-block'}),
+    dbc.Col([
 dcc.DatePickerSingle(
     id='date-picker-single',
     date=date(2021, 6, 1),
     style  = {'display': 'inline-block','width':'10px', 'height':'10px'}
 )]),
-    dbc.Col([html.Label("Release Fraction",style = {'font-size':'20px','display': 'inline-block'}),
-             dcc.Input(id= 'rel_fra',type ='number', min =0.1, max =1,step =0.01,value =0.25,style  = {'display': 'inline-block','width':'50px', 'height':'30px'} )])
-    ,
-    dbc.Col([html.Label("Release Days",style = {'font-size':'20px','display': 'inline-block'}),
-             dcc.Input(id='rel_d',type='number',value=30,min =1, max=90,style  = {'display': 'inline-block','width':'50px', 'height':'30px'})])
+    dbc.Col(dcc.Dropdown(
+        id='drp_relfrac',
+        options=[
+            {'label':'25%','value':0.25},
+            {'label': '50%', 'value':0.5},
+            {'label':'75%','value':0.75},
+            {'label':'100%','value':1},
+ 
+        ],
+        value=0.25,style = {'color':'black','width':'75%','display': 'inline-block','margin-left':'0.8%'}
+    )),
+    dbc.Col(dcc.Dropdown(
+        id='rel_d',
+        options=[
+            {'label':'1 week','value':1*7},
+            {'label': '2 week', 'value':2*7},
+            {'label':'3 week','value':3*7},
+            {'label':'4 week','value':4*7},
+ 
+        ],
+        value=1*7,style = {'color':'black','width':'75%','display': 'inline-block','margin-left':'0.8%'}
+    ))
     ]),
 
       dbc.Row(
@@ -498,7 +513,7 @@ dcc.DatePickerSingle(
     Input('drp_dn','value'),
     Input('cum_state_cases','on'),
     Input('date-picker-single','date'),
-    Input('rel_fra','value'),
+    Input('drp_relfrac','value'),
     Input('rel_d','value'))
 def update_figure_l(ca,cum,rel_date,rel_fra,rel_d):
     fig2 = extedend_state(ca,'cases',rel_d,rel_fra,rel_date,0,cum)
@@ -510,7 +525,7 @@ def update_figure_l(ca,cum,rel_date,rel_fra,rel_d):
     Input('drp_dn','value'),
     Input('cum_state_deaths','on'),
     Input('date-picker-single','date'),
-    Input('rel_fra','value'),
+    Input('drp_relfrac','value'),
     Input('rel_d','value'))
 def update_figure_l1(ca,cum,rel_date,rel_fra,rel_d):
     fig2 = extedend_state(ca,'deaths',rel_d,rel_fra,rel_date,0,cum)
@@ -535,7 +550,7 @@ def update_figure_l4(st):
     Output('fig_ind_cases', 'figure'),
     Input('bool_cum_cases','on'),
     Input('date-picker-single','date'),
-    Input('rel_fra','value'),
+    Input('drp_relfrac','value'),
     Input('rel_d','value'))
 def update_figure_l5(ca,rel_date,rel_fra,rel_d):
     fig1 = extend_all('cases',rel_d,rel_fra,rel_date,ca)
@@ -546,7 +561,7 @@ def update_figure_l5(ca,rel_date,rel_fra,rel_d):
     Output('fig_ind_deaths', 'figure'),
     Input('bool_cum_deaths','on'),
     Input('date-picker-single','date'),
-    Input('rel_fra','value'),
+    Input('drp_relfrac','value'),
     Input('rel_d','value'))
 def update_figure_l6(ca,rel_date,rel_fra,rel_d):
     fig2 = extend_all('deaths',rel_d,rel_fra,rel_date,ca)
