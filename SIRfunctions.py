@@ -1,8 +1,43 @@
 import numpy as np
 import datetime
 import pandas as pd
+import math
 
 expon = 1
+
+
+def weighted_relative_deviation(weights0, cases0, sim0, start_value, num_para):
+	for i in range(len(cases0)):
+		if cases0[i] >= start_value:
+			break
+	cases = cases0[i:]
+	sim = sim0[i:]
+	weights = weights0[i:]
+	size = len(cases)
+	sum_wt = sum(weights)
+	data = [(cases[i] - sim[i]) / sim[i] for i in range(size)]
+	metric = math.sqrt(sum([data[i] ** 2 * weights[i] for i in range(size)])
+	                   /
+	                   ((size - num_para) * sum_wt / size)
+	                   )
+	return metric
+
+
+def weighted_deviation(weights0, cases0, sim0, start_value, num_para):
+	for i in range(len(cases0)):
+		if cases0[i] >= start_value:
+			break
+	cases = cases0[i:]
+	sim = sim0[i:]
+	weights = weights0[i:]
+	size = len(cases)
+	sum_wt = sum(weights)
+	data = [(cases[i] - sim[i]) for i in range(size)]
+	metric = math.sqrt(sum([data[i] ** 2 * weights[i] for i in range(size)])
+	                   /
+	                   ((size - num_para) * sum_wt / size)
+	                   )
+	return metric
 
 
 def c(eta, c1):
@@ -147,6 +182,43 @@ def SIARG(t, y):
 	        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 
+def SEIARG_SG(t, y):
+	S = y[0]
+	E = y[1]
+	I = y[2]
+	A = y[3]
+	IH = y[4]
+	IN = y[5]
+	D = y[6]
+	R = y[7]
+	G = y[8]
+	beta = y[9]
+	gammaE = y[10]
+	alpha = y[11]
+	gamma = y[12]
+	gamma2 = y[13]
+	gamma3 = y[14]
+	a1 = y[15]
+	a2 = y[16]
+	a3 = y[17]
+	eta = y[18]
+	n_0 = y[19]
+	c1 = y[20]
+	H0 = y[21]
+	beta1 = computeBeta_SG(beta, eta, n_0, S, c1, H0)
+	return [-beta1 * S * (I + A) / n_0,  # dS
+	        beta1 * S * (I + A) / n_0 - gammaE * E,  # dE
+	        (1 - alpha) * gammaE * E - (gamma + gamma2) * I,  # dI
+	        alpha * gammaE * E - gamma3 * A,  # dA
+	        gamma * I - (a1 + a2) * IH,  # dIH
+	        gamma2 * I - a3 * IN,  # dIN
+	        a2 * IH,  # dD
+	        a1 * IH + a3 * IN + gamma3 * A,  # dR
+	        (1 - alpha) * gammaE * E,  # dG
+	        beta1,
+	        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+
 def SEIARG(t, y):
 	S = y[0]
 	E = y[1]
@@ -172,6 +244,7 @@ def SEIARG(t, y):
 	H = y[21]
 	H0 = y[22]
 	beta1 = computeBeta_combined(beta, eta, n_0, S, I, H, c1, H0)
+	# print(f'dS={-beta1 * S * (I + A) / n_0}, S={S}, E={E}, I={I}, A={A}')
 	return [-beta1 * S * (I + A) / n_0,  # dS
 	        beta1 * S * (I + A) / n_0 - gammaE * E,  # dE
 	        (1 - alpha) * gammaE * E - (gamma + gamma2) * I,  # dI
@@ -211,6 +284,7 @@ def SEIARG_fixed(t, y):
 	H0 = y[22]
 	beta1 = beta
 	# beta1 = computeBeta_combined(beta, eta, n_0, S, I, H, c1, H0)
+	# print(f'dS={-beta1 * S * (I + A) / n_0}, S={S}, E={E}, I={I}, A={A}')
 	return [-beta1 * S * (I + A) / n_0,  # dS
 	        beta1 * S * (I + A) / n_0 - gammaE * E,  # dE
 	        (1 - alpha) * gammaE * E - (gamma + gamma2) * I,  # dI
@@ -295,6 +369,12 @@ def computeBeta_combined(beta, eta, n_0, S, I, H, c1, H0):
 	#                 (1 - c1 * S / (n_0 - H / eta)))
 	# beta1 = beta * (1 - c1 * I / (eta * n_0 + H0 - H))
 	beta1 = beta * (1 - c1) / (1 - c1 * (S / (eta * n_0 + H0 - H)))
+
+	return beta1
+
+
+def computeBeta_SG(beta, eta, n_0, S, c1, H0):
+	beta1 = beta * (1 - c1) / (1 - c1 * (S / (eta * n_0 + H0)))
 
 	return beta1
 

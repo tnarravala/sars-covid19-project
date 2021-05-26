@@ -67,7 +67,7 @@ total_deaths = deaths.set_index('state')
 total_state_deaths = total_deaths.iloc[:,-1:]
 total_deaths= total_state_deaths.sum()
 
-date_range = ["2021-02-10", "2021-07-1"]
+date_range = ["2021-02-10", "2021-08-5"]
 
 def plot_cases(state,ca):
     sim_data = pd.read_csv(f'extended/{state}/sim.csv')
@@ -241,7 +241,7 @@ def plot_total_cases(ca):
     height=400,
     yaxis = dict(
        #range = [0,100] ,
-       #rangemode="tozero",
+       rangemode="tozero",
         autorange=True,
         title_text='cases',
         titlefont=dict(size=10),
