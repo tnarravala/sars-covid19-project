@@ -423,7 +423,8 @@ dcc.DatePickerSingle(
                                html.Br(),
             
               # html.P(id = "sim_ind_title", style = {'color':'green','display': 'inline-block'}),
-               dcc.Graph(id='fig_ind_cases',figure = extend_all('cases',30,release_frac,release_date))] ),
+               #dcc.Graph(id='fig_ind_cases',figure = extend_all('cases',30,release_frac,release_date))
+               ] ),
         dbc.Col([
            # html.H3(id = "sim_i_d", style = {'display': 'inline-block'}),
             html.Br(),
@@ -436,7 +437,7 @@ dcc.DatePickerSingle(
                                html.Br(),
               
             #html.P(id = "sim_ind_title2", style = {'color':'red','display': 'inline-block'}),
-            dcc.Graph(id='fig_ind_deaths',figure = extend_all('deaths',release_days,release_frac,release_date))
+            #dcc.Graph(id='fig_ind_deaths',figure = extend_all('deaths',release_days,release_frac,release_date))
             
             ]),
     
