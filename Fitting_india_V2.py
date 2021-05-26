@@ -4,7 +4,6 @@ import time
 import concurrent.futures
 
 from scipy.optimize import minimize
-import matplotlib
 
 import sys
 from sklearn.metrics import r2_score, mean_squared_error
