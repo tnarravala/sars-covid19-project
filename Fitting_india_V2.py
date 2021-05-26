@@ -1,22 +1,19 @@
 import numpy as np
 import pandas as pd
 import time
-import math
 import concurrent.futures
-import multiprocessing
+
 from scipy.optimize import minimize
 import matplotlib
 
-import matplotlib.pyplot as plt
 import sys
 from sklearn.metrics import r2_score, mean_squared_error
 from SIRfunctions import SEIARG, SEIARG_fixed, weighted_deviation, weighted_relative_deviation
 import datetime
 from numpy.random import uniform as uni
 import os
-import warnings
-from matplotlib.dates import DateFormatter
-import matplotlib.dates as mdates
+
+
 
 np.set_printoptions(threshold=sys.maxsize)
 Geo = 0.98
@@ -493,37 +490,7 @@ def plot_combined(state, confirmed, death, days, n_0, para, state_path):
         = simulate_combined(size, S, E, I, A, IH, IN, D, R, G, H, beta, gammaE, alpha, gamma, gamma2, gamma3, a1, a2,
                             a3, h, Hiding_init, eta, c1, n_0, reopen_day)
 
-    fig = plt.figure(figsize=(12, 10))
-    fig.suptitle(state)
-    ax = fig.add_subplot(321)
-    # ax.set_title(state)
-    ax2 = fig.add_subplot(322)
-    ax3 = fig.add_subplot(323)
-    ax4 = fig.add_subplot(324)
-    ax5 = fig.add_subplot(325)
-    ax.axvline(days[reopen_day], linestyle='dashed', color='tab:grey')
-    ax2.axvline(days[reopen_day], linestyle='dashed', color='tab:grey')
-    ax3.axvline(days[reopen_day], linestyle='dashed', color='tab:grey', label=days[reopen_day].strftime('%Y-%m-%d'))
-    ax.plot(days, [i / 1000 for i in confirmed], linewidth=5, linestyle=':', label="Cumulative\nCases")
-    ax2.plot(days, [i / 1000 for i in death], linewidth=5, linestyle=':', label="Cumulative\nDeaths")
-    ax.plot(days, [i / 1000 for i in G], label='G')
-    ax2.plot(days, [i / 1000 for i in D], label='D')
-    ax3.plot(days, betas, label='beta')
-    ax5.plot(days, [i / 1000 for i in S], label='S')
-    ax5.plot(days, [i / 1000 for i in H], label='H')
-    diff_G = pd.Series(np.diff(G))
-    diff_confirmed = pd.Series(np.diff(confirmed))
-    ax4.plot(days[-len(diff_confirmed):], [i / 1000 for i in diff_confirmed], label='daily new cases')
-    ax4.plot(days[-len(diff_G):], [i / 1000 for i in diff_G], label='dG')
-    ax.legend()
-    ax2.legend()
-    ax3.legend()
-    ax4.legend()
-    ax5.legend()
-    fig.autofmt_xdate()
-    fig.savefig(f'{state_path}/sim.png', bbox_inches="tight")
-    # fig.savefig(f'init_only_{end_date}/{state}/sim.png', bbox_inches="tight")
-    plt.close(fig)
+    
     return [S, E, I, A, IH, IN, D, R, G, H, betas]
 
 
@@ -636,129 +603,7 @@ def extend_state(state, ConfirmFile, DeathFile, PopFile, ParaFile, release_frac,
    dD1.insert(0, 0)
 
 
-   # fig = plt.figure(figsize=(20, 20))
-   fig = plt.figure(figsize=(16, 12))
-   # fig.suptitle(f'{state} eta={round(eta, 3)}')
-   fig.suptitle(state_dict[state])
-   # ax = fig.add_subplot(421)
-   # ax.set_title('Confirmed')
-   # ax2 = fig.add_subplot(422)
-   # ax2.set_title('Death')
-   # ax3 = fig.add_subplot(423)
-   # ax3.set_title('Infected')
-   # ax4 = fig.add_subplot(424)
-   # ax4.set_title('Asymptomatic')
-   # ax5 = fig.add_subplot(425)
-   # ax5.set_title('Beta')
-   # ax6 = fig.add_subplot(426)
-   # ax6.set_title('Susceptible')
-   # ax7 = fig.add_subplot(427)
-   # ax7.set_title('New Cases')
-   # ax8 = fig.add_subplot(428)
-   # ax8.set_title('New Deaths')
-
-   ax = fig.add_subplot(221)
-   ax.set_title('Confirmed Cases')
-   ax2 = fig.add_subplot(222)
-   ax2.set_title('Deaths')
-   ax7 = fig.add_subplot(223)
-   ax7.set_title('Daily New Cases')
-   ax8 = fig.add_subplot(224)
-   ax8.set_title('Daily New Deaths')
-
-   # ax.axvline(days_ext[reopen_day], linestyle='dashed', color='tab:grey', label=reopen_date)
-   # ax2.axvline(days_ext[reopen_day], linestyle='dashed', color='tab:grey', label=reopen_date)
-   # ax3.axvline(days_ext[reopen_day], linestyle='dashed', color='tab:grey', label=reopen_date)
-   # ax4.axvline(days_ext[reopen_day], linestyle='dashed', color='tab:grey', label=reopen_date)
-   # ax5.axvline(days_ext[reopen_day], linestyle='dashed', color='tab:grey', label=reopen_date)
-   # ax6.axvline(days_ext[reopen_day], linestyle='dashed', color='tab:grey', label=reopen_date)
-   # ax7.axvline(days_ext[reopen_day], linestyle='dashed', color='tab:grey', label=reopen_date)
-   # ax8.axvline(days_ext[reopen_day], linestyle='dashed', color='tab:grey', label=reopen_date)
-   # ax.axvline(days_ext[release_day], linestyle='dashed', color='tab:red', label=release_date)
-   # ax2.axvline(days_ext[release_day], linestyle='dashed', color='tab:red', label=release_date)
-   # ax3.axvline(days_ext[release_day], linestyle='dashed', color='tab:red', label=release_date)
-   # ax4.axvline(days_ext[release_day], linestyle='dashed', color='tab:red', label=release_date)
-   # ax5.axvline(days_ext[release_day], linestyle='dashed', color='tab:red', label=release_date)
-   # ax6.axvline(days_ext[release_day], linestyle='dashed', color='tab:red', label=release_date)
-   # ax7.axvline(days_ext[release_day], linestyle='dashed', color='tab:red', label=release_date)
-   # ax8.axvline(days_ext[release_day], linestyle='dashed', color='tab:red', label=release_date)
-
-   ax.axvline(days_ext[reopen_day], linestyle='dashed', color='tab:grey')
-   ax2.axvline(days_ext[reopen_day], linestyle='dashed', color='tab:grey')
-   ax7.axvline(days_ext[reopen_day], linestyle='dashed', color='tab:grey')
-   ax8.axvline(days_ext[reopen_day], linestyle='dashed', color='tab:grey')
-   ax.axvline(days_ext[release_day], linestyle='dashed', color='tab:red')
-   ax2.axvline(days_ext[release_day], linestyle='dashed', color='tab:red')
-   ax7.axvline(days_ext[release_day], linestyle='dashed', color='tab:red')
-   ax8.axvline(days_ext[release_day], linestyle='dashed', color='tab:red')
-
-   ax.plot(days, [i / 1000 for i in confirmed], linewidth=5, linestyle=':', label="Reported", alpha=0.6)
-   ax2.plot(days, [i / 1000 for i in death], linewidth=5, linestyle=':', label="Reported", alpha=0.6)
-   # ax.scatter(days, [i / 1000 for i in confirmed], s=20, linewidth=0, alpha=1, label="Reported\nCases")
-   # ax2.scatter(days, [i / 1000 for i in death], s=20, linewidth=0, alpha=1, label="Reported\nDeaths")
-
-   ax.plot(days_ext, [i / 1000 for i in G1], label=f'{round(release_frac * 100)}% release', color='orangered')
-   ax2.plot(days_ext, [i / 1000 for i in D1], label=f'{round(release_frac * 100)}% release', color='orangered')
    
-   ax.plot(days_ext, [i / 1000 for i in G0], label='Original\nProjection', color='green')
-   ax2.plot(days_ext, [i / 1000 for i in D0], label='Original\nProjection', color='green')
-   
-  
-   
-   
-
-   # ax3.plot(days_ext, [i / 1000 for i in I0], label="I")
-   # ax3.plot(days_ext, [i / 1000 for i in I1], label="I2")
-
-   # ax4.plot(days_ext, [i / 1000 for i in A0], label="A")
-   # ax4.plot(days_ext, [i / 1000 for i in A1], label="A2")
-
-   # ax5.plot(days_ext, betas0, label="beta")
-   # ax5.plot(days_ext, betas1, label="beta2")
-
-   # ax6.plot(days_ext, [i / 1000 for i in S0], label="S")
-   # ax6.plot(days_ext, [i / 1000 for i in S1], label="S2")
-   # ax6.plot(days_ext, [i / 1000 for i in H0], label="H")
-   # ax6.plot(days_ext, [i / 1000 for i in HH1], label="HH")
-
-   # ax7.plot(days_ext[1:len(d_confirmed)], [i / 1000 for i in d_confirmed[1:]], linewidth=5, linestyle=':',
-   #          label="Reported\nCases", alpha=0.6)
-   # ax8.plot(days_ext[1:len(d_death)], [i / 1000 for i in d_death[1:]], linewidth=5, linestyle=':',
-   #          label="Reported\nDeaths", alpha=0.6)
-   ax7.scatter(days_ext[1:len(d_confirmed)], [i / 1000 for i in d_confirmed[1:]], s=15, linewidth=0, alpha=0.6,
-               label="Reported")
-   ax8.scatter(days_ext[1:len(d_death)], [i / 1000 for i in d_death[1:]], s=15, linewidth=0, alpha=0.6,
-               label="Reported")
-   ax7.plot(days_ext[1:], [i / 1000 for i in dG1[1:]], label=f"{round(release_frac * 100)}% release",
-            color='orangered')
-   
-   ax7.plot(days_ext[1:], [i / 1000 for i in dG0[1:]], label="Original\nProjection", color='green')
-   ax8.plot(days_ext[1:], [i / 1000 for i in dD1[1:]], label=f"{round(release_frac * 100)}% release",
-            color='orangered')
-   
-   ax8.plot(days_ext[1:], [i / 1000 for i in dD0[1:]], label="Original\nProjection", color='green')
-   
-
-   ax.legend()
-   ax2.legend()
-   # ax3.legend()
-   # ax4.legend()
-   # ax5.legend()
-   # ax6.legend()
-   ax7.legend()
-   ax8.legend()
-
-   fig.autofmt_xdate()
-   fig.savefig(f'{state_path}/extended_{state}.png', bbox_inches="tight")
-   # plt.show()
-   plt.close(fig)
-
-   '''data = [S0, E0, I0, A0, IH0, IN0, D0, R0, G0, H0, betas0, S1, E1, I1, A1, IH1, IN1, D1, R1, G1, H1, HH1, betas1]
-   c0 = ['S', 'E', 'I', 'A', 'IH', 'IN', 'D', 'R', 'G', 'H', 'betas', 'S1', 'E1', 'I1', 'A1', 'IH1', 'IN1', 'D1', 'R1',
-         'G1', 'H1', 'HH1', 'betas1']
-   df = pd.DataFrame(data, columns=dates_ext)
-   df.insert(0, 'series', c0)
-   df.to_csv(f'{state_path}/sim.csv', index=False)'''
    return state, confirmed, death, G0, D0, G1, D1, release_day
 
 
@@ -777,58 +622,7 @@ def extend_india(confirmed, death, G0, D0, G1, D1, release_day):
     dD2 = [D1[i] - D1[i - 1] for i in range(1, len(D1))]
     dD2.insert(0, 0)
 
-    fig = plt.figure(figsize=(9, 8))
-    fig.suptitle('India')
-    ax = fig.add_subplot(221)
-    ax.set_title('Confirmed Cases')
-    ax2 = fig.add_subplot(222)
-    ax2.set_title('Deaths')
-    ax7 = fig.add_subplot(223)
-    ax7.set_title('Daily New Cases')
-    ax8 = fig.add_subplot(224)
-    ax8.set_title('Daily New Deaths')
-
-    days_ext = [datetime.datetime.strptime(start_date, '%Y-%m-%d') + datetime.timedelta(days=i) for i in range(len(G0))]
-
-    ax.axvline(days_ext[release_day], linestyle='dashed', color='tab:red')
-    ax2.axvline(days_ext[release_day], linestyle='dashed', color='tab:red')
-    ax7.axvline(days_ext[release_day], linestyle='dashed', color='tab:red')
-    ax8.axvline(days_ext[release_day], linestyle='dashed', color='tab:red')
-
-    ax.plot(days_ext[:len(confirmed)], [i / 1000 for i in confirmed], linewidth=5, linestyle=':', label="Reported",
-            alpha=0.6)
-    ax2.plot(days_ext[:len(death)], [i / 1000 for i in death], linewidth=5, linestyle=':', label="Reported", alpha=0.6)
-    # ax.scatter(days_ext[:len(confirmed)], [i / 1000 for i in confirmed], s=20, linewidth=0, alpha=1,
-    #            label="Reported\nCases")
-    # ax2.scatter(days_ext[:len(death)], [i / 1000 for i in death], s=20, linewidth=0, alpha=1, label="Reported\nDeaths")
-
-    ax.plot(days_ext, [i / 1000 for i in G1], label='25% release', color='orangered')
-    ax2.plot(days_ext, [i / 1000 for i in D1], label='25% release', color='orangered')
-    ax.plot(days_ext, [i / 1000 for i in G0], label='Original\nProjection', color='green')
-    ax2.plot(days_ext, [i / 1000 for i in D0], label='Original\nProjection', color='green')
-
-    # ax7.plot(days_ext[1:len(d_confirmed)], [i / 1000 for i in d_confirmed[1:]], linewidth=5, linestyle=':',
-    #          label="Reported\nCases", alpha=0.6)
-    # ax8.plot(days_ext[1:len(d_death)], [i / 1000 for i in d_death[1:]], linewidth=5, linestyle=':',
-    #          label="Reported\nDeaths", alpha=0.6)
-    ax7.scatter(days_ext[1:len(d_confirmed)], [i / 1000 for i in d_confirmed[1:]], s=15, linewidth=0, alpha=0.6,
-                label="Reported")
-    ax8.scatter(days_ext[1:len(d_death)], [i / 1000 for i in d_death[1:]], s=15, linewidth=0, alpha=0.6,
-                label="Reported")
-
-    ax7.plot(days_ext[1:], [i / 1000 for i in dG2[1:]], label="25% release", color='orangered')
-    ax7.plot(days_ext[1:], [i / 1000 for i in dG[1:]], label="Original\nProjection", color='green')
-    ax8.plot(days_ext[1:], [i / 1000 for i in dD2[1:]], label="25% release", color='orangered')
-    ax8.plot(days_ext[1:], [i / 1000 for i in dD[1:]], label="Original\nProjection", color='green')
-
-    ax.legend()
-    ax2.legend()
-    ax7.legend()
-    ax8.legend()
-    fig.autofmt_xdate()
-    fig.savefig(f'india/extended/extended_india.png', bbox_inches="tight")
-    # plt.show()
-    plt.close(fig)
+    
     return
 
 
