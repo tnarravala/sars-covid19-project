@@ -294,25 +294,25 @@ def extend_india(confirmed, death, G0, D0, G1, D1, release_day,cd,cum):
         fig.add_trace(go.Bar(x=days_ext[1:len(d_confirmed)],y=[i / 1000 for i in d_confirmed[1:]],name="Reported"))
         fig.add_trace(go.Scatter(x =days_ext[1:],y=[i / 1000 for i in dG2[1:]],name =f'{round(release_frac * 100)}% release' ))
         fig.add_trace(go.Scatter(x=days_ext[1:],y =[i / 1000 for i in dG[1:]],name='Original\nProjection'))
-        fig.add_vline(days_ext[release_day],line_dash ='dash')
+        #fig.add_vline(days_ext[release_date],line_dash ='dash')
         titlename = "Cases in India"
     elif cd == "deaths" and cum == False:
         fig.add_trace(go.Bar(x=days_ext[1:len(d_death)],y=[i / 1000 for i in d_death[1:]],name="Reported"))
         fig.add_trace(go.Scatter(x =days_ext[1:],y=[i / 1000 for i in dD2[1:]],name =f'{round(release_frac * 100)}% release' ))
         fig.add_trace(go.Scatter(x=days_ext[1:],y =[i / 1000 for i in dD[1:]],name='Original\nProjection'))
-        fig.add_vline(days_ext[release_day],line_dash ='dash')
+        #fig.add_vline(days_ext[release_date],line_dash ='dash')
         titlename = "Deaths in India"
     elif cd == "cases" and cum == True:
         fig.add_trace(go.Bar(x=days_ext[:len(confirmed)],y=[i / 1000 for i in confirmed],name="Reported"))
         fig.add_trace(go.Scatter(x =days_ext,y=[i / 1000 for i in G1],name =f'{round(release_frac * 100)}% release' ))
         fig.add_trace(go.Scatter(x=days_ext,y =[i / 1000 for i in G0],name='Original\nProjection'))
-        fig.add_vline(days_ext[release_day],line_dash ='dash')
+        #fig.add_vline(days_ext[release_date],line_dash ='dash')
         titlename = "Cases in India"
     elif cd == "deaths" and cum == True:
         fig.add_trace(go.Bar(x=days_ext[:len(confirmed)],y=[i / 1000 for i in death],name="Reported"))
         fig.add_trace(go.Scatter(x =days_ext,y=[i / 1000 for i in D1],name =f'{round(release_frac * 100)}% release' ))
         fig.add_trace(go.Scatter(x=days_ext,y =[i / 1000 for i in D0],name='Original\nProjection'))
-        fig.add_vline(days_ext[release_day],line_dash ='dash')
+        #fig.add_vline(days_ext[release_date],line_dash ='dash')
         titlename = "Deaths in India"
     
     fig.update_layout(
@@ -411,38 +411,7 @@ dcc.DatePickerSingle(
 
       dbc.Row(
         [html.Br()]),
-    dbc.Row([
-   dbc.Col([html.H3(id = "sim_ic", style = {'display': 'inline-block'}),
-                 html.Br(),
-                 html.P("Cummulative",style = {'display': 'inline-block'}),
-                 daq.BooleanSwitch(
-                id='bool_cum_cases',
-                on=False,
-                style = {'display': 'inline-block','size':'20%'}
-                        ),
-                               html.Br(),
-            
-              # html.P(id = "sim_ind_title", style = {'color':'green','display': 'inline-block'}),
-               #dcc.Graph(id='fig_ind_cases',figure = extend_all('cases',30,release_frac,release_date))
-               ] ),
-        dbc.Col([
-           # html.H3(id = "sim_i_d", style = {'display': 'inline-block'}),
-            html.Br(),
-                 html.P("Cummulative",style = {'display': 'inline-block'}),
-                 daq.BooleanSwitch(
-                id='bool_cum_deaths',
-                on=False,
-                style = {'display': 'inline-block','size':'20%'}
-                        ),
-                               html.Br(),
-              
-            #html.P(id = "sim_ind_title2", style = {'color':'red','display': 'inline-block'}),
-            #dcc.Graph(id='fig_ind_deaths',figure = extend_all('deaths',release_days,release_frac,release_date))
-            
-            ]),
     
-   ]
-        ),
     dbc.Row(
         [
     dcc.Dropdown(
