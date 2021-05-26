@@ -423,7 +423,7 @@ dcc.DatePickerSingle(
                                html.Br(),
             
               # html.P(id = "sim_ind_title", style = {'color':'green','display': 'inline-block'}),
-               dcc.Graph(id='fig_ind_cases',figure = extend_all('cases',30,0.25,release_date))] ),
+               dcc.Graph(id='fig_ind_cases',figure = extend_all('cases',30,release_frac,release_date))] ),
         dbc.Col([
            # html.H3(id = "sim_i_d", style = {'display': 'inline-block'}),
             html.Br(),
@@ -436,7 +436,7 @@ dcc.DatePickerSingle(
                                html.Br(),
               
             #html.P(id = "sim_ind_title2", style = {'color':'red','display': 'inline-block'}),
-            dcc.Graph(id='fig_ind_deaths',figure = extend_all('deaths',30,0.25,release_date))
+            dcc.Graph(id='fig_ind_deaths',figure = extend_all('deaths',release_days,release_frac,release_date))
             
             ]),
     
@@ -500,7 +500,7 @@ dcc.DatePickerSingle(
                         ),
                                html.Br(),
                html.P(id = "state_cases", style = {'color':'green','display': 'inline-block'}),
-               dcc.Graph(id='fig_state_cases',figure = extedend_state('dl','cases',release_days,0.25,release_date))] ),
+               dcc.Graph(id='fig_state_cases',figure = extedend_state('dl','cases',release_days,release_frac,release_date))] ),
         dbc.Col([
             #html.H3(id = "sim_td", style = {'display': 'inline-block'}),
             html.Br(),
@@ -512,7 +512,7 @@ dcc.DatePickerSingle(
                         ),
                                html.Br(),
             html.P(id = "state_deaths", style = {'color':'red','display': 'inline-block'}),
-            dcc.Graph(id='fig_state_deaths',figure = extedend_state('dl','deaths',release_days,0.25,release_date))
+            dcc.Graph(id='fig_state_deaths',figure = extedend_state('dl','deaths',release_days,release_frac,release_date))
             
             ])
         ,])
