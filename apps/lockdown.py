@@ -14,7 +14,7 @@ import dash_bootstrap_components as dbc
 import dash_daq as daq
 import pandas as pd
 import plotly.graph_objects as go
-
+from datetime import date
 from app import app
 
 from Fitting_india_V2 import simulate_combined,simulate_release
@@ -122,7 +122,7 @@ state_dict = {'ap':'Andhra Pradesh',
              'la':'Lakshdweep'}
 
 def extend_state(state, ConfirmFile, DeathFile, PopFile, ParaFile, release_frac, peak_ratio,
-                 daily_speed,cd,cum):
+                 daily_speed,cd,cum,release_d):
    state_path = f'extended/{state}'
    if not os.path.exists(state_path):
       os.makedirs(state_path)
@@ -260,7 +260,7 @@ def extend_state(state, ConfirmFile, DeathFile, PopFile, ParaFile, release_frac,
     xanchor="left",
     x=0.01
     ))
-    #fig.update_layout(showlegend=False)
+   fig.update_layout(showlegend=False)
    fig.update_yaxes(title=None)
    fig.update_xaxes(title=None)
    return fig,state, confirmed, death, G0, D0, G1, D1, release_day
@@ -348,41 +348,43 @@ def extend_india(confirmed, death, G0, D0, G1, D1, release_day,cd,cum):
     fig.update_xaxes(title=None)
     return fig
 
+def extedend_state(state,cd,rel_days,rel_frac,rel_date,ind = 0,cum = False):
+    fig,state, confirmed, death, G0, D0, G1, D1, release_day =extend_state(state, 'indian_cases_confirmed_cases.csv',
+                                   'indian_cases_confirmed_deaths.csv', 'state_population.csv',
+                                   f'fittingV2_{end_date}/{state}/para.csv', rel_frac, 0.5, 1 / rel_days,cd,cum,rel_date)
+    return fig
 
-def extend_all(state,cd,ind = 0,cum = False):
+def extend_all(cd,rel_days,rel_frac,rel_date,cum = False):
     India_G0 = []
     India_D0 = []
     India_G1 = []
     India_D1 = []
     India_confirmed = []
     India_death = []
-    if ind == 0 and state != 'ind':
-        fig,state, confirmed, death, G0, D0, G1, D1, release_day =extend_state(state, 'indian_cases_confirmed_cases.csv',
-                                   'indian_cases_confirmed_deaths.csv', 'state_population.csv',
-                                   f'fittingV2_{end_date}/dl/para.csv', release_frac, 0.5, 1 / release_days,cd,cum)
-    else:
-        for state in states:
+    
+    for state in states:
             fig,state, confirmed, death, G0, D0, G1, D1, release_day =extend_state(state, 'indian_cases_confirmed_cases.csv',
                                    'indian_cases_confirmed_deaths.csv', 'state_population.csv',
-                                   f'fittingV2_{end_date}/dl/para.csv', release_frac, 0.5, 1 / release_days,cd,cum)
-        India_release_day = release_day
-        if len(India_G0) == 0:
-                India_G0 = G0.copy()
-                India_D0 = D0.copy()
-                India_G1 = G1.copy()
-                India_D1 = D1.copy()
-                India_confirmed = confirmed.copy()
-                India_death = death.copy()
-        else:
-                India_G0 = [India_G0[i] + G0[i] for i in range(len(G0))]
-                India_D0 = [India_D0[i] + D0[i] for i in range(len(G0))]
-                India_G1 = [India_G1[i] + G1[i] for i in range(len(G0))]
-                India_D1 = [India_D1[i] + D1[i] for i in range(len(G0))]
-                India_confirmed = [India_confirmed[i] + confirmed[i] for i in range(len(confirmed))]
-                India_death = [India_death[i] + death[i] for i in range(len(death))]
+                                   f'fittingV2_{end_date}/{state}/para.csv', rel_frac, 0.5, 1 / rel_days,cd,cum,rel_date)
+            India_release_day = release_day
+            if len(India_G0) == 0:
+                    India_G0 = G0.copy()
+                    India_D0 = D0.copy()
+                    India_G1 = G1.copy()
+                    India_D1 = D1.copy()
+                    India_confirmed = confirmed.copy()
+                    India_death = death.copy()
+            else:
+                    India_G0 = [India_G0[i] + G0[i] for i in range(len(G0))]
+                    India_D0 = [India_D0[i] + D0[i] for i in range(len(G0))]
+                    India_G1 = [India_G1[i] + G1[i] for i in range(len(G0))]
+                    India_D1 = [India_D1[i] + D1[i] for i in range(len(G0))]
+                    India_confirmed = [India_confirmed[i] + confirmed[i] for i in range(len(confirmed))]
+                    India_death = [India_death[i] + death[i] for i in range(len(death))]
     
     
-        fig = extend_india(India_confirmed, India_death, India_G0, India_D0, India_G1, India_D1, India_release_day,cd,cum)
+    fig = extend_india(India_confirmed, India_death, India_G0, India_D0, India_G1, India_D1, India_release_day,cd,cum)
+        
     
      
 
@@ -393,7 +395,19 @@ body = dbc.Container([
 
 
 dbc.Row([html.P("Projections on removal of lockdown coming soon...",style={'color':'#9E12D6',"font-size":"20px"})]),
-
+dbc.Row([
+    dbc.Col([html.Label("Release Date ",style = {'font-size':'20px','display': 'inline-block'}),
+dcc.DatePickerSingle(
+    id='date-picker-single',
+    date=date(2021, 6, 1),
+    style  = {'display': 'inline-block','width':'10px', 'height':'10px'}
+)]),
+    dbc.Col([html.Label("Release Fraction",style = {'font-size':'20px','display': 'inline-block'}),
+             dcc.Input(id= 'rel_fra',type ='number', min =0.1, max =1,step =0.01,value =0.25,style  = {'display': 'inline-block','width':'50px', 'height':'30px'} )])
+    ,
+    dbc.Col([html.Label("Release Days",style = {'font-size':'20px','display': 'inline-block'}),
+             dcc.Input(id='rel_d',type='number',value=30,min =1, max=90,style  = {'display': 'inline-block','width':'50px', 'height':'30px'})])
+    ]),
 
       dbc.Row(
         [html.Br()]),
@@ -409,7 +423,7 @@ dbc.Row([html.P("Projections on removal of lockdown coming soon...",style={'colo
                                html.Br(),
             
               # html.P(id = "sim_ind_title", style = {'color':'green','display': 'inline-block'}),
-               dcc.Graph(id='fig_ind_cases',figure = extend_all('ind','cases',1))] ),
+               dcc.Graph(id='fig_ind_cases',figure = extend_all('cases',30,0.25,release_date))] ),
         dbc.Col([
            # html.H3(id = "sim_i_d", style = {'display': 'inline-block'}),
             html.Br(),
@@ -422,7 +436,7 @@ dbc.Row([html.P("Projections on removal of lockdown coming soon...",style={'colo
                                html.Br(),
               
             #html.P(id = "sim_ind_title2", style = {'color':'red','display': 'inline-block'}),
-            dcc.Graph(id='fig_ind_deaths',figure = extend_all('ind','deaths',1))
+            dcc.Graph(id='fig_ind_deaths',figure = extend_all('deaths',30,0.25,release_date))
             
             ]),
     
@@ -486,7 +500,7 @@ dbc.Row([html.P("Projections on removal of lockdown coming soon...",style={'colo
                         ),
                                html.Br(),
                html.P(id = "state_cases", style = {'color':'green','display': 'inline-block'}),
-               dcc.Graph(id='fig_state_cases',figure = extend_all('dl','cases'))] ),
+               dcc.Graph(id='fig_state_cases',figure = extedend_state('dl','cases',release_days,0.25,release_date))] ),
         dbc.Col([
             #html.H3(id = "sim_td", style = {'display': 'inline-block'}),
             html.Br(),
@@ -498,7 +512,7 @@ dbc.Row([html.P("Projections on removal of lockdown coming soon...",style={'colo
                         ),
                                html.Br(),
             html.P(id = "state_deaths", style = {'color':'red','display': 'inline-block'}),
-            dcc.Graph(id='fig_state_deaths',figure = extend_all('dl','deaths'))
+            dcc.Graph(id='fig_state_deaths',figure = extedend_state('dl','deaths',release_days,0.25,release_date))
             
             ])
         ,])
@@ -512,18 +526,24 @@ dbc.Row([html.P("Projections on removal of lockdown coming soon...",style={'colo
 @app.callback(
     Output('fig_state_cases', 'figure'),
     Input('drp_dn','value'),
-    Input('cum_state_cases','on'))
-def update_figure_l(ca,cum):
-    fig2 = extend_all(ca,'cases',0,cum)
+    Input('cum_state_cases','on'),
+    Input('date-picker-single','date'),
+    Input('rel_fra','value'),
+    Input('rel_d','value'))
+def update_figure_l(ca,cum,rel_date,rel_fra,rel_d):
+    fig2 = extedend_state(ca,'cases',rel_d,rel_fra,rel_date,0,cum)
     fig2.update_layout(transition_duration=500)
     return fig2
 
 @app.callback(
     Output('fig_state_deaths', 'figure'),
     Input('drp_dn','value'),
-    Input('cum_state_deaths','on'))
-def update_figure_l1(ca,cum):
-    fig2 = extend_all(ca,'deaths',0,cum)
+    Input('cum_state_deaths','on'),
+    Input('date-picker-single','date'),
+    Input('rel_fra','value'),
+    Input('rel_d','value'))
+def update_figure_l1(ca,cum,rel_date,rel_fra,rel_d):
+    fig2 = extedend_state(ca,'deaths',rel_d,rel_fra,rel_date,0,cum)
     fig2.update_layout(transition_duration=500)
     return fig2
 
@@ -543,19 +563,26 @@ def update_figure_l4(st):
 
 @app.callback(
     Output('fig_ind_cases', 'figure'),
-    Input('bool_cum_cases','on'))
-def update_figure_l5(ca):
-    fig1 = extend_all('ind','cases',1,ca)
+    Input('bool_cum_cases','on'),
+    Input('date-picker-single','date'),
+    Input('rel_fra','value'),
+    Input('rel_d','value'))
+def update_figure_l5(ca,rel_date,rel_fra,rel_d):
+    fig1 = extend_all('cases',rel_d,rel_fra,rel_date,ca)
     fig1.update_layout(transition_duration=500)
     return fig1
 
 @app.callback(
     Output('fig_ind_deaths', 'figure'),
-    Input('bool_cum_deaths','on'))
-def update_figure_l6(ca):
-    fig2 = extend_all('ind','cases',1,ca)
+    Input('bool_cum_deaths','on'),
+    Input('date-picker-single','date'),
+    Input('rel_fra','value'),
+    Input('rel_d','value'))
+def update_figure_l6(ca,rel_date,rel_fra,rel_d):
+    fig2 = extend_all('deaths',rel_d,rel_fra,rel_date,ca)
     fig2.update_layout(transition_duration=500)
     return fig2
+
 
 
 
