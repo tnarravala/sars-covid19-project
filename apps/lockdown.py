@@ -203,26 +203,27 @@ def extend_state(state, ConfirmFile, DeathFile, PopFile, ParaFile, release_frac,
    dD1 = [D1[i] - D1[i - 1] for i in range(1, len(D1))]
    dD1.insert(0, 0)
 
-
-   fig = go.Figure()
-   if cd == "cases" and cum == False:
-       fig.add_trace(go.Bar(x=days_ext[1:len(d_confirmed)],y = [i / 1000 for i in d_confirmed[1:]],name="Reported"))
-       fig.add_trace(go.Scatter(x=days_ext[1:],y = [i / 1000 for i in dG1[1:]],name=f'{round(release_frac * 100)}% release'))
-       fig.add_trace(go.Scatter(x=days_ext[1:],y = [i / 1000 for i in dG0[1:]],name='Original\nProjection'))
-   elif cd == "deaths" and cum == False:
-       fig.add_trace(go.Bar(x=days_ext[1:len(d_death)],y = [i / 1000 for i in d_death[1:]],name="Reported"))
-       fig.add_trace(go.Scatter(x=days_ext[1:],y = [i / 1000 for i in dD1[1:]],name=f'{round(release_frac * 100)}% release'))
-       fig.add_trace(go.Scatter(x=days_ext[1:],y = [i / 1000 for i in dD0[1:]],name='Original\nProjection'))
-   elif cd == "cases" and cum == True:
-       fig.add_trace(go.Bar(x=days,y = [i / 1000 for i in confirmed],name="Reported"))
-       fig.add_trace(go.Scatter(x=days_ext,y = [i / 1000 for i in G1],name=f'{round(release_frac * 100)}% release'))
-       fig.add_trace(go.Scatter(x=days_ext,y = [i / 1000 for i in G0],name='Original\nProjection'))
-   elif cd == "deaths" and cum == True:
-       fig.add_trace(go.Bar(x=days,y = [i / 1000 for i in death],name="Reported"))
-       fig.add_trace(go.Scatter(x=days_ext,y = [i / 1000 for i in D1],name=f'{round(release_frac * 100)}% release'))
-       fig.add_trace(go.Scatter(x=days_ext,y = [i / 1000 for i in D0],name='Original\nProjection'))
    
-   fig.add_vline(release_d,line_dash ='dash')
+   fig = go.Figure()
+   #fig.add_vline(x =rdate,line_dash ='dash')
+   if cd == "cases" and cum == False:
+       fig.add_trace(go.Bar(x=days_ext[1:len(d_confirmed)],y = [i for i in d_confirmed[1:]],name="Reported"))
+       fig.add_trace(go.Scatter(x=days_ext[1:],y = [i  for i in dG1[1:]],name=f'{round(release_frac * 100)}% release'))
+       fig.add_trace(go.Scatter(x=days_ext[1:],y = [i for i in dG0[1:]],name='Original\nProjection'))
+   elif cd == "deaths" and cum == False:
+       fig.add_trace(go.Bar(x=days_ext[1:len(d_death)],y = [i  for i in d_death[1:]],name="Reported"))
+       fig.add_trace(go.Scatter(x=days_ext[1:],y = [i  for i in dD1[1:]],name=f'{round(release_frac * 100)}% release'))
+       fig.add_trace(go.Scatter(x=days_ext[1:],y = [i for i in dD0[1:]],name='Original\nProjection'))
+   elif cd == "cases" and cum == True:
+       fig.add_trace(go.Bar(x=days,y = [i  for i in confirmed],name="Reported"))
+       fig.add_trace(go.Scatter(x=days_ext,y = [i  for i in G1],name=f'{round(release_frac * 100)}% release'))
+       fig.add_trace(go.Scatter(x=days_ext,y = [i  for i in G0],name='Original\nProjection'))
+   elif cd == "deaths" and cum == True:
+       fig.add_trace(go.Bar(x=days,y = [i  for i in death],name="Reported"))
+       fig.add_trace(go.Scatter(x=days_ext,y = [i  for i in D1],name=f'{round(release_frac * 100)}% release'))
+       fig.add_trace(go.Scatter(x=days_ext,y = [i  for i in D0],name='Original\nProjection'))
+   
+   
    fig.update_layout(
     autosize=True,
     #title = titlename,
@@ -282,27 +283,27 @@ def extend_india(confirmed, death, G0, D0, G1, D1, release_day,cd,cum):
     ax7.axvline(days_ext[release_day], linestyle='dashed', color='tab:red')
     ax8.axvline(days_ext[release_day], linestyle='dashed', color='tab:red')'''
     if cd == "cases" and cum == False:
-        fig.add_trace(go.Bar(x=days_ext[1:len(d_confirmed)],y=[i / 1000 for i in d_confirmed[1:]],name="Reported"))
-        fig.add_trace(go.Scatter(x =days_ext[1:],y=[i / 1000 for i in dG2[1:]],name =f'{round(release_frac * 100)}% release' ))
-        fig.add_trace(go.Scatter(x=days_ext[1:],y =[i / 1000 for i in dG[1:]],name='Original\nProjection'))
+        fig.add_trace(go.Bar(x=days_ext[1:len(d_confirmed)],y=[i for i in d_confirmed[1:]],name="Reported"))
+        fig.add_trace(go.Scatter(x =days_ext[1:],y=[i  for i in dG2[1:]],name =f'{round(release_frac * 100)}% release' ))
+        fig.add_trace(go.Scatter(x=days_ext[1:],y =[i  for i in dG[1:]],name='Original\nProjection'))
         #fig.add_vline(days_ext[release_date],line_dash ='dash')
         titlename = "Cases in India"
     elif cd == "deaths" and cum == False:
-        fig.add_trace(go.Bar(x=days_ext[1:len(d_death)],y=[i / 1000 for i in d_death[1:]],name="Reported"))
-        fig.add_trace(go.Scatter(x =days_ext[1:],y=[i / 1000 for i in dD2[1:]],name =f'{round(release_frac * 100)}% release' ))
-        fig.add_trace(go.Scatter(x=days_ext[1:],y =[i / 1000 for i in dD[1:]],name='Original\nProjection'))
+        fig.add_trace(go.Bar(x=days_ext[1:len(d_death)],y=[i  for i in d_death[1:]],name="Reported"))
+        fig.add_trace(go.Scatter(x =days_ext[1:],y=[i for i in dD2[1:]],name =f'{round(release_frac * 100)}% release' ))
+        fig.add_trace(go.Scatter(x=days_ext[1:],y =[i  for i in dD[1:]],name='Original\nProjection'))
         #fig.add_vline(days_ext[release_date],line_dash ='dash')
         titlename = "Deaths in India"
     elif cd == "cases" and cum == True:
-        fig.add_trace(go.Bar(x=days_ext[:len(confirmed)],y=[i / 1000 for i in confirmed],name="Reported"))
-        fig.add_trace(go.Scatter(x =days_ext,y=[i / 1000 for i in G1],name =f'{round(release_frac * 100)}% release' ))
-        fig.add_trace(go.Scatter(x=days_ext,y =[i / 1000 for i in G0],name='Original\nProjection'))
+        fig.add_trace(go.Bar(x=days_ext[:len(confirmed)],y=[i  for i in confirmed],name="Reported"))
+        fig.add_trace(go.Scatter(x =days_ext,y=[i for i in G1],name =f'{round(release_frac * 100)}% release' ))
+        fig.add_trace(go.Scatter(x=days_ext,y =[i  for i in G0],name='Original\nProjection'))
         #fig.add_vline(days_ext[release_date],line_dash ='dash')
         titlename = "Cases in India"
     elif cd == "deaths" and cum == True:
-        fig.add_trace(go.Bar(x=days_ext[:len(confirmed)],y=[i / 1000 for i in death],name="Reported"))
-        fig.add_trace(go.Scatter(x =days_ext,y=[i / 1000 for i in D1],name =f'{round(release_frac * 100)}% release' ))
-        fig.add_trace(go.Scatter(x=days_ext,y =[i / 1000 for i in D0],name='Original\nProjection'))
+        fig.add_trace(go.Bar(x=days_ext[:len(confirmed)],y=[i  for i in death],name="Reported"))
+        fig.add_trace(go.Scatter(x =days_ext,y=[i  for i in D1],name =f'{round(release_frac * 100)}% release' ))
+        fig.add_trace(go.Scatter(x=days_ext,y =[i  for i in D0],name='Original\nProjection'))
         #fig.add_vline(days_ext[release_date],line_dash ='dash')
         titlename = "Deaths in India"
     
@@ -517,6 +518,7 @@ dcc.DatePickerSingle(
     Input('rel_d','value'))
 def update_figure_l(ca,cum,rel_date,rel_fra,rel_d):
     fig2 = extedend_state(ca,'cases',rel_d,rel_fra,rel_date,0,cum)
+    fig2.add_vline(x =rel_date,line_dash ='dash')
     fig2.update_layout(transition_duration=500)
     return fig2
 
@@ -529,6 +531,7 @@ def update_figure_l(ca,cum,rel_date,rel_fra,rel_d):
     Input('rel_d','value'))
 def update_figure_l1(ca,cum,rel_date,rel_fra,rel_d):
     fig2 = extedend_state(ca,'deaths',rel_d,rel_fra,rel_date,0,cum)
+    fig2.add_vline(x =rel_date,line_dash ='dash')
     fig2.update_layout(transition_duration=500)
     return fig2
 
