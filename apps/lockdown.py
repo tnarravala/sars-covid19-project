@@ -518,7 +518,7 @@ dcc.DatePickerSingle(
     Input('rel_d','value'))
 def update_figure_l(ca,cum,rel_date,rel_fra,rel_d):
     fig2 = extedend_state(ca,'cases',rel_d,rel_fra,rel_date,0,cum)
-    fig2.add_vline(x =rel_date,line_dash ='dash')
+    #fig2.add_vline(x =rel_date,line_dash ='dash')
     fig2.update_layout(transition_duration=500)
     return fig2
 
@@ -531,7 +531,7 @@ def update_figure_l(ca,cum,rel_date,rel_fra,rel_d):
     Input('rel_d','value'))
 def update_figure_l1(ca,cum,rel_date,rel_fra,rel_d):
     fig2 = extedend_state(ca,'deaths',rel_d,rel_fra,rel_date,0,cum)
-    fig2.add_vline(x =rel_date,line_dash ='dash')
+    #fig2.add_vline(x =rel_date,line_dash ='dash')
     fig2.update_layout(transition_duration=500)
     return fig2
 
