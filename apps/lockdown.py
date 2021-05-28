@@ -75,11 +75,11 @@ p_m = 1
 # Hiding = 0.33
 delay = 7
 change_eta2 = False
-size_ext = 75
+size_ext = 180
 release_days = 30 #input
 fig_row = 5
 fig_col = 3
-date_range = ["2021-02-10", "2021-08-5"]
+date_range = ["2021-02-10", "2021-10-5"]
 states = ['kl', 'dl', 'tg', 'rj', 'hr', 'jk', 'ka', 'la', 'mh', 'pb', 'tn', 'up', 'ap', 'ut', 'or', 'wb', 'py', 'ch',
           'ct', 'gj', 'hp', 'mp', 'br', 'mn', 'mz', 'ga', 'an', 'as', 'jh', 'ar', 'tr', 'nl', 'ml', 'sk', 'dn_dd', 'ld']
 
