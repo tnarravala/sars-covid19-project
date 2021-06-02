@@ -328,9 +328,9 @@ body = dbc.Container([
 
 dbc.Row([html.P("Projections for infections and deaths in Indian States and  for overall India are based in part on the model described in the following paper: ",style= {"color":"#151516","font-size":"20px"}),]),
 dbc.Row([html.P(dcc.Link("Hidden Parameters Impacting Resurgence of SARS-CoV-2 Pandemic",href="https://www.medrxiv.org/content/10.1101/2021.01.15.20248217v1",target="_blank",style = {"color":"#6211FF","font-size":"20px"}))]),
-dbc.Row([html.P(dcc.Link("Projections on removal of lockdown",href="https://sars-covid-tracker-india.herokuapp.com/lockdown",target="_blank",style={'color':'#9E12D6',"font-size":"20px"}))]),
+dbc.Row([html.P("Projections on removal of lockdown coming soon...",style={'color':'#9E12D6',"font-size":"20px"})]),
 dbc.Row([html.P("Computing is provided by Chemeleon Cloud, sponsored by NSF-USA",style = {"font-size":"10px"})]),
-
+dbc.Row([html.P("This data on confirmed cases and deaths has been updated on 1st June, 2021",style= {"color":"#151516",'font-size':'20px'}),]),
       dbc.Row(
         [html.Br()]),
     dbc.Row([

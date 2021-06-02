@@ -79,7 +79,7 @@ size_ext = 180
 release_days = 30 #input
 fig_row = 5
 fig_col = 3
-date_range = ["2021-02-10", "2021-10-5"]
+date_range = ["2021-02-10", "2021-11-5"]
 states = ['kl', 'dl', 'tg', 'rj', 'hr', 'jk', 'ka', 'la', 'mh', 'pb', 'tn', 'up', 'ap', 'ut', 'or', 'wb', 'py', 'ch',
           'ct', 'gj', 'hp', 'mp', 'br', 'mn', 'mz', 'ga', 'an', 'as', 'jh', 'ar', 'tr', 'nl', 'ml', 'sk', 'dn_dd', 'ld']
 
@@ -387,6 +387,7 @@ body = dbc.Container([
 
 
 dbc.Row([html.P("These projections are based on population behaviour in 2021 and can change based on adoption of social distancing measures",style={'color':'#9E12D6',"font-size":"20px"})]),
+dbc.Row([html.P("This data on confirmed cases and deaths has been updated on 1st June, 2021",style= {"color":"#151516",'font-size':'20px'}),]),
 dbc.Row(
         [
             dbc.Col(html.Label("Release Date ",style = {'font-size':'20px','display': 'inline-block'})),

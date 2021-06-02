@@ -319,7 +319,7 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 body = dbc.Container([ 
     
-    dbc.Row([html.P("This data on confirmed cases and deaths has been updated on 22nd May, 2021",style= {"color":"#151516",'font-size':'20px'}),]),
+    dbc.Row([html.P("This data on confirmed cases and deaths has been updated on 1st June, 2021",style= {"color":"#151516",'font-size':'20px'}),]),
     dbc.Row([   
         html.Label(['Projections based on our model can be found on this link ---> ', 
         html.A('here', href='https://sars-covid-tracker-india.herokuapp.com/Projections',style = {"color":"#E60B1F",'font-size':'20px'})],style={"color":"#151516",'font-size':'20px'})
