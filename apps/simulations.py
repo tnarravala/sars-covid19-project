@@ -67,7 +67,7 @@ total_deaths = deaths.set_index('state')
 total_state_deaths = total_deaths.iloc[:,-1:]
 total_deaths= total_state_deaths.sum()
 
-date_range = ["2021-02-10", "2021-08-5"]
+date_range = ["2021-02-10", "2021-09-15"]
 
 def plot_cases(state,ca):
     sim_data = pd.read_csv(f'extended/{state}/sim.csv')
@@ -332,7 +332,7 @@ dbc.Row([
         html.Label(['Projections on removal of lockdown can be found on this link ---> ', 
         html.A('here', href='https://sars-covid-tracker-india.herokuapp.com/lockdown',style = {"color":"#E60B1F",'font-size':'20px'})],style={"color":"#151516",'font-size':'20px'})
              ]),
-dbc.Row([html.P("Computing is provided by Chemeleon Cloud, sponsored by NSF-USA",style = {"font-size":"10px"})]),
+dbc.Row([html.P("Computing is provided by Chameleon Cloud, sponsored by NSF-USA",style = {"font-size":"10px"})]),
 dbc.Row([html.P("This data on confirmed cases and deaths has been updated on 1st June, 2021",style= {"color":"#151516",'font-size':'20px'}),]),
       dbc.Row(
         [html.Br()]),
