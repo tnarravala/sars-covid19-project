@@ -112,9 +112,9 @@ def plot_cases(state,ca):
     #fig.add_trace()
     fig.update_layout(legend=dict(
     yanchor="top",
-    y=0.99,
-    xanchor="left",
-    x=0.01
+    #y=0.99,
+    xanchor="right",
+    #x=0.01
     ))
     fig.update_layout(
     autosize=True,
@@ -197,9 +197,9 @@ def plot_deaths(state,ca):
     )
     fig.update_layout(legend=dict(
     yanchor="top",
-    y=0.99,
-    xanchor="left",
-    x=0.01
+    #y=0.01,
+    xanchor="right",
+    #x=0.99
     ))
     #fig.update_layout(showlegend=False)
     fig.update_yaxes(title=None)
@@ -254,9 +254,9 @@ def plot_total_cases(ca):
     )
     fig.update_layout(legend=dict(
     yanchor="top",
-    y=0.99,
-    xanchor="left",
-    x=0.01
+    #y=0.99,
+    xanchor="right",
+    #x=0.01
     ))
     #fig.update_layout(showlegend=False)
     fig.update_yaxes(title=None)
@@ -313,9 +313,9 @@ def plot_total_deaths(ca):
     )
     fig.update_layout(legend=dict(
     yanchor="top",
-    y=0.99,
-    xanchor="left",
-    x=0.01
+    #y=0.99,
+    xanchor="right",
+    #x=0.01
     ))
     #fig.update_layout(showlegend=False)
     fig.update_yaxes(title=None)

@@ -67,8 +67,8 @@ k2_range = (0.1, 2)
 I_initial_range = (0, 1)
 start_date = '2021-02-01'
 reopen_date = '2021-03-15'
-end_date = '2021-05-22'
-release_date = "2021-06-01" #input june 1st,2021 and Aug 1st,2021
+end_date = '2021-06-01'
+release_date = "2021-06-15" #input june 1st,2021 and Aug 1st,2021
 release_frac = 1/4 #input
 k_drop = 14
 p_m = 1
@@ -79,7 +79,7 @@ size_ext = 180
 release_days = 30 #input
 fig_row = 5
 fig_col = 3
-date_range = ["2021-02-10", "2021-11-5"]
+date_range = ["2021-02-10", "2021-09-15"]
 states = ['kl', 'dl', 'tg', 'rj', 'hr', 'jk', 'ka', 'la', 'mh', 'pb', 'tn', 'up', 'ap', 'ut', 'or', 'wb', 'py', 'ch',
           'ct', 'gj', 'hp', 'mp', 'br', 'mn', 'mz', 'ga', 'an', 'as', 'jh', 'ar', 'tr', 'nl', 'ml', 'sk', 'dn_dd', 'ld']
 
