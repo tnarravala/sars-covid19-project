@@ -335,7 +335,7 @@ def extend_india(confirmed, death, G0, D0, G1, D1, release_day,cd,cum):
     xanchor="left",
     x=0.01
     ))
-    #fig.update_layout(showlegend=False)
+    fig.update_layout(showlegend=False)
     fig.update_yaxes(title=None)
     fig.update_xaxes(title=None)
     return fig
@@ -425,6 +425,33 @@ dcc.DatePickerSingle(
         value=1*7,style = {'color':'black','width':'75%','display': 'inline-block','margin-left':'0.8%'}
     ))
     ]),
+  dbc.Row([
+        dbc.Col([#html.H3(id = "sim_tc", style = {'display': 'inline-block'}),
+                 html.Br(),
+                 html.P("Cummulative",style = {'display': 'inline-block'}),
+                 daq.BooleanSwitch(
+                id='bool_cum_cases',
+                on=False,
+                style = {'display': 'inline-block','size':'20%'}
+                        ),
+                               html.Br(),
+               html.P(id = "india_cases", style = {'color':'green','display': 'inline-block'}),
+               dcc.Graph(id='fig_india_cases',figure = extend_all('cases',release_days,release_frac,release_date))] ),
+        dbc.Col([
+            #html.H3(id = "sim_td", style = {'display': 'inline-block'}),
+            html.Br(),
+                 html.P("Cummulative",style = {'display': 'inline-block'}),
+                 daq.BooleanSwitch(
+                id='bool_cum_deaths',
+                on=False,
+                style = {'display': 'inline-block','size':'20%'}
+                        ),
+                               html.Br(),
+            html.P(id = "state_deaths", style = {'color':'red','display': 'inline-block'}),
+            dcc.Graph(id='fig_india_deaths',figure = extend_all('deaths',release_days,release_frac,release_date))
+            
+            ])
+        ,]),
 
       dbc.Row(
         [html.Br()]),
@@ -551,7 +578,7 @@ def update_figure_l4(st):
     return u'Deaths in {}'.format(state_dict[st]) 
 
 @app.callback(
-    Output('fig_ind_cases', 'figure'),
+    Output('fig_india_cases', 'figure'),
     Input('bool_cum_cases','on'),
     Input('date-picker-single','date'),
     Input('drp_relfrac','value'),
@@ -562,7 +589,7 @@ def update_figure_l5(ca,rel_date,rel_fra,rel_d):
     return fig1
 
 @app.callback(
-    Output('fig_ind_deaths', 'figure'),
+    Output('fig_india_deaths', 'figure'),
     Input('bool_cum_deaths','on'),
     Input('date-picker-single','date'),
     Input('drp_relfrac','value'),
