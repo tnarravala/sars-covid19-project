@@ -126,6 +126,91 @@ state_dict = {'ap':'Andhra Pradesh',
              'ld':'Ladakh',
              'la':'Lakshdweep'}
 
+def extend_state2(state, para_row,release_frac, peak_ratio,
+                 daily_speed,cum,release_d):
+   state_path = f'extended/{state}' 
+   if not os.path.exists(state_path):
+      os.makedirs(state_path)
+   #df = pd.read_csv(ParaFile)
+   para_row = list(para_row)[1:]
+   [beta, gammaE, alpha, gamma, gamma2, gamma3, a1, a2, a3, eta, h, Hiding_init, c1, I_initial, metric1, metric2, r1, r2, reopen_date ] =  para_row
+
+   release_size = min(1 - eta, eta * release_frac)
+   
+
+   #print(
+    #  f'eta={round(eta, 3)} hiding={round(eta * Hiding_init, 3)} release={round(release_size, 3)} in {state_dict[state]}')
+
+   df = PopFile
+   n_0 = df[df.iloc[:, 0] == state].iloc[0]['POP']
+   df = ConfirmFile
+   confirmed = df[df.iloc[:, 0] == state]
+   df2 = DeathFile
+   death = df2[df2.iloc[:, 0] == state]
+   dates = list(confirmed.columns)
+   dates = dates[dates.index(start_date):dates.index(end_date) + 1]
+   days = [datetime.datetime.strptime(d, '%Y-%m-%d') for d in dates]
+   confirmed = confirmed.iloc[0].loc[start_date: end_date]
+   death = death.iloc[0].loc[start_date: end_date]
+   reopen_day = days.index(datetime.datetime.strptime(reopen_date, '%Y-%m-%d'))
+
+   d_confirmed = [confirmed[i] - confirmed[i - 1] for i in range(1, len(confirmed))]
+   d_confirmed.insert(0, 0)
+   d_death = [death[i] - death[i - 1] for i in range(1, len(death))]
+   d_death.insert(0, 0)
+
+   S = [n_0 * eta * (1 - Hiding_init)]
+   E = [0]
+   I = [n_0 * eta * I_initial * (1 - alpha)]
+   A = [n_0 * eta * I_initial * alpha]
+   IH = [0]
+   IN = [I[-1] * gamma2]
+   D = [death[0]]
+   R = [0]
+   G = [confirmed[0]]
+   H = [n_0 * eta * Hiding_init]
+   # H = [0]
+   size = len(days)
+   days_ext = [days[0] + datetime.timedelta(days=i) for i in range(size + size_ext)]
+   dates_ext = [d.strftime('%Y-%m-%d') for d in days_ext]
+
+   result, [S0, E0, I0, A0, IH0, IN0, D0, R0, G0, H0, betas0] \
+      = simulate_combined(size + size_ext, S, E, I, A, IH, IN, D, R, G, H, beta, gammaE, alpha, gamma, gamma2, gamma3,
+                          a1, a2, a3, h, Hiding_init, eta, c1, n_0, reopen_day)
+
+   dG0 = [G0[i] - G0[i - 1] for i in range(1, len(G0))]
+   dG0.insert(0, 0)
+   dD0 = [D0[i] - D0[i - 1] for i in range(1, len(D0))]
+   dD0.insert(0, 0)
+   peak_dG = 0
+   peak_day = 0
+ 
+   # release_day = max(release_day, dates_ext.index('2021-06-01'))
+   release_day = dates_ext.index(release_d)
+
+   S = [n_0 * eta * (1 - Hiding_init)]
+   E = [0]
+   I = [n_0 * eta * I_initial * (1 - alpha)]
+   A = [n_0 * eta * I_initial * alpha]
+   IH = [0]
+   IN = [I[-1] * gamma2]
+   D = [death[0]]
+   R = [0]
+   G = [confirmed[0]]
+   H = [n_0 * eta * Hiding_init]
+
+   result, [S1, E1, I1, A1, IH1, IN1, D1, R1, G1, H1, HH1, betas1] \
+      = simulate_release(size + size_ext, S, E, I, A, IH, IN, D, R, G, H, beta, gammaE, alpha, gamma, gamma2, gamma3,
+                         a1, a2, a3, h, Hiding_init, eta, c1, n_0, reopen_day, release_day, release_size, daily_speed)
+
+   dG1 = [G1[i] - G1[i - 1] for i in range(1, len(G1))]
+   dG1.insert(0, 0)
+   dD1 = [D1[i] - D1[i - 1] for i in range(1, len(D1))]
+   dD1.insert(0, 0)
+
+   
+   return [state, confirmed, death, G0, D0, G1, D1, release_day]
+
 def extend_state(state, para_row,release_frac, peak_ratio,
                  daily_speed,cum,release_d):
    state_path = f'extended/{state}' 
@@ -291,7 +376,7 @@ def extend_state(state, para_row,release_frac, peak_ratio,
    fig2.update_layout(showlegend=False)
    fig2.update_yaxes(title=None)
    fig2.update_xaxes(title=None)
-   return [fig,fig2,state, confirmed, death, G0, D0, G1, D1, release_day]
+   return [fig,fig2]
 
 
 def extend_india(confirmed, death, G0, D0, G1, D1, release_day,cum):
@@ -404,7 +489,7 @@ def extend_india(confirmed, death, G0, D0, G1, D1, release_day,cum):
 
 def extedend_state(state,rel_days,rel_frac,rel_date,ind = 0,cum = False):
     para_row = paraFile[paraFile['state']==state].iloc[0]
-    fig,fig2,state, confirmed, death, G0, D0, G1, D1, release_day =extend_state(state
+    fig,fig2 =extend_state(state
                                    ,
                                    para_row, rel_frac, 0.5, 1 / rel_days,cum,rel_date)
     return fig,fig2
@@ -420,7 +505,7 @@ def extend_all(rel_days,rel_frac,rel_date,cum = False):
 
     for state in states:
             para_row = paraFile[paraFile['state']==state].iloc[0]
-            [fig,fig2,state, confirmed, death, G0, D0, G1, D1, release_day] =extend_state(state,
+            [state, confirmed, death, G0, D0, G1, D1, release_day] =extend_state2(state,
                                     para_row,rel_frac, 0.5, 1 / rel_days,cum,rel_date)
             India_release_day = release_day
             if len(India_G0) == 0:
@@ -441,7 +526,6 @@ def extend_all(rel_days,rel_frac,rel_date,cum = False):
     
     fig,fig2 = extend_india(India_confirmed, India_death, India_G0, India_D0, India_G1, India_D1, India_release_day,cum)
         
-    print(fig)
     return fig,fig2
 
 
@@ -492,27 +576,11 @@ dcc.DatePickerSingle(
     ))
     ]),
   dbc.Row([
-        dbc.Col([#html.H3(id = "sim_tc", style = {'display': 'inline-block'}),
-                 html.Br(),
-                 html.P("Cummulative",style = {'display': 'inline-block'}),
-                 daq.BooleanSwitch(
-                id='bool_cum_cases',
-                on=False,
-                style = {'display': 'inline-block','size':'20%'}
-                        ),
-                               html.Br(),
+        dbc.Col([
                html.P(id = "india_cases", style = {'color':'green','display': 'inline-block'}),
                dcc.Graph(id='fig_india_cases',figure = ind_fig)] ),
         dbc.Col([
-            #html.H3(id = "sim_td", style = {'display': 'inline-block'}),
-            html.Br(),
-                 html.P("Cummulative",style = {'display': 'inline-block'}),
-                 daq.BooleanSwitch(
-                id='bool_cum_deaths',
-                on=False,
-                style = {'display': 'inline-block','size':'20%'}
-                        ),
-                               html.Br(),
+
             html.P(id = "state_deaths", style = {'color':'red','display': 'inline-block'}),
             dcc.Graph(id='fig_india_deaths',figure = ind_fig2)
             
