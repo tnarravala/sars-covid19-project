@@ -127,7 +127,7 @@ state_dict = {'ap':'Andhra Pradesh',
              'la':'Lakshdweep'}
 
 def extend_state(state, para_row,release_frac, peak_ratio,
-                 daily_speed,cd,cum,release_d):
+                 daily_speed,cum,release_d):
    state_path = f'extended/{state}' 
    if not os.path.exists(state_path):
       os.makedirs(state_path)
@@ -210,23 +210,22 @@ def extend_state(state, para_row,release_frac, peak_ratio,
 
    
    fig = go.Figure()
+   fig2 = go.Figure()
    #fig.add_vline(x =rdate,line_dash ='dash')
-   if cd == "cases" and cum == False:
+   if cum == False:
        fig.add_trace(go.Bar(x=days_ext[1:len(d_confirmed)],y = [i for i in d_confirmed[1:]],name="Reported"))
        fig.add_trace(go.Scatter(x=days_ext[1:],y = [i  for i in dG1[1:]],name=f'{round(release_frac * 100)}% release'))
        fig.add_trace(go.Scatter(x=days_ext[1:],y = [i for i in dG0[1:]],name='Original\nProjection'))
-   elif cd == "deaths" and cum == False:
-       fig.add_trace(go.Bar(x=days_ext[1:len(d_death)],y = [i  for i in d_death[1:]],name="Reported"))
-       fig.add_trace(go.Scatter(x=days_ext[1:],y = [i  for i in dD1[1:]],name=f'{round(release_frac * 100)}% release'))
-       fig.add_trace(go.Scatter(x=days_ext[1:],y = [i for i in dD0[1:]],name='Original\nProjection'))
-   elif cd == "cases" and cum == True:
+       fig2.add_trace(go.Bar(x=days_ext[1:len(d_death)],y = [i  for i in d_death[1:]],name="Reported"))
+       fig2.add_trace(go.Scatter(x=days_ext[1:],y = [i  for i in dD1[1:]],name=f'{round(release_frac * 100)}% release'))
+       fig2.add_trace(go.Scatter(x=days_ext[1:],y = [i for i in dD0[1:]],name='Original\nProjection'))
+   else:
        fig.add_trace(go.Bar(x=days,y = [i  for i in confirmed],name="Reported"))
        fig.add_trace(go.Scatter(x=days_ext,y = [i  for i in G1],name=f'{round(release_frac * 100)}% release'))
        fig.add_trace(go.Scatter(x=days_ext,y = [i  for i in G0],name='Original\nProjection'))
-   elif cd == "deaths" and cum == True:
-       fig.add_trace(go.Bar(x=days,y = [i  for i in death],name="Reported"))
-       fig.add_trace(go.Scatter(x=days_ext,y = [i  for i in D1],name=f'{round(release_frac * 100)}% release'))
-       fig.add_trace(go.Scatter(x=days_ext,y = [i  for i in D0],name='Original\nProjection'))
+       fig2.add_trace(go.Bar(x=days,y = [i  for i in death],name="Reported"))
+       fig2.add_trace(go.Scatter(x=days_ext,y = [i  for i in D1],name=f'{round(release_frac * 100)}% release'))
+       fig2.add_trace(go.Scatter(x=days_ext,y = [i  for i in D0],name='Original\nProjection'))
    
    
    fig.update_layout(
@@ -260,10 +259,42 @@ def extend_state(state, para_row,release_frac, peak_ratio,
    fig.update_layout(showlegend=False)
    fig.update_yaxes(title=None)
    fig.update_xaxes(title=None)
-   return [fig,state, confirmed, death, G0, D0, G1, D1, release_day]
+   
+   fig2.update_layout(
+    autosize=True,
+    #title = titlename,
+    margin = dict(l=40, r=40, t=40, b=40 ),
+    width=500,
+    height=400,
+
+    #style = {'color':'green'},
+    yaxis = dict(
+       #range = [0,100] ,
+       #rangemode="tozero",
+        autorange=True,
+        title_text='deaths',
+        titlefont=dict(size=10),
+    ),
+    xaxis=dict(
+        title_text = "date",
+        autorange=True,
+        range=date_range,
+        title=None
+    ),
+    )
+   fig2.update_layout(legend=dict(
+    yanchor="top",
+    y=0.99,
+    xanchor="left",
+    x=0.01
+    ))
+   fig2.update_layout(showlegend=False)
+   fig2.update_yaxes(title=None)
+   fig2.update_xaxes(title=None)
+   return [fig,fig2,state, confirmed, death, G0, D0, G1, D1, release_day]
 
 
-def extend_india(confirmed, death, G0, D0, G1, D1, release_day,cd,cum):
+def extend_india(confirmed, death, G0, D0, G1, D1, release_day,cum):
     d_confirmed = [confirmed[i] - confirmed[i - 1] for i in range(1, len(confirmed))]
     d_confirmed.insert(0, 0)
     d_death = [death[i] - death[i - 1] for i in range(1, len(death))]
@@ -279,6 +310,7 @@ def extend_india(confirmed, death, G0, D0, G1, D1, release_day,cd,cum):
     dD2.insert(0, 0)
     
     fig = go.Figure()
+    fig2 = go.Figure()
     
 
     days_ext = [datetime.datetime.strptime(start_date, '%Y-%m-%d') + datetime.timedelta(days=i) for i in range(len(G0))]
@@ -287,34 +319,27 @@ def extend_india(confirmed, death, G0, D0, G1, D1, release_day,cd,cum):
     ax2.axvline(days_ext[release_day], linestyle='dashed', color='tab:red')
     ax7.axvline(days_ext[release_day], linestyle='dashed', color='tab:red')
     ax8.axvline(days_ext[release_day], linestyle='dashed', color='tab:red')'''
-    if cd == "cases" and cum == False:
+    if cum == False:
         fig.add_trace(go.Bar(x=days_ext[1:len(d_confirmed)],y=[i for i in d_confirmed[1:]],name="Reported"))
         fig.add_trace(go.Scatter(x =days_ext[1:],y=[i  for i in dG2[1:]],name =f'{round(release_frac * 100)}% release' ))
         fig.add_trace(go.Scatter(x=days_ext[1:],y =[i  for i in dG[1:]],name='Original\nProjection'))
-        #fig.add_vline(days_ext[release_date],line_dash ='dash')
-        titlename = "Cases in India"
-    elif cd == "deaths" and cum == False:
-        fig.add_trace(go.Bar(x=days_ext[1:len(d_death)],y=[i  for i in d_death[1:]],name="Reported"))
-        fig.add_trace(go.Scatter(x =days_ext[1:],y=[i for i in dD2[1:]],name =f'{round(release_frac * 100)}% release' ))
-        fig.add_trace(go.Scatter(x=days_ext[1:],y =[i  for i in dD[1:]],name='Original\nProjection'))
-        #fig.add_vline(days_ext[release_date],line_dash ='dash')
-        titlename = "Deaths in India"
-    elif cd == "cases" and cum == True:
+
+        fig2.add_trace(go.Bar(x=days_ext[1:len(d_death)],y=[i  for i in d_death[1:]],name="Reported"))
+        fig2.add_trace(go.Scatter(x =days_ext[1:],y=[i for i in dD2[1:]],name =f'{round(release_frac * 100)}% release' ))
+        fig2.add_trace(go.Scatter(x=days_ext[1:],y =[i  for i in dD[1:]],name='Original\nProjection'))
+
+    else:
         fig.add_trace(go.Bar(x=days_ext[:len(confirmed)],y=[i  for i in confirmed],name="Reported"))
         fig.add_trace(go.Scatter(x =days_ext,y=[i for i in G1],name =f'{round(release_frac * 100)}% release' ))
         fig.add_trace(go.Scatter(x=days_ext,y =[i  for i in G0],name='Original\nProjection'))
-        #fig.add_vline(days_ext[release_date],line_dash ='dash')
-        titlename = "Cases in India"
-    elif cd == "deaths" and cum == True:
-        fig.add_trace(go.Bar(x=days_ext[:len(confirmed)],y=[i  for i in death],name="Reported"))
-        fig.add_trace(go.Scatter(x =days_ext,y=[i  for i in D1],name =f'{round(release_frac * 100)}% release' ))
-        fig.add_trace(go.Scatter(x=days_ext,y =[i  for i in D0],name='Original\nProjection'))
-        #fig.add_vline(days_ext[release_date],line_dash ='dash')
-        titlename = "Deaths in India"
+        fig2.add_trace(go.Bar(x=days_ext[:len(confirmed)],y=[i  for i in death],name="Reported"))
+        fig2.add_trace(go.Scatter(x =days_ext,y=[i  for i in D1],name =f'{round(release_frac * 100)}% release' ))
+        fig2.add_trace(go.Scatter(x=days_ext,y =[i  for i in D0],name='Original\nProjection'))
+
     
     fig.update_layout(
     autosize=True,
-    title = titlename,
+    #title = titlename,
     margin = dict(l=40, r=40, t=40, b=40 ),
     width=500,
     height=400,
@@ -343,16 +368,48 @@ def extend_india(confirmed, death, G0, D0, G1, D1, release_day,cd,cum):
     fig.update_layout(showlegend=False)
     fig.update_yaxes(title=None)
     fig.update_xaxes(title=None)
-    return fig
+    fig2.update_layout(
+    autosize=True,
+    #title = titlename,
+    margin = dict(l=40, r=40, t=40, b=40 ),
+    width=500,
+    height=400,
 
-def extedend_state(state,cd,rel_days,rel_frac,rel_date,ind = 0,cum = False):
+    #style = {'color':'green'},
+    yaxis = dict(
+       #range = [0,100] ,
+       #rangemode="tozero",
+        autorange=True,
+        title_text='deaths',
+        titlefont=dict(size=10),
+    ),
+    xaxis=dict(
+        title_text = "date",
+        autorange=True,
+        range=date_range,
+        title=None
+    ),
+    )
+    fig2.update_layout(legend=dict(
+    yanchor="top",
+    y=0.99,
+    xanchor="left",
+    x=0.01
+    ))
+    fig2.update_layout(showlegend=False)
+    fig2.update_yaxes(title=None)
+    fig2.update_xaxes(title=None)
+    #print('type of fig',type(fig))
+    return fig,fig2
+
+def extedend_state(state,rel_days,rel_frac,rel_date,ind = 0,cum = False):
     para_row = paraFile[paraFile['state']==state].iloc[0]
-    fig,state, confirmed, death, G0, D0, G1, D1, release_day =extend_state(state
+    fig,fig2,state, confirmed, death, G0, D0, G1, D1, release_day =extend_state(state
                                    ,
-                                   para_row, rel_frac, 0.5, 1 / rel_days,cd,cum,rel_date)
-    return fig
+                                   para_row, rel_frac, 0.5, 1 / rel_days,cum,rel_date)
+    return fig,fig2
 
-def extend_all(cd,rel_days,rel_frac,rel_date,cum = False):
+def extend_all(rel_days,rel_frac,rel_date,cum = False):
     India_G0 = []
     India_D0 = []
     India_G1 = []
@@ -363,8 +420,8 @@ def extend_all(cd,rel_days,rel_frac,rel_date,cum = False):
 
     for state in states:
             para_row = paraFile[paraFile['state']==state].iloc[0]
-            [fig,state, confirmed, death, G0, D0, G1, D1, release_day] =extend_state(state,
-                                    para_row,rel_frac, 0.5, 1 / rel_days,cd,cum,rel_date)
+            [fig,fig2,state, confirmed, death, G0, D0, G1, D1, release_day] =extend_state(state,
+                                    para_row,rel_frac, 0.5, 1 / rel_days,cum,rel_date)
             India_release_day = release_day
             if len(India_G0) == 0:
                     India_G0 = G0.copy()
@@ -382,10 +439,15 @@ def extend_all(cd,rel_days,rel_frac,rel_date,cum = False):
                     India_death = [India_death[i] + death[i] for i in range(len(death))]
     
     
-    fig = extend_india(India_confirmed, India_death, India_G0, India_D0, India_G1, India_D1, India_release_day,cd,cum)
+    fig,fig2 = extend_india(India_confirmed, India_death, India_G0, India_D0, India_G1, India_D1, India_release_day,cum)
         
-    
-    return fig
+    print(fig)
+    return fig,fig2
+
+
+ind_fig,ind_fig2= extend_all(release_days,release_frac,release_date)
+st_fig,st_fig2 = extedend_state('dl',release_days,release_frac,release_date)
+
 
 body = dbc.Container([ 
 
@@ -403,7 +465,7 @@ dbc.Row([
     dbc.Col([
 dcc.DatePickerSingle(
     id='date-picker-single',
-    date=date(2021, 6, 1),
+    date=date(2021, 6, 15),
     style  = {'display': 'inline-block','width':'10px', 'height':'10px'}
 )]),
     dbc.Col(dcc.Dropdown(
@@ -440,7 +502,7 @@ dcc.DatePickerSingle(
                         ),
                                html.Br(),
                html.P(id = "india_cases", style = {'color':'green','display': 'inline-block'}),
-               dcc.Graph(id='fig_india_cases',figure = extend_all('cases',release_days,release_frac,release_date))] ),
+               dcc.Graph(id='fig_india_cases',figure = ind_fig)] ),
         dbc.Col([
             #html.H3(id = "sim_td", style = {'display': 'inline-block'}),
             html.Br(),
@@ -452,7 +514,7 @@ dcc.DatePickerSingle(
                         ),
                                html.Br(),
             html.P(id = "state_deaths", style = {'color':'red','display': 'inline-block'}),
-            dcc.Graph(id='fig_india_deaths',figure = extend_all('deaths',release_days,release_frac,release_date))
+            dcc.Graph(id='fig_india_deaths',figure = ind_fig2)
             
             ])
         ,]),
@@ -518,7 +580,7 @@ dcc.DatePickerSingle(
                         ),
                                html.Br(),
                html.P(id = "state_cases", style = {'color':'green','display': 'inline-block'}),
-               dcc.Graph(id='fig_state_cases',figure = extedend_state('dl','cases',release_days,release_frac,release_date))] ),
+               dcc.Graph(id='fig_state_cases',figure =st_fig)] ),
         dbc.Col([
             #html.H3(id = "sim_td", style = {'display': 'inline-block'}),
             html.Br(),
@@ -530,7 +592,7 @@ dcc.DatePickerSingle(
                         ),
                                html.Br(),
             html.P(id = "state_deaths", style = {'color':'red','display': 'inline-block'}),
-            dcc.Graph(id='fig_state_deaths',figure = extedend_state('dl','deaths',release_days,release_frac,release_date))
+            dcc.Graph(id='fig_state_deaths',figure = st_fig2)
             
             ])
         ,])
@@ -542,29 +604,17 @@ dcc.DatePickerSingle(
 
 )
 @app.callback(
-    Output('fig_state_cases', 'figure'),
+    [Output('fig_state_cases', 'figure'),
+    Output('fig_state_deaths', 'figure')],
     Input('drp_dn','value'),
-    Input('cum_state_cases','on'),
     Input('date-picker-single','date'),
     Input('drp_relfrac','value'),
     Input('rel_d','value'))
-def update_figure_l(ca,cum,rel_date,rel_fra,rel_d):
-    fig2 = extedend_state(ca,'cases',rel_d,rel_fra,rel_date,0,cum)
-    #fig2.add_vline(x =rel_date,line_dash ='dash')
+def update_figure_l(ca,rel_date,rel_fra,rel_d):
+    [fig,fig2] = extedend_state(ca,rel_d,rel_fra,rel_date)
     fig2.update_layout(transition_duration=500)
-    return fig2
+    return [fig,fig2]
 
-@app.callback(
-    Output('fig_state_deaths', 'figure'),
-    Input('drp_dn','value'),
-    Input('cum_state_deaths','on'),
-    Input('date-picker-single','date'),
-    Input('drp_relfrac','value'),
-    Input('rel_d','value'))
-def update_figure_l1(ca,cum,rel_date,rel_fra,rel_d):
-    fig2 = extedend_state(ca,'deaths',rel_d,rel_fra,rel_date,0,cum)
-    fig2.update_layout(transition_duration=500)
-    return fig2
 
 @app.callback(
     Output('state_cases','children'),
@@ -581,26 +631,17 @@ def update_figure_l4(st):
     return u'Deaths in {}'.format(state_dict[st]) 
 
 @app.callback(
-    Output('fig_india_cases', 'figure'),
-    Input('bool_cum_cases','on'),
+    [Output('fig_india_cases', 'figure'),
+    Output('fig_india_deaths', 'figure')],
     Input('date-picker-single','date'),
     Input('drp_relfrac','value'),
     Input('rel_d','value'))
-def update_figure_l5(ca,rel_date,rel_fra,rel_d):
-    fig1 = extend_all('cases',rel_d,rel_fra,rel_date,ca)
-    fig1.update_layout(transition_duration=500)
-    return fig1
+def update_figure_l5(rel_date,rel_fra,rel_d):
+    [fig1,fig2] = extend_all(rel_d,rel_fra,rel_date)
+    
+    return [fig1,fig2]
 
-@app.callback(
-    Output('fig_india_deaths', 'figure'),
-    Input('bool_cum_deaths','on'),
-    Input('date-picker-single','date'),
-    Input('drp_relfrac','value'),
-    Input('rel_d','value'))
-def update_figure_l6(ca,rel_date,rel_fra,rel_d):
-    fig2 = extend_all('deaths',rel_d,rel_fra,rel_date,ca)
-    fig2.update_layout(transition_duration=500)
-    return fig2
+
 
 
 
