@@ -569,8 +569,8 @@ dcc.DatePickerSingle(
     ))
     ]),
   dbc.Row([
-        dbc.Col([
-               html.P(id = "india_cases", style = {'color':'green','display': 'inline-block'}),
+        dbc.Col([html.Br(),
+               html.P(["Cases in India"],style = {'color':'green','display': 'inline-block'}),
             dcc.Loading(
             id="loading-2",
             type="default",
@@ -578,8 +578,8 @@ dcc.DatePickerSingle(
                
         
         dbc.Col([
-
-            html.P(id = "state_deaths", style = {'color':'red','display': 'inline-block'}),
+html.Br(),
+            html.P(["Deaths in India"],style = {'color':'red','display': 'inline-block'}),
             
             dcc.Loading(
             id="loading-1",
@@ -640,27 +640,10 @@ dcc.DatePickerSingle(
             ]
         ),
     dbc.Row([
-        dbc.Col([#html.H3(id = "sim_tc", style = {'display': 'inline-block'}),
-                 html.Br(),
-                 html.P("Cummulative",style = {'display': 'inline-block'}),
-                 daq.BooleanSwitch(
-                id='cum_state_cases',
-                on=False,
-                style = {'display': 'inline-block','size':'20%'}
-                        ),
-                               html.Br(),
+        dbc.Col([
                html.P(id = "state_cases", style = {'color':'green','display': 'inline-block'}),
                dcc.Graph(id='fig_state_cases',figure =st_fig)] ),
         dbc.Col([
-            #html.H3(id = "sim_td", style = {'display': 'inline-block'}),
-            html.Br(),
-                 html.P("Cummulative",style = {'display': 'inline-block'}),
-                 daq.BooleanSwitch(
-                id='cum_state_deaths',
-                on=False,
-                style = {'display': 'inline-block','size':'20%'}
-                        ),
-                               html.Br(),
             html.P(id = "state_deaths", style = {'color':'red','display': 'inline-block'}),
             dcc.Graph(id='fig_state_deaths',figure = st_fig2)
             
