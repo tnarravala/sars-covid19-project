@@ -528,7 +528,7 @@ st_fig,st_fig2 = extedend_state('dl',release_days,release_frac,release_date)
 
 body = dbc.Container([ 
 
-
+dbc.Row([html.P("Projections of Daily Cases and Deaths",style={'color':'#151516',"font-size":"25px",'font-weight': 'bold'})]),
 dbc.Row([html.P("These projections are based on population behaviour in 2021 and can change based on adoption of social distancing measures",style={'color':'#9E12D6',"font-size":"20px"})]),
 dbc.Row([html.P("This data on confirmed cases and deaths has been updated on 1st June, 2021",style= {"color":"#151516",'font-size':'20px'}),]),
 dbc.Row(
