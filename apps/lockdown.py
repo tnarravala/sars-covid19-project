@@ -84,6 +84,11 @@ states = ['kl', 'dl', 'tg', 'rj', 'hr', 'jk', 'ka', 'la', 'mh', 'pb', 'tn', 'up'
           'ct', 'gj', 'hp', 'mp', 'br', 'mn', 'mz', 'ga', 'an', 'as', 'jh', 'ar', 'tr', 'nl', 'ml', 'sk', 'dn_dd', 'ld']
 
 
+paraFile = pd.read_csv(f'fittingV2_{end_date}/paras.csv')
+ConfirmFile = pd.read_csv('indian_cases_confirmed_cases.csv')
+DeathFile = pd.read_csv('indian_cases_confirmed_deaths.csv')
+PopFile = pd.read_csv( 'state_population.csv')
+
 state_dict = {'ap':'Andhra Pradesh',
              'dl':'Delhi',
              'mp':'Madhya Pradesh',
@@ -121,14 +126,14 @@ state_dict = {'ap':'Andhra Pradesh',
              'ld':'Ladakh',
              'la':'Lakshdweep'}
 
-def extend_state(state, ConfirmFile, DeathFile, PopFile, ParaFile, release_frac, peak_ratio,
+def extend_state(state, para_row,release_frac, peak_ratio,
                  daily_speed,cd,cum,release_d):
-   state_path = f'extended/{state}'
+   state_path = f'extended/{state}' 
    if not os.path.exists(state_path):
       os.makedirs(state_path)
-   df = pd.read_csv(ParaFile)
-   beta, gammaE, alpha, gamma, gamma2, gamma3, a1, a2, a3, eta, h, Hiding_init, c1, I_initial, metric1, metric2, r1, r2, reopen_date  = \
-      df.iloc[0]
+   #df = pd.read_csv(ParaFile)
+   para_row = list(para_row)[1:]
+   [beta, gammaE, alpha, gamma, gamma2, gamma3, a1, a2, a3, eta, h, Hiding_init, c1, I_initial, metric1, metric2, r1, r2, reopen_date ] =  para_row
 
    release_size = min(1 - eta, eta * release_frac)
    
@@ -136,11 +141,11 @@ def extend_state(state, ConfirmFile, DeathFile, PopFile, ParaFile, release_frac,
    #print(
     #  f'eta={round(eta, 3)} hiding={round(eta * Hiding_init, 3)} release={round(release_size, 3)} in {state_dict[state]}')
 
-   df = pd.read_csv(PopFile)
+   df = PopFile
    n_0 = df[df.iloc[:, 0] == state].iloc[0]['POP']
-   df = pd.read_csv(ConfirmFile)
+   df = ConfirmFile
    confirmed = df[df.iloc[:, 0] == state]
-   df2 = pd.read_csv(DeathFile)
+   df2 = DeathFile
    death = df2[df2.iloc[:, 0] == state]
    dates = list(confirmed.columns)
    dates = dates[dates.index(start_date):dates.index(end_date) + 1]
@@ -255,7 +260,7 @@ def extend_state(state, ConfirmFile, DeathFile, PopFile, ParaFile, release_frac,
    fig.update_layout(showlegend=False)
    fig.update_yaxes(title=None)
    fig.update_xaxes(title=None)
-   return fig,state, confirmed, death, G0, D0, G1, D1, release_day
+   return [fig,state, confirmed, death, G0, D0, G1, D1, release_day]
 
 
 def extend_india(confirmed, death, G0, D0, G1, D1, release_day,cd,cum):
@@ -341,9 +346,10 @@ def extend_india(confirmed, death, G0, D0, G1, D1, release_day,cd,cum):
     return fig
 
 def extedend_state(state,cd,rel_days,rel_frac,rel_date,ind = 0,cum = False):
-    fig,state, confirmed, death, G0, D0, G1, D1, release_day =extend_state(state, 'indian_cases_confirmed_cases.csv',
-                                   'indian_cases_confirmed_deaths.csv', 'state_population.csv',
-                                   f'fittingV2_{end_date}/{state}/para.csv', rel_frac, 0.5, 1 / rel_days,cd,cum,rel_date)
+    para_row = paraFile[paraFile['state']==state].iloc[0]
+    fig,state, confirmed, death, G0, D0, G1, D1, release_day =extend_state(state
+                                   ,
+                                   para_row, rel_frac, 0.5, 1 / rel_days,cd,cum,rel_date)
     return fig
 
 def extend_all(cd,rel_days,rel_frac,rel_date,cum = False):
@@ -354,10 +360,11 @@ def extend_all(cd,rel_days,rel_frac,rel_date,cum = False):
     India_confirmed = []
     India_death = []
     
+
     for state in states:
-            fig,state, confirmed, death, G0, D0, G1, D1, release_day =extend_state(state, 'indian_cases_confirmed_cases.csv',
-                                   'indian_cases_confirmed_deaths.csv', 'state_population.csv',
-                                   f'fittingV2_{end_date}/{state}/para.csv', rel_frac, 0.5, 1 / rel_days,cd,cum,rel_date)
+            para_row = paraFile[paraFile['state']==state].iloc[0]
+            [fig,state, confirmed, death, G0, D0, G1, D1, release_day] =extend_state(state,
+                                    para_row,rel_frac, 0.5, 1 / rel_days,cd,cum,rel_date)
             India_release_day = release_day
             if len(India_G0) == 0:
                     India_G0 = G0.copy()
@@ -377,9 +384,6 @@ def extend_all(cd,rel_days,rel_frac,rel_date,cum = False):
     
     fig = extend_india(India_confirmed, India_death, India_G0, India_D0, India_G1, India_D1, India_release_day,cd,cum)
         
-    
-     
-
     
     return fig
 
@@ -559,7 +563,6 @@ def update_figure_l(ca,cum,rel_date,rel_fra,rel_d):
     Input('rel_d','value'))
 def update_figure_l1(ca,cum,rel_date,rel_fra,rel_d):
     fig2 = extedend_state(ca,'deaths',rel_d,rel_fra,rel_date,0,cum)
-    #fig2.add_vline(x =rel_date,line_dash ='dash')
     fig2.update_layout(transition_duration=500)
     return fig2
 
