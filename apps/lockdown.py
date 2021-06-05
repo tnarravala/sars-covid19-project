@@ -16,7 +16,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from datetime import date
 from app import app
-
+import time
 from Fitting_india_V2 import simulate_combined,simulate_release
 
 import numpy as np
@@ -128,10 +128,6 @@ state_dict = {'ap':'Andhra Pradesh',
 
 def extend_state2(state, para_row,release_frac, peak_ratio,
                  daily_speed,cum,release_d):
-   state_path = f'extended/{state}' 
-   if not os.path.exists(state_path):
-      os.makedirs(state_path)
-   #df = pd.read_csv(ParaFile)
    para_row = list(para_row)[1:]
    [beta, gammaE, alpha, gamma, gamma2, gamma3, a1, a2, a3, eta, h, Hiding_init, c1, I_initial, metric1, metric2, r1, r2, reopen_date ] =  para_row
 
@@ -213,10 +209,7 @@ def extend_state2(state, para_row,release_frac, peak_ratio,
 
 def extend_state(state, para_row,release_frac, peak_ratio,
                  daily_speed,cum,release_d):
-   state_path = f'extended/{state}' 
-   if not os.path.exists(state_path):
-      os.makedirs(state_path)
-   #df = pd.read_csv(ParaFile)
+
    para_row = list(para_row)[1:]
    [beta, gammaE, alpha, gamma, gamma2, gamma3, a1, a2, a3, eta, h, Hiding_init, c1, I_initial, metric1, metric2, r1, r2, reopen_date ] =  para_row
 
@@ -578,11 +571,20 @@ dcc.DatePickerSingle(
   dbc.Row([
         dbc.Col([
                html.P(id = "india_cases", style = {'color':'green','display': 'inline-block'}),
-               dcc.Graph(id='fig_india_cases',figure = ind_fig)] ),
+            dcc.Loading(
+            id="loading-2",
+            type="default",
+            children=html.Div(dcc.Graph(id='fig_india_cases',figure = ind_fig) ))]),
+               
+        
         dbc.Col([
 
             html.P(id = "state_deaths", style = {'color':'red','display': 'inline-block'}),
-            dcc.Graph(id='fig_india_deaths',figure = ind_fig2)
+            
+            dcc.Loading(
+            id="loading-1",
+            type="default",
+            children=html.Div(dcc.Graph(id='fig_india_deaths',figure = ind_fig2)))
             
             ])
         ,]),
@@ -709,8 +711,15 @@ def update_figure_l5(rel_date,rel_fra,rel_d):
     
     return [fig1,fig2]
 
+@app.callback(Output("loading-output-1", "children"), Input("fig_india_deaths", "figure"))
+def input_triggers_spinner(figure):
+    time.sleep(10)
+    return figure
 
-
+@app.callback(Output("loading-output-2", "children"), Input("fig_india_cases", "figure"))
+def input_triggers_spinner2(figure):
+    time.sleep(10)
+    return figure
 
 
 
