@@ -669,6 +669,8 @@ dcc.DatePickerSingle(
         value=1*7,style = {'color':'black','width':'75%','display': 'inline-block','margin-left':'0.8%'}
     ))
     ]),
+   dbc.Row(
+        [html.Br()]),
     dbc.Row([
         dbc.Col([
                html.P(id = "state_cases", style = {'color':'green','display': 'inline-block'}),
@@ -690,9 +692,9 @@ dcc.DatePickerSingle(
     [Output('fig_state_cases', 'figure'),
     Output('fig_state_deaths', 'figure')],
     Input('drp_dn','value'),
-    Input('date-picker-single_state','date'),
+    Input('date-picker-single-state','date'),
     Input('drp_relfrac_state','value'),
-    Input('rel_d','value'))
+    Input('rel_d_state','value'))
 def update_figure_l(ca,rel_date,rel_fra,rel_d):
     [fig,fig2] = extedend_state(ca,rel_d,rel_fra,rel_date)
     fig2.update_layout(transition_duration=500)
