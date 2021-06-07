@@ -639,6 +639,38 @@ html.Br(),
     ),
             ]
         ),
+          dbc.Row([
+    dbc.Col([
+dcc.DatePickerSingle(
+    id='date-picker-single-state',
+    date=date(2021, 6, 15),
+    style  = {'display': 'inline-block','width':'10px', 'height':'10px'}
+)]),
+    dbc.Col(dcc.Dropdown(
+        id='drp_relfrac_state',
+        options=[
+            {'label':'25%','value':0.25},
+            {'label': '50%', 'value':0.5},
+            {'label':'75%','value':0.75},
+            {'label':'100%','value':1},
+ 
+        ],
+        value=0.25,style = {'color':'black','width':'75%','display': 'inline-block','margin-left':'0.8%'}
+    )),
+    dbc.Col(dcc.Dropdown(
+        id='rel_d_state',
+        options=[
+            {'label':'1 week','value':1*7},
+            {'label': '2 week', 'value':2*7},
+            {'label':'3 week','value':3*7},
+            {'label':'4 week','value':4*7},
+ 
+        ],
+        value=1*7,style = {'color':'black','width':'75%','display': 'inline-block','margin-left':'0.8%'}
+    ))
+    ]),
+   dbc.Row(
+        [html.Br()]),
     dbc.Row([
         dbc.Col([
                html.P(id = "state_cases", style = {'color':'green','display': 'inline-block'}),
@@ -660,9 +692,9 @@ html.Br(),
     [Output('fig_state_cases', 'figure'),
     Output('fig_state_deaths', 'figure')],
     Input('drp_dn','value'),
-    Input('date-picker-single','date'),
-    Input('drp_relfrac','value'),
-    Input('rel_d','value'))
+    Input('date-picker-single-state','date'),
+    Input('drp_relfrac_state','value'),
+    Input('rel_d_state','value'))
 def update_figure_l(ca,rel_date,rel_fra,rel_d):
     [fig,fig2] = extedend_state(ca,rel_d,rel_fra,rel_date)
     fig2.update_layout(transition_duration=500)
