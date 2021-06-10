@@ -15,26 +15,21 @@ import pandas as pd
 import plotly.graph_objects as go
 from datetime import date
 from app import app
-import time
-from Fitting_india_V2 import simulate_combined,simulate_release
+
 
 import numpy as np
-import concurrent.futures
-from scipy.optimize import minimize
-import matplotlib
+
+
 import matplotlib.pyplot as plt
 import sys
-from sklearn.metrics import r2_score, mean_squared_error
-from SIRfunctions import SEIARG, computeBeta_combined
+
+
 import datetime
-from numpy.random import uniform as uni
-import os
+
 #import matplotlib
 
 #import matplotlib.pyplot as plt
-import sys
 
-import datetime
 
 np.set_printoptions(threshold=sys.maxsize)
 
