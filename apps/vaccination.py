@@ -31,7 +31,7 @@ import datetime
 #import matplotlib.pyplot as plt
 
 
-np.set_printoptions(threshold=sys.maxsize)
+'''np.set_printoptions(threshold=sys.maxsize)
 
 states = ['kl', 'dl', 'tg', 'rj', 'hr', 'jk', 'ka', 'la', 'mh', 'pb', 'tn', 'up', 'ap', 'ut', 'or', 'wb', 'py', 'ch',
           'ct', 'gj', 'hp', 'mp', 'br', 'mn', 'mz', 'ga', 'an', 'as', 'jh', 'ar', 'tr', 'nl', 'ml', 'sk', 'dn_dd', 'ld']
@@ -398,12 +398,12 @@ class State:
         self.rday = release_day
         release_size = min(1 - self.eta, release_frac * self.eta)
         self.HH = [release_size * self.n_0]
-        '''result = simulate_release(self.size + size_ext,
+        result = simulate_release(self.size + size_ext,
                                   self.S, self.E, self.I, self.A, self.IH, self.IN, self.D, self.R, self.G, self.H,
                                   self.HH,
                                   self.betas, self.beta, self.gammaE, self.alpha, self.gamma, self.gamma2, self.gamma3,
                                   self.a1, self.a2, self.a3, self.h, self.Hiding_init, self.eta, self.c1, self.n_0,
-                                  self.reopen_day, release_day, release_size, release_speed)'''
+                                  self.reopen_day, release_day, release_size, release_speed)
 
         G = self.G.copy()
         D = self.D.copy()
@@ -497,9 +497,9 @@ class State:
         return G, D
 
 def vac_all():
-    '''state_path = f'india/vaccine/{round(1 / daily_rspeed)} day'
+    state_path = f'india/vaccine/{round(1 / daily_rspeed)} day'
     if not os.path.exists(state_path):
-        os.makedirs(state_path)'''
+        os.makedirs(state_path)
     global india_G0
     global india_D0
     global india_G1
@@ -708,7 +708,7 @@ def plot_comparison_state(state):
     return
 
 india_cases = vac_all()[0]
-india_deaths = vac_all()[0]
+india_deaths = vac_all()[0]'''
 body = dbc.Container([ 
 
               dbc.Row(
@@ -740,11 +740,11 @@ dcc.DatePickerSingle(
 dbc.Row([
         dbc.Col([
                html.P(id = "state_cases", style = {'color':'green','display': 'inline-block'}), ]),
-               dcc.Graph(id='fig_state_cases',figure =india_cases)] ),
+               #dcc.Graph(id='fig_state_cases',figure =india_cases)] ),
         dbc.Col([
             html.P(id = "state_deaths", style = {'color':'red','display': 'inline-block'}),
-            dcc.Graph(id='fig_state_deaths',figure = india_deaths)
-            
+            #dcc.Graph(id='fig_state_deaths',figure = india_deaths)
+            ]),
             ])
         
 

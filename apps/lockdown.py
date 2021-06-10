@@ -292,11 +292,15 @@ def extend_state(state, para_row,release_frac, peak_ratio,
    #fig.add_vline(x =rdate,line_dash ='dash')
    if cum == False:
        fig.add_trace(go.Bar(x=days_ext[1:len(d_confirmed)],y = [i for i in d_confirmed[1:]],name="Reported"))
-       fig.add_trace(go.Scatter(x=days_ext[1:],y = [i for i in dG0[1:]],name='Original\nProjection'),)
-       fig.add_trace(go.Scatter(x=days_ext[1:],y = [i  for i in dG1[1:]],name=f'{round(release_frac * 100)}% release',fill='tonexty'))
+       fig.add_trace(go.Scatter(x=days_ext[1:],y = [i  for i in dG1[1:]],name=f'{round(release_frac * 100)}% release'))
+       fig.add_trace(go.Scatter(x=days_ext[1:],y = [i for i in dG0[1:]],name='Original\nProjection',fill='tonexty',fillcolor = '#ffcccb'))
+
+       
+       
        fig2.add_trace(go.Bar(x=days_ext[1:len(d_death)],y = [i  for i in d_death[1:]],name="Reported"))
-       fig2.add_trace(go.Scatter(x=days_ext[1:],y = [i for i in dD0[1:]],name='Original\nProjection'))
-       fig2.add_trace(go.Scatter(x=days_ext[1:],y = [i  for i in dD1[1:]],name=f'{round(release_frac * 100)}% release',fill='tonexty'))
+       fig2.add_trace(go.Scatter(x=days_ext[1:],y = [i  for i in dD1[1:]],name=f'{round(release_frac * 100)}% release'))
+       fig2.add_trace(go.Scatter(x=days_ext[1:],y = [i for i in dD0[1:]],name='Original\nProjection',fill='tonexty',fillcolor = '#ffcccb'))
+       
    else:
        fig.add_trace(go.Bar(x=days,y = [i  for i in confirmed],name="Reported"))
        fig.add_trace(go.Scatter(x=days_ext,y = [i  for i in G1],name=f'{round(release_frac * 100)}% release'))
@@ -399,12 +403,13 @@ def extend_india(confirmed, death, G0, D0, G1, D1, release_day,cum,release_frac)
     ax8.axvline(days_ext[release_day], linestyle='dashed', color='tab:red')'''
     if cum == False:
         fig.add_trace(go.Bar(x=days_ext[1:len(d_confirmed)],y=[i for i in d_confirmed[1:]],name="Reported"))
-        fig.add_trace(go.Scatter(x=days_ext[1:],y =[i  for i in dG[1:]],name='Original\nProjection'))
-        fig.add_trace(go.Scatter(x =days_ext[1:],y=[i  for i in dG2[1:]],name =f'{round(release_frac * 100)}% release',fill='tonexty'))
-
+        
+        fig.add_trace(go.Scatter(x =days_ext[1:],y=[i  for i in dG2[1:]],name =f'{round(release_frac * 100)}% release'))
+        fig.add_trace(go.Scatter(x=days_ext[1:],y =[i  for i in dG[1:]],name='Original\nProjection',fill='tonexty',fillcolor = '#ffcccb'))
         fig2.add_trace(go.Bar(x=days_ext[1:len(d_death)],y=[i  for i in d_death[1:]],name="Reported"))
-        fig2.add_trace(go.Scatter(x=days_ext[1:],y =[i  for i in dD[1:]],name='Original\nProjection'))
-        fig2.add_trace(go.Scatter(x =days_ext[1:],y=[i for i in dD2[1:]],name =f'{round(release_frac * 100)}% release',fill='tonexty' ))
+        fig2.add_trace(go.Scatter(x =days_ext[1:],y=[i for i in dD2[1:]],name =f'{round(release_frac * 100)}% release'))
+        fig2.add_trace(go.Scatter(x=days_ext[1:],y =[i  for i in dD[1:]],name='Original\nProjection',fill='tonexty',fillcolor = '#ffcccb' ))
+        
         
 
     else:
