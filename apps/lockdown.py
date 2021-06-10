@@ -67,7 +67,7 @@ k2_range = (0.1, 2)
 I_initial_range = (0, 1)
 start_date = '2021-02-01'
 reopen_date = '2021-03-15'
-end_date = '2021-06-01'
+end_date = '2021-06-09'
 release_date = "2021-06-15" #input june 1st,2021 and Aug 1st,2021
 release_frac = 1/4 #input
 k_drop = 14
@@ -292,11 +292,11 @@ def extend_state(state, para_row,release_frac, peak_ratio,
    #fig.add_vline(x =rdate,line_dash ='dash')
    if cum == False:
        fig.add_trace(go.Bar(x=days_ext[1:len(d_confirmed)],y = [i for i in d_confirmed[1:]],name="Reported"))
-       fig.add_trace(go.Scatter(x=days_ext[1:],y = [i  for i in dG1[1:]],name=f'{round(release_frac * 100)}% release'))
-       fig.add_trace(go.Scatter(x=days_ext[1:],y = [i for i in dG0[1:]],name='Original\nProjection'))
+       fig.add_trace(go.Scatter(x=days_ext[1:],y = [i for i in dG0[1:]],name='Original\nProjection'),)
+       fig.add_trace(go.Scatter(x=days_ext[1:],y = [i  for i in dG1[1:]],name=f'{round(release_frac * 100)}% release',fill='tonexty'))
        fig2.add_trace(go.Bar(x=days_ext[1:len(d_death)],y = [i  for i in d_death[1:]],name="Reported"))
-       fig2.add_trace(go.Scatter(x=days_ext[1:],y = [i  for i in dD1[1:]],name=f'{round(release_frac * 100)}% release'))
        fig2.add_trace(go.Scatter(x=days_ext[1:],y = [i for i in dD0[1:]],name='Original\nProjection'))
+       fig2.add_trace(go.Scatter(x=days_ext[1:],y = [i  for i in dD1[1:]],name=f'{round(release_frac * 100)}% release',fill='tonexty'))
    else:
        fig.add_trace(go.Bar(x=days,y = [i  for i in confirmed],name="Reported"))
        fig.add_trace(go.Scatter(x=days_ext,y = [i  for i in G1],name=f'{round(release_frac * 100)}% release'))
@@ -372,7 +372,7 @@ def extend_state(state, para_row,release_frac, peak_ratio,
    return [fig,fig2]
 
 
-def extend_india(confirmed, death, G0, D0, G1, D1, release_day,cum):
+def extend_india(confirmed, death, G0, D0, G1, D1, release_day,cum,release_frac):
     d_confirmed = [confirmed[i] - confirmed[i - 1] for i in range(1, len(confirmed))]
     d_confirmed.insert(0, 0)
     d_death = [death[i] - death[i - 1] for i in range(1, len(death))]
@@ -399,12 +399,13 @@ def extend_india(confirmed, death, G0, D0, G1, D1, release_day,cum):
     ax8.axvline(days_ext[release_day], linestyle='dashed', color='tab:red')'''
     if cum == False:
         fig.add_trace(go.Bar(x=days_ext[1:len(d_confirmed)],y=[i for i in d_confirmed[1:]],name="Reported"))
-        fig.add_trace(go.Scatter(x =days_ext[1:],y=[i  for i in dG2[1:]],name =f'{round(release_frac * 100)}% release' ))
         fig.add_trace(go.Scatter(x=days_ext[1:],y =[i  for i in dG[1:]],name='Original\nProjection'))
+        fig.add_trace(go.Scatter(x =days_ext[1:],y=[i  for i in dG2[1:]],name =f'{round(release_frac * 100)}% release',fill='tonexty'))
 
         fig2.add_trace(go.Bar(x=days_ext[1:len(d_death)],y=[i  for i in d_death[1:]],name="Reported"))
-        fig2.add_trace(go.Scatter(x =days_ext[1:],y=[i for i in dD2[1:]],name =f'{round(release_frac * 100)}% release' ))
         fig2.add_trace(go.Scatter(x=days_ext[1:],y =[i  for i in dD[1:]],name='Original\nProjection'))
+        fig2.add_trace(go.Scatter(x =days_ext[1:],y=[i for i in dD2[1:]],name =f'{round(release_frac * 100)}% release',fill='tonexty' ))
+        
 
     else:
         fig.add_trace(go.Bar(x=days_ext[:len(confirmed)],y=[i  for i in confirmed],name="Reported"))
@@ -517,7 +518,7 @@ def extend_all(rel_days,rel_frac,rel_date,cum = False):
                     India_death = [India_death[i] + death[i] for i in range(len(death))]
     
     
-    fig,fig2 = extend_india(India_confirmed, India_death, India_G0, India_D0, India_G1, India_D1, India_release_day,cum)
+    fig,fig2 = extend_india(India_confirmed, India_death, India_G0, India_D0, India_G1, India_D1, India_release_day,cum,rel_frac)
         
     return fig,fig2
 
@@ -530,7 +531,7 @@ body = dbc.Container([
 
 dbc.Row([html.P("Projections of Daily Cases and Deaths",style={'color':'#151516',"font-size":"25px",'font-weight': 'bold'})]),
 dbc.Row([html.P("These projections are based on population behaviour in 2021 and can change based on adoption of social distancing measures",style={'color':'#9E12D6',"font-size":"20px"})]),
-dbc.Row([html.P("This data on confirmed cases and deaths has been updated on 1st June, 2021",style= {"color":"#151516",'font-size':'20px'}),]),
+dbc.Row([html.P("This data on confirmed cases and deaths has been updated on 9th June, 2021",style= {"color":"#151516",'font-size':'20px'}),]),
 dbc.Row(
         [
             dbc.Col(html.Label("Release Date ",style = {'font-size':'20px','display': 'inline-block'})),

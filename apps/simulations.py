@@ -333,7 +333,7 @@ dbc.Row([
         html.A('here', href='https://sars-covid-tracker-india.herokuapp.com/lockdown',style = {"color":"#E60B1F",'font-size':'20px'})],style={"color":"#151516",'font-size':'20px'})
              ]),
 dbc.Row([html.P("Computing is provided by Chameleon Cloud, sponsored by NSF-USA",style = {"font-size":"10px"})]),
-dbc.Row([html.P("This data on confirmed cases and deaths has been updated on 1st June, 2021",style= {"color":"#151516",'font-size':'20px'}),]),
+dbc.Row([html.P("This data on confirmed cases and deaths has been updated on 9th June, 2021",style= {"color":"#151516",'font-size':'20px'}),]),
       dbc.Row(
         [html.Br()]),
     dbc.Row([
