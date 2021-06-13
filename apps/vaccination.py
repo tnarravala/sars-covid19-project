@@ -779,32 +779,80 @@ def plot_comparison_state(state):
     dD2 = [D2[i] - D2[i - 1] for i in range(1, len(D2))]
     dD2.insert(0, 0)
 
-    '''fig = plt.figure(figsize=(12, 4.5))
-    fig.suptitle(state_dict[state_obj.state])
-    ax = fig.add_subplot(121)
-    ax2 = fig.add_subplot(122)
-    ax.set_title('Daily Cases')
-    ax2.set_title('Daily Deaths')
+    fig = go.Figure()
+    fig2 = go.Figure()
+    fig.add_trace(go.Scatter(x=state_obj.days_ext,y=dG0,name="No vaccine"))
+    fig.add_trace(go.Scatter(x=state_obj.days_ext,y=dG1,name="Current rate"))
+    fig.add_trace(go.Scatter(x=state_obj.days_ext,y=dG2,name="Projected rate"))
 
-    ax.plot(state_obj.days_ext, dG0, label='No vaccine')
-    ax.plot(state_obj.days_ext, dG1, label='Current rate')
-    ax.plot(state_obj.days_ext, dG2, label='Projected rate')
+    fig2.add_trace(go.Scatter(x=state_obj.days_ext,y=dD0,name="No vaccine"))
+    fig2.add_trace(go.Scatter(x=state_obj.days_ext,y=dD1,name="Current rate"))
+    fig2.add_trace(go.Scatter(x=state_obj.days_ext,y=dD2,name="Projected rate"))
+    
+    fig.update_layout(
+    autosize=True,
+    #title = titlename,
+    margin = dict(l=40, r=40, t=40, b=40 ),
+    width=500,
+    height=400,
 
-    ax2.plot(state_obj.days_ext, dD0, label='No vaccine')
-    ax2.plot(state_obj.days_ext, dD1, label='Current rate')
-    ax2.plot(state_obj.days_ext, dD2, label='Projected rate')
+    #style = {'color':'green'},
+    yaxis = dict(
+       #range = [0,100] ,
+       #rangemode="tozero",
+        autorange=True,
+        title_text='deaths',
+        titlefont=dict(size=10),
+    ),
+    xaxis=dict(
+        title_text = "date",
+        autorange=True,
+        range=date_range,
+        title=None
+    ),
+    )
+    fig.update_layout(legend=dict(
+    yanchor="top",
+    #y=0.99,
+    xanchor="right",
+    #x=0.01
+    ))
+    #fig.update_layout(showlegend=False)
+    fig.update_yaxes(title=None)
+    fig.update_xaxes(title=None)
+    fig2.update_layout(
+    autosize=True,
+    #title = titlename,
+    margin = dict(l=40, r=40, t=40, b=40 ),
+    width=500,
+    height=400,
 
-    # ax.axvline(state_obj.days_ext[state_obj.rday], linestyle='dashed', color='tab:grey', label='release')
-    # ax.axvline(state_obj.days_ext[state_obj.vday], linestyle='dashed', color='tab:green', label='vaccine')
-    # ax2.axvline(state_obj.days_ext[state_obj.rday], linestyle='dashed', color='tab:grey', label='release')
-    # ax2.axvline(state_obj.days_ext[state_obj.vday], linestyle='dashed', color='tab:green', label='vaccine')
+    #style = {'color':'green'},
+    yaxis = dict(
+       #range = [0,100] ,
+       #rangemode="tozero",
+        autorange=True,
+        title_text='deaths',
+        titlefont=dict(size=10),
+    ),
+    xaxis=dict(
+        title_text = "date",
+        autorange=True,
+        range=date_range,
+        title=None
+    ),
+    )
+    fig2.update_layout(legend=dict(
+    yanchor="top",
+    #y=0.99,
+    xanchor="right",
+    #x=0.01
+    ))
+    #fig2.update_layout(showlegend=False)
+    fig2.update_yaxes(title=None)
+    fig2.update_xaxes(title=None)
 
-    ax.legend()
-    ax2.legend()
-    fig.autofmt_xdate()'''
-    # plt.show(
-
-    return
+    return [fig,fig2]
 
 
 def improvements():
@@ -834,7 +882,13 @@ def improvements():
 
 ind_fig = vac_all(daily_vspeed2,v_date)[0]
 ind_fig1 = vac_all(daily_vspeed2,v_date)[1]
+st_fig = plot_comparison_state('dl')[0]
+st_fig2 = plot_comparison_state('dl')[1]
 body = dbc.Container([ 
+dbc.Row([
+    dbc.Col(html.P("Vaccination Date", style = {'color':'black','display': 'inline-block'})),
+    dbc.Col(html.P("Vaccination speed", style = {'color':'black','display': 'inline-block'})),
+    ]),
 dbc.Row([
     dbc.Col([
 dcc.DatePickerSingle(
@@ -855,14 +909,79 @@ dcc.DatePickerSingle(
     )),
 
     ]),
-        dbc.Row([html.Br()]),                                               
+        dbc.Row([html.Br()]),     
         dbc.Row([
         dbc.Col([
                html.P("Daily Cases in India", style = {'color':'green','display': 'inline-block'}),
-               dcc.Graph(id='vac_ind_c',figure =ind_fig)] ),
+                dcc.Loading(
+            id="loading-2",
+            type="default",
+            children=html.Div(dcc.Graph(id='vac_ind_c',figure = ind_fig) ))]),
+               
         dbc.Col([
             html.P("Daily Deaths in India", style = {'color':'red','display': 'inline-block'}),
-            dcc.Graph(id='vac_ind_d',figure = ind_fig1)
+             dcc.Loading(
+            id="loading-2",
+            type="default",
+            children=html.Div(dcc.Graph(id='vac_ind_d',figure = ind_fig1) )),
+            
+            
+            ])
+        ,]),
+        dbc.Row(
+        [
+    dcc.Dropdown(
+        id='st_drp',
+        options=[
+            {'label':'Andaman and Nicobar','value':'an'},
+            {'label': 'Andhra Pradesh', 'value': 'ap'},
+            {'label':'Arunachal Pradesh','value':'ar'},
+            {'label':'Assam','value':'as'},
+            {'label':'Bihar','value':'br'},
+            {'label':'Chandigarh','value':'ch'},
+            {'label':'Chattisgarh','value':'ct'},
+            {'label':'Daman and Diu','value':'dn_dd'},
+            {'label':'Delhi','value':'dl'},
+            {'label':'Goa','value':'ga'},
+            {'label':'Gujarat','value':'gj'},
+            {'label':'Haryana','value':'hr'},
+            {'label':'Himachal Pradesh','value':'hp'},
+            {'label':'Jammu and Kashmir','value':'jk'},
+            {'label':'Jharkhand','value':'jh'},
+            {'label':'Karnataka','value':'ka'},
+            {'label': 'Kerala', 'value': 'kl'},
+            {'label':'Ladakh','value':'ld'},
+            {'label':'Lakshdweep','value':'la'},
+            {'label': 'Madhya Pradesh', 'value': 'mp'},
+            {'label':'Maharastra','value':'mh'},
+            {'label':'Manipur','value':'mn'},
+            {'label':'Meghalaya','value':'ml'},
+            {'label':'Mizoram','value':'mz'},
+            {'label':'Nagaland','value':'nl'},
+            {'label':'Odisha','value':'or'},
+            {'label':'Puducherry','value':'py'},
+            {'label':'Punjab','value':'pb'},
+            {'label':'Rajesthan','value':'rj'},
+            {'label':'Sikkim','value':'sk'},
+            {'label':'Tamil Nadu','value':'tn'},
+            {'label':'Telangana','value':'tg'},
+            {'label':'Tripura','value':'tr'},
+            {'label':'Uttarakhand','value':'ut'},
+            {'label':'Uttar Pradesh','value':'up'},
+            {'label':'West Bengal','value':'wb'},
+ 
+        ],
+        value='dl',style = {'color':'black','width':'50%','display': 'inline-block','margin-left':'0.8%'}
+    ),
+            ]
+        ),
+        dbc.Row([
+        dbc.Col([
+               html.P(id = "state_cases", style = {'color':'green','display': 'inline-block'}),
+               dcc.Graph(id='st_fig_c',figure =st_fig)] ),
+        dbc.Col([
+            html.P(id = "state_deaths", style = {'color':'red','display': 'inline-block'}),
+            dcc.Graph(id='st_fig_d',figure = st_fig2)
             
             ])
         ,])
@@ -881,6 +1000,14 @@ def update_vspeed(v_speed,vdate):
     [fig,fig2] = vac_all(v_speed,v_date)
     return [fig,fig2]
 
+@app.callback([Output('st_fig_c','figure'),
+     Output('st_fig_d','figure')
+    ],
+    Input('st_drp','value')          
+    )
+def update_state(st):
+    [fig,fig2] = plot_comparison_state(st)
+    return [fig,fig2]
 
 #app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SUPERHERO])
 server = app.server
