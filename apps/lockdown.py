@@ -569,6 +569,13 @@ dcc.DatePickerSingle(
             {'label': '2 week', 'value':2*7},
             {'label':'3 week','value':3*7},
             {'label':'4 week','value':4*7},
+            {'label':'6 week','value':6*7},
+            {'label':'8 week','value':8*7},
+            {'label':'10 week','value':10*7},
+            {'label':'12 week','value':12*7},
+            {'label':'4 months','value':4*30},
+            {'label':'5 months','value':5*30},
+            {'label':'6 months','value':6*30},
  
         ],
         value=1*7,style = {'color':'black','width':'75%','display': 'inline-block','margin-left':'0.8%'}
@@ -674,6 +681,9 @@ dcc.DatePickerSingle(
             {'label':'8 week','value':8*7},
             {'label':'10 week','value':10*7},
             {'label':'12 week','value':12*7},
+            {'label':'4 months','value':4*30},
+            {'label':'5 months','value':5*30},
+            {'label':'6 months','value':6*30},
             
  
         ],
