@@ -592,7 +592,9 @@ class State:
         return
 
 
-def vac_all():
+def vac_all(v_speed,vdate):
+    daily_vspeed2 = v_speed
+    v_date = vdate
     state_path = f'india/vaccine/{round(1 / daily_rspeed)} day'
     if not os.path.exists(state_path):
         os.makedirs(state_path)
@@ -830,8 +832,8 @@ def improvements():
 
 
 
-ind_fig = vac_all()[0]
-ind_fig1 = vac_all()[1]
+ind_fig = vac_all(daily_vspeed2,v_date)[0]
+ind_fig1 = vac_all(daily_vspeed2,v_date)[1]
 body = dbc.Container([ 
 dbc.Row([
     dbc.Col([
@@ -843,13 +845,13 @@ dcc.DatePickerSingle(
     dbc.Col(dcc.Dropdown(
         id='v_speed',
         options=[
-            {'label':'25%','value':0.25},
-            {'label': '50%', 'value':0.5},
-            {'label':'75%','value':0.75},
-            {'label':'100%','value':1},
+            {'label':'0.3%','value':0.003},
+            {'label': '0.4%', 'value':0.004},
+            {'label':'0.5%','value':0.005},
+            {'label':'1%','value':0.01},
  
         ],
-        value=0.25,style = {'color':'black','width':'75%','display': 'inline-block','margin-left':'0.8%'}
+        value=0.003,style = {'color':'black','width':'75%','display': 'inline-block','margin-left':'0.8%'}
     )),
 
     ]),
@@ -857,10 +859,10 @@ dcc.DatePickerSingle(
         dbc.Row([
         dbc.Col([
                html.P("Daily Cases in India", style = {'color':'green','display': 'inline-block'}),
-               dcc.Graph(id='fig_state_cases',figure =ind_fig)] ),
+               dcc.Graph(id='vac_ind_c',figure =ind_fig)] ),
         dbc.Col([
             html.P("Daily Deaths in India", style = {'color':'red','display': 'inline-block'}),
-            dcc.Graph(id='fig_state_deaths',figure = ind_fig1)
+            dcc.Graph(id='vac_ind_d',figure = ind_fig1)
             
             ])
         ,])
@@ -869,7 +871,15 @@ dcc.DatePickerSingle(
 
 )
 
-
+@app.callback(
+    [Output('vac_ind_c','figure'),
+     Output('vac_ind_d','figure')],
+    Input('v_speed','value'),
+    Input('v_date','date')
+    )
+def update_vspeed(v_speed,vdate):
+    [fig,fig2] = vac_all(v_speed,v_date)
+    return [fig,fig2]
 
 
 #app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SUPERHERO])
