@@ -495,7 +495,7 @@ def plot_combined(state, confirmed, death, days, n_0, para, state_path):
 
 def fit_all():
     t1 = time.perf_counter()
-    matplotlib.use('Agg')
+    #matplotlib.use('Agg')
     # states = ['mz', 'dn_dd', 'ld']
     for state in states:
         fit_state(state, 'india/indian_cases_confirmed_cases.csv', 'india/indian_cases_confirmed_deaths.csv',

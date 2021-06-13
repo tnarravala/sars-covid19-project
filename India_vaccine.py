@@ -7,7 +7,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import sys
 from sklearn.metrics import r2_score, mean_squared_error
-from SIRfunctions import SEIARG, computeBeta_combined
+#from SIRfunctions import SEIARG, computeBeta_combined
 import datetime
 from numpy.random import uniform as uni
 import os
