@@ -541,7 +541,7 @@ dbc.Row(
         [
             dbc.Col(html.Label("Release Date ",style = {'font-size':'20px','display': 'inline-block'})),
             dbc.Col(html.Label("Release Fraction ",style = {'font-size':'20px','display': 'inline-block'})),
-            dbc.Col(html.Label("Release days ",style = {'font-size':'20px','display': 'inline-block'}))
+            dbc.Col(html.Label("Release period ",style = {'font-size':'20px','display': 'inline-block'}))
         ]
         ),
 dbc.Row([
@@ -565,14 +565,14 @@ dcc.DatePickerSingle(
     dbc.Col(dcc.Dropdown(
         id='rel_d',
         options=[
-            {'label':'1 week','value':1*7},
-            {'label': '2 week', 'value':2*7},
-            {'label':'3 week','value':3*7},
-            {'label':'4 week','value':4*7},
-            {'label':'6 week','value':6*7},
-            {'label':'8 week','value':8*7},
-            {'label':'10 week','value':10*7},
-            {'label':'12 week','value':12*7},
+            {'label':'1 weeks','value':1*7},
+            {'label': '2 weeks', 'value':2*7},
+            {'label':'3 weeks','value':3*7},
+            {'label':'4 weeks','value':4*7},
+            {'label':'6 weeks','value':6*7},
+            {'label':'8 weeks','value':8*7},
+            {'label':'10 weeks','value':10*7},
+            {'label':'12 weeks','value':12*7},
             {'label':'4 months','value':4*30},
             {'label':'5 months','value':5*30},
             {'label':'6 months','value':6*30},
@@ -673,14 +673,14 @@ dcc.DatePickerSingle(
     dbc.Col(dcc.Dropdown(
         id='rel_d_state',
         options=[
-            {'label':'1 week','value':1*7},
-            {'label': '2 week', 'value':2*7},
-            {'label':'3 week','value':3*7},
-            {'label':'4 week','value':4*7},
-            {'label':'6 week','value':6*7},
-            {'label':'8 week','value':8*7},
-            {'label':'10 week','value':10*7},
-            {'label':'12 week','value':12*7},
+            {'label':'1 weeks','value':1*7},
+            {'label': '2 weeks', 'value':2*7},
+            {'label':'3 weeks','value':3*7},
+            {'label':'4 weeks','value':4*7},
+            {'label':'6 weeks','value':6*7},
+            {'label':'8 weeks','value':8*7},
+            {'label':'10 weeks','value':10*7},
+            {'label':'12 weeks','value':12*7},
             {'label':'4 months','value':4*30},
             {'label':'5 months','value':5*30},
             {'label':'6 months','value':6*30},
