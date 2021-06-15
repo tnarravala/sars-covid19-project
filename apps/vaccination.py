@@ -992,6 +992,13 @@ dcc.DatePickerSingle(
         ),
         dbc.Row([html.Br()]),
         dbc.Row([
+    dbc.Col(html.P("Vaccination Date", style = {'color':'black','display': 'inline-block'})),
+    dbc.Col(html.P("Release Date", style = {'color':'black','display': 'inline-block'})),
+    dbc.Col(html.P("Release Period", style = {'color':'black','display': 'inline-block'})),
+    dbc.Col(html.P("Release Fraction", style = {'color':'black','display': 'inline-block'})),
+    dbc.Col(html.P("Vaccination speed", style = {'color':'black','display': 'inline-block'})),
+    ]),
+        dbc.Row([
     dbc.Col([
 dcc.DatePickerSingle(
     id='v_st_date',
@@ -1050,10 +1057,18 @@ dcc.DatePickerSingle(
         dbc.Row([
         dbc.Col([
                html.P(id = "state_cases", style = {'color':'green','display': 'inline-block'}),
-               dcc.Graph(id='st_fig_c',figure =st_fig)] ),
+                dcc.Loading(
+            id="loading-2",
+            type="default",
+            children=html.Div(dcc.Graph(id='st_fig_c',figure =st_fig)))
+               ] ),
         dbc.Col([
             html.P(id = "state_deaths", style = {'color':'red','display': 'inline-block'}),
-            dcc.Graph(id='st_fig_d',figure = st_fig2)
+            dcc.Loading(
+            id="loading-2",
+            type="default",
+            children=html.Div(dcc.Graph(id='st_fig_d',figure = st_fig2)))
+            
             
             ])
         ,])
@@ -1072,21 +1087,21 @@ dcc.DatePickerSingle(
     Input('v_reldays','value')
     )
 def update_vspeed(v_speed,vdate,r_date,r_frac,r_days):
-    [fig,fig2] = vac_all(v_speed,v_date,r_date,r_frac,1/r_days)
+    [fig,fig2] = vac_all(v_speed,vdate,r_date,r_frac,1/r_days)
     return [fig,fig2]
 
 @app.callback([Output('st_fig_c','figure'),
      Output('st_fig_d','figure')
     ],
     Input('st_drp','value'),
-   Input('v_st_speed','value'),
+    Input('v_st_speed','value'),
     Input('v_st_date','date'),
     Input('r_st_date','date'),
     Input('vac_st_relfrac','value'),
     Input('v_st_reldays','value')
     )
 def update_state(st,v_speed,vdate,r_date,r_frac,r_days):
-    [fig,fig2] = plot_comparison_state(st,v_speed,v_date,r_date,r_frac,1/r_days)
+    [fig,fig2] = plot_comparison_state(st,v_speed,vdate,r_date,r_frac,1/r_days)
     return [fig,fig2]
 
 #app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SUPERHERO])
