@@ -91,10 +91,12 @@ parasFile = f'fittingV2_{end_date}/paras.csv'
 popFile = 'state_population.csv'
 confirmFile = 'indian_cases_confirmed_cases.csv'
 deathFile = 'indian_cases_confirmed_deaths.csv'
+indiavac = 'indiavaccine.csv'
 paras_df = pd.read_csv(parasFile)
 pop_df = pd.read_csv(popFile)
 confirm_df = pd.read_csv(confirmFile)
 death_df = pd.read_csv(deathFile)
+vaccine_df = pd.read_csv(indiavac)
 
 v_date = '2021-06-15'
 r_date = '2021-06-30'
@@ -331,11 +333,15 @@ def simulate_vac(start_index, size,
 
 
 class State:
-    def __init__(self, state, paras_df, pop_df, confirm_df, death_df):
+    def __init__(self, state, paras_df, pop_df, confirm_df, death_df,vaccine_df):
         self.state = state
 
         row = list(paras_df[paras_df['state'] == state].iloc[0])
         # self.state = row[0]
+        self.frac1 = vaccine_df[vaccine_df['Name'] == state].iloc[0]['Vaccine']
+        self.frac2 = self.frac1*0.80
+        self.frac1 = self.frac1*0.20
+        self.frac3 = 0
         self.beta = row[1]
         self.gammaE = row[2]
         self.alpha = row[3]
@@ -512,6 +518,9 @@ class State:
         self.H3 = [0] * extend_start_day
 
         # new releases
+        HH_frac1 = self.frac1
+        HH_frac2 = self.frac2
+        HH_frac3 = self.frac3
         self.HH0 = self.HH[:extend_start_day].copy()
         self.HH1 = [0] * extend_start_day
         self.HH2 = [0] * extend_start_day
@@ -553,48 +562,13 @@ class State:
         dDD = [DD[i] - DD[i - 1] for i in range(1, len(DD))]
         dDD.insert(0, 0)
 
-        '''fig = plt.figure()
-        ax = fig.add_subplot(221)
-        ax2 = fig.add_subplot(222)
-        ax3 = fig.add_subplot(223)
-        ax4 = fig.add_subplot(224)
-        fig.suptitle(self.state)
-        ax.plot(self.days_ext, dG, label='dG')
-        ax.plot(self.days_ext, dGG, label='dG2')
-        ax2.plot(self.days_ext, dD, label='dD')
-        ax2.plot(self.days_ext, dDD, label='dD2')
-        ax.axvline(self.days_ext[self.rday], linestyle='dashed', color='tab:grey', label='release')
-        ax.axvline(self.days_ext[self.vday], linestyle='dashed', color='tab:green', label='vaccine')
-        ax2.axvline(self.days_ext[self.rday], linestyle='dashed', color='tab:grey', label='release')
-        ax2.axvline(self.days_ext[self.vday], linestyle='dashed', color='tab:green', label='vaccine')
-
-        # ax3.plot(self.days_ext, self.HH0, label='HH0')
-        ax3.plot(self.days_ext, self.HH1, label='HH1')
-        ax3.plot(self.days_ext, self.HH2, label='HH2')
-        ax3.plot(self.days_ext, self.HH3, label='HH3')
-        ax4.plot(self.days_ext, self.betas, label='beta')
-        ax4.plot(self.days_ext, self.betas2, label='beta2')
-        # ax.plot(self.days_ext, [i / 1000 for i in self.G], label='G')
-        # ax.plot(self.days_ext,
-        #         [(self.G0[i] + self.G1[i] + self.G2[i] + self.G3[i]) / 1000 for i in range(len(self.G0))], label='G2')
-        # ax2.plot(self.days_ext, [i / 1000 for i in self.D], label='D')
-        # ax2.plot(self.days_ext,
-        #          [(self.D0[i] + self.D1[i] + self.D2[i] + self.D3[i]) / 1000 for i in range(len(self.D0))], label='D2')
-        # ax.plot(self.days, [i / 1000 for i in self.confirmed], linewidth=5, linestyle=':', label="Cumulative\nCases")
-        # ax2.plot(self.days, [i / 1000 for i in self.death], linewidth=5, linestyle=':', label="Cumulative\nDeaths")
-        ax.legend()
-        ax2.legend()
-        ax3.legend()
-        ax4.legend()
-        fig.autofmt_xdate()
-        plt.show()
-        plt.close(fig)'''
         return
 
 
-def vac_all(v_speed,vdate):
+def vac_all(v_speed,vdate,r_date,r_frac,r_days):
     daily_vspeed2 = v_speed
     v_date = vdate
+    daily_rspeed = r_days
     state_path = f'india/vaccine/{round(1 / daily_rspeed)} day'
     if not os.path.exists(state_path):
         os.makedirs(state_path)
@@ -609,7 +583,7 @@ def vac_all(v_speed,vdate):
 
     for state in states:
 
-        state_obj = State(state, paras_df, pop_df, confirm_df, death_df)
+        state_obj = State(state, paras_df, pop_df, confirm_df, death_df,vaccine_df)
         state_objs[state] = state_obj
         G0, D0 = state_obj.sim(release_date=r_date, release_frac=r_frac, release_speed=daily_rspeed)
 
@@ -755,14 +729,17 @@ def plot_comparison_india(G0, D0, G1, D1, G2, D2, release_date, vaccine_date, da
     return [fig,fig2]
 
 
-def plot_comparison_state(state):
-    state_obj = state_objs[state]
-    G0 = G0s[state]
-    D0 = D0s[state]
-    G1 = G1s[state]
-    D1 = D1s[state]
-    G2 = G2s[state]
-    D2 = D2s[state]
+def plot_comparison_state(state,v_speed,v_date,r_date,r_frac,daily_rspeed):
+    state_obj2 = State(state, paras_df, pop_df, confirm_df, death_df,vaccine_df)
+     #state_objs[state] = state_obj
+    G0, D0 = state_obj2.sim(release_date=r_date, release_frac=r_frac, release_speed=daily_rspeed)
+
+    vac_speeds = [daily_vspeed1] * (state_obj2.size + size_ext)
+    G1, D1 = state_obj2.vac(release_date=r_date, release_frac=r_frac, release_speed=daily_rspeed,vaccine_date=v_date, vaccine_speeds=vac_speeds, vac_period1=v_period1,vac_period2=v_period2, vac_eff1=v_eff1, vac_eff2=v_eff2)
+
+    vac_speeds = [daily_vspeed1] * state_obj2.vday + [v_speed] * (state_obj2.size + size_ext - state_obj2.vday)
+    G2, D2 = state_obj2.vac(release_date=r_date, release_frac=r_frac, release_speed=daily_rspeed,vaccine_date=v_date, vaccine_speeds=vac_speeds, vac_period1=v_period1,vac_period2=v_period2, vac_eff1=v_eff1, vac_eff2=v_eff2)
+ 
 
     dG0 = [G0[i] - G0[i - 1] for i in range(1, len(G0))]
     dG0.insert(0, 0)
@@ -781,13 +758,13 @@ def plot_comparison_state(state):
 
     fig = go.Figure()
     fig2 = go.Figure()
-    fig.add_trace(go.Scatter(x=state_obj.days_ext,y=dG0,name="No vaccine"))
-    fig.add_trace(go.Scatter(x=state_obj.days_ext,y=dG1,name="Current rate"))
-    fig.add_trace(go.Scatter(x=state_obj.days_ext,y=dG2,name="Projected rate"))
+    fig.add_trace(go.Scatter(x=state_obj2.days_ext,y=dG0,name="No vaccine"))
+    fig.add_trace(go.Scatter(x=state_obj2.days_ext,y=dG1,name="Current rate"))
+    fig.add_trace(go.Scatter(x=state_obj2.days_ext,y=dG2,name="Projected rate"))
 
-    fig2.add_trace(go.Scatter(x=state_obj.days_ext,y=dD0,name="No vaccine"))
-    fig2.add_trace(go.Scatter(x=state_obj.days_ext,y=dD1,name="Current rate"))
-    fig2.add_trace(go.Scatter(x=state_obj.days_ext,y=dD2,name="Projected rate"))
+    fig2.add_trace(go.Scatter(x=state_obj2.days_ext,y=dD0,name="No vaccine"))
+    fig2.add_trace(go.Scatter(x=state_obj2.days_ext,y=dD1,name="Current rate"))
+    fig2.add_trace(go.Scatter(x=state_obj2.days_ext,y=dD2,name="Projected rate"))
     
     fig.update_layout(
     autosize=True,
@@ -880,13 +857,15 @@ def improvements():
 
 
 
-ind_fig = vac_all(daily_vspeed2,v_date)[0]
-ind_fig1 = vac_all(daily_vspeed2,v_date)[1]
-st_fig = plot_comparison_state('dl')[0]
-st_fig2 = plot_comparison_state('dl')[1]
+ind_fig,ind_fig1 = vac_all(daily_vspeed2,v_date,r_date,r_frac,daily_rspeed)
+st_fig,st_fig2 = plot_comparison_state('dl',daily_vspeed2,v_date,r_date,r_frac,daily_rspeed)
+
 body = dbc.Container([ 
 dbc.Row([
     dbc.Col(html.P("Vaccination Date", style = {'color':'black','display': 'inline-block'})),
+    dbc.Col(html.P("Release Date", style = {'color':'black','display': 'inline-block'})),
+    dbc.Col(html.P("Release Period", style = {'color':'black','display': 'inline-block'})),
+    dbc.Col(html.P("Release Fraction", style = {'color':'black','display': 'inline-block'})),
     dbc.Col(html.P("Vaccination speed", style = {'color':'black','display': 'inline-block'})),
     ]),
 dbc.Row([
@@ -896,6 +875,42 @@ dcc.DatePickerSingle(
     date=date(2021, 6, 15),
     style  = {'display': 'inline-block','width':'10px', 'height':'10px'}
 )]),
+           dbc.Col([
+dcc.DatePickerSingle(
+    id='r_date',
+    date=date(2021, 6, 30),
+    style  = {'display': 'inline-block','width':'10px', 'height':'10px'}
+)]),
+     dbc.Col(dcc.Dropdown(
+        id='v_reldays',
+        options=[
+            {'label':'1 week','value':1*7},
+            {'label': '2 weeks', 'value':2*7},
+            {'label':'3 weeks','value':3*7},
+            {'label':'4 weeks','value':4*7},
+            {'label':'6 weeks','value':6*7},
+            {'label':'8 weeks','value':8*7},
+            {'label':'10 weeks','value':10*7},
+            {'label':'12 weeks','value':12*7},
+            {'label':'4 months','value':4*30},
+            {'label':'5 months','value':5*30},
+            {'label':'6 months','value':6*30},
+ 
+        ],
+        value=12*7,style = {'color':'black','width':'75%','display': 'inline-block','margin-left':'0.8%'}
+    )),
+     dbc.Col(dcc.Dropdown(
+        id='vac_relfrac',
+        options=[
+            {'label':'25%','value':0.25},
+            {'label': '50%', 'value':0.5},
+            {'label':'75%','value':0.75},
+            {'label':'100%','value':1},
+ 
+        ],
+        value=0.25,style = {'color':'black','width':'75%','display': 'inline-block','margin-left':'0.8%'}
+    )),
+
     dbc.Col(dcc.Dropdown(
         id='v_speed',
         options=[
@@ -975,6 +990,63 @@ dcc.DatePickerSingle(
     ),
             ]
         ),
+        dbc.Row([html.Br()]),
+        dbc.Row([
+    dbc.Col([
+dcc.DatePickerSingle(
+    id='v_st_date',
+    date=date(2021, 6, 15),
+    style  = {'display': 'inline-block','width':'10px', 'height':'10px'}
+)]),
+           dbc.Col([
+dcc.DatePickerSingle(
+    id='r_st_date',
+    date=date(2021, 6, 30),
+    style  = {'display': 'inline-block','width':'10px', 'height':'10px'}
+)]),
+     dbc.Col(dcc.Dropdown(
+        id='v_st_reldays',
+        options=[
+            {'label':'1 week','value':1*7},
+            {'label': '2 weeks', 'value':2*7},
+            {'label':'3 weeks','value':3*7},
+            {'label':'4 weeks','value':4*7},
+            {'label':'6 weeks','value':6*7},
+            {'label':'8 weeks','value':8*7},
+            {'label':'10 weeks','value':10*7},
+            {'label':'12 weeks','value':12*7},
+            {'label':'4 months','value':4*30},
+            {'label':'5 months','value':5*30},
+            {'label':'6 months','value':6*30},
+ 
+        ],
+        value=12*7,style = {'color':'black','width':'75%','display': 'inline-block','margin-left':'0.8%'}
+    )),
+     dbc.Col(dcc.Dropdown(
+        id='vac_st_relfrac',
+        options=[
+            {'label':'25%','value':0.25},
+            {'label': '50%', 'value':0.5},
+            {'label':'75%','value':0.75},
+            {'label':'100%','value':1},
+ 
+        ],
+        value=0.25,style = {'color':'black','width':'75%','display': 'inline-block','margin-left':'0.8%'}
+    )),
+
+    dbc.Col(dcc.Dropdown(
+        id='v_st_speed',
+        options=[
+            {'label':'0.3%','value':0.003},
+            {'label': '0.4%', 'value':0.004},
+            {'label':'0.5%','value':0.005},
+            {'label':'1%','value':0.01},
+ 
+        ],
+        value=0.003,style = {'color':'black','width':'75%','display': 'inline-block','margin-left':'0.8%'}
+    )),
+
+    ]),
         dbc.Row([
         dbc.Col([
                html.P(id = "state_cases", style = {'color':'green','display': 'inline-block'}),
@@ -994,19 +1066,27 @@ dcc.DatePickerSingle(
     [Output('vac_ind_c','figure'),
      Output('vac_ind_d','figure')],
     Input('v_speed','value'),
-    Input('v_date','date')
+    Input('v_date','date'),
+    Input('r_date','date'),
+    Input('vac_relfrac','value'),
+    Input('v_reldays','value')
     )
-def update_vspeed(v_speed,vdate):
-    [fig,fig2] = vac_all(v_speed,v_date)
+def update_vspeed(v_speed,vdate,r_date,r_frac,r_days):
+    [fig,fig2] = vac_all(v_speed,v_date,r_date,r_frac,1/r_days)
     return [fig,fig2]
 
 @app.callback([Output('st_fig_c','figure'),
      Output('st_fig_d','figure')
     ],
-    Input('st_drp','value')          
+    Input('st_drp','value'),
+   Input('v_st_speed','value'),
+    Input('v_st_date','date'),
+    Input('r_st_date','date'),
+    Input('vac_st_relfrac','value'),
+    Input('v_st_reldays','value')
     )
-def update_state(st):
-    [fig,fig2] = plot_comparison_state(st)
+def update_state(st,v_speed,vdate,r_date,r_frac,r_days):
+    [fig,fig2] = plot_comparison_state(st,v_speed,v_date,r_date,r_frac,1/r_days)
     return [fig,fig2]
 
 #app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SUPERHERO])
