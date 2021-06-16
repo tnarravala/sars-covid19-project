@@ -572,6 +572,12 @@ def vac_all(v_speed,vdate,r_date,r_frac,r_days):
     state_path = f'india/vaccine/{round(1 / daily_rspeed)} day'
     if not os.path.exists(state_path):
         os.makedirs(state_path)
+    india_G0 = []
+    india_D0 = []
+    india_G1 = []
+    india_D1 = []
+    india_G2 = []
+    india_D2 = []
     global india_G0
     global india_D0
     global india_G1
@@ -597,7 +603,7 @@ def vac_all(v_speed,vdate,r_date,r_frac,r_days):
                                vaccine_date=v_date, vaccine_speeds=vac_speeds, vac_period1=v_period1,
                                vac_period2=v_period2, vac_eff1=v_eff1, vac_eff2=v_eff2)
 
-        G0s[state] = G0
+        G0s[state] = G0   #what's the use of these
         G1s[state] = G1
         G2s[state] = G2
         D0s[state] = D0
