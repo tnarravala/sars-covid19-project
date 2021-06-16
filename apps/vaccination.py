@@ -70,7 +70,7 @@ state_dict = {'up': 'Uttar Pradesh',
 
 start_date = '2021-02-01'
 # reopen_date = '2021-03-15'
-end_date = '2021-06-09'
+end_date = '2021-06-01'
 
 size_ext = 400
 
