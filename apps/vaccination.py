@@ -589,7 +589,7 @@ def vac_all(v_speed,vdate,r_date,r_frac,r_days):
     india_D2 = []
 
     for state in states:
-
+        state_obj = {}            
         state_obj = State(state, paras_df, pop_df, confirm_df, death_df,vaccine_df)
         state_objs[state] = state_obj
         G0, D0 = state_obj.sim(release_date=r_date, release_frac=r_frac, release_speed=daily_rspeed)
@@ -737,6 +737,7 @@ def plot_comparison_india(G0, D0, G1, D1, G2, D2, release_date, vaccine_date, da
 
 
 def plot_comparison_state(state,v_speed,v_date,r_date,r_frac,daily_rspeed):
+    state_obj2 = {}      
     state_obj2 = State(state, paras_df, pop_df, confirm_df, death_df,vaccine_df)
      #state_objs[state] = state_obj
     G0, D0 = state_obj2.sim(release_date=r_date, release_frac=r_frac, release_speed=daily_rspeed)
