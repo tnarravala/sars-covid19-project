@@ -339,8 +339,8 @@ class State:
         row = list(paras_df[paras_df['state'] == state].iloc[0])
         # self.state = row[0]
         self.frac1 = vaccine_df[vaccine_df['Name'] == state].iloc[0]['Vaccine']
-        self.frac2 = self.frac1*0.80
-        self.frac1 = self.frac1*0.20
+        self.frac2 = self.frac1*0.80*0
+        self.frac1 = self.frac1*0.20*0
         self.frac3 = 0
         self.beta = row[1]
         self.gammaE = row[2]
