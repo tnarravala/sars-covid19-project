@@ -70,7 +70,7 @@ state_dict = {'up': 'Uttar Pradesh',
 
 start_date = '2021-02-01'
 # reopen_date = '2021-03-15'
-end_date = '2021-06-09'
+end_date = '2021-06-01'
 
 size_ext = 400
 
@@ -339,8 +339,8 @@ class State:
         row = list(paras_df[paras_df['state'] == state].iloc[0])
         # self.state = row[0]
         self.frac1 = vaccine_df[vaccine_df['Name'] == state].iloc[0]['Vaccine']
-        self.frac2 = self.frac1*0.80
-        self.frac1 = self.frac1*0.20
+        self.frac2 = self.frac1*0.80*0
+        self.frac1 = self.frac1*0.20*0
         self.frac3 = 0
         self.beta = row[1]
         self.gammaE = row[2]
@@ -572,6 +572,7 @@ def vac_all(v_speed,vdate,r_date,r_frac,r_days):
     state_path = f'india/vaccine/{round(1 / daily_rspeed)} day'
     if not os.path.exists(state_path):
         os.makedirs(state_path)
+
     global india_G0
     global india_D0
     global india_G1
@@ -580,9 +581,15 @@ def vac_all(v_speed,vdate,r_date,r_frac,r_days):
     global india_D2
     global days
     global dates
+    india_G0 = []
+    india_D0 = []
+    india_G1 = []
+    india_D1 = []
+    india_G2 = []
+    india_D2 = []
 
     for state in states:
-
+        state_obj = {}            
         state_obj = State(state, paras_df, pop_df, confirm_df, death_df,vaccine_df)
         state_objs[state] = state_obj
         G0, D0 = state_obj.sim(release_date=r_date, release_frac=r_frac, release_speed=daily_rspeed)
@@ -597,7 +604,7 @@ def vac_all(v_speed,vdate,r_date,r_frac,r_days):
                                vaccine_date=v_date, vaccine_speeds=vac_speeds, vac_period1=v_period1,
                                vac_period2=v_period2, vac_eff1=v_eff1, vac_eff2=v_eff2)
 
-        G0s[state] = G0
+        G0s[state] = G0   #what's the use of these
         G1s[state] = G1
         G2s[state] = G2
         D0s[state] = D0
@@ -730,6 +737,7 @@ def plot_comparison_india(G0, D0, G1, D1, G2, D2, release_date, vaccine_date, da
 
 
 def plot_comparison_state(state,v_speed,v_date,r_date,r_frac,daily_rspeed):
+    state_obj2 = {}      
     state_obj2 = State(state, paras_df, pop_df, confirm_df, death_df,vaccine_df)
      #state_objs[state] = state_obj
     G0, D0 = state_obj2.sim(release_date=r_date, release_frac=r_frac, release_speed=daily_rspeed)
